@@ -9,6 +9,9 @@ RUN npm ci
 
 # builder - create-react-app build
 FROM depender as builder
+
+ENV PUBLIC_URL "http://localhost/abacus"
+
 WORKDIR /build/
 COPY public/ public/
 COPY src/ src/
@@ -19,5 +22,9 @@ RUN npm run build
 FROM nginx:stable-alpine as server
 COPY --from=builder /build/build /usr/share/nginx/html
 COPY nginx-default.conf /etc/nginx/templates/default.conf.template
-ENV KEYCLOAK_HOST "http://localhost:8080"
+
+ENV KEYCLOAK_HOST "http://localhost/auth"
+ENV KEYCLOAK_CLIENT_ID "dcr-test"
+ENV KEYCLOAK_REALM "tdf"
+ENV ATTRIBUTES_HOST "http://localhost/attributes"
 EXPOSE 80
