@@ -12,14 +12,14 @@ import { useClient } from "../../hooks";
 const Client = () => {
   const { id } = useParams<{ id: string }>();
 
-  const [entityId, setEntityId] = useState(`service-account-${id}`);
+  const [entityId, setEntityId] = useState(id);
 
   const { client } = useClient(id);
   console.log(`client`, client);
   const { entityAttributes } = useEntitlements(entityId);
 
   useEffect(() => {
-    setEntityId(`service-account-${id}`);
+    setEntityId(id);
   }, [id]);
 
   const onDeleteKey = useCallback(
