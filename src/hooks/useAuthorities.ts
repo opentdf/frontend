@@ -6,8 +6,7 @@ import { Method } from "../types/enums";
 
 export const useAuthorities = () => {
   const [authorities, setAuthorities] = useState<Authorities>([]);
-
-  const [data] = useFetch<Authorities>(entityClient, { method: Method.GET, path: `attributes/v1/authorityNamespace` });
+  const [data] = useFetch<Authorities>(entityClient, { method: Method.GET, path: `/attributes/v1/authorityNamespace` });
 
   useEffect(() => {
     if (data) {

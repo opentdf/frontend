@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseURL = 'https://etheria-pflynn.com/keycloak/auth/';
+const baseURL = `${process.env.SVC_ROOT}/auth/`;
 
 const keyCloakClient = () => {
   const instance = axios.create({

@@ -27,4 +27,5 @@ ENV KEYCLOAK_HOST "http://localhost/auth"
 ENV KEYCLOAK_CLIENT_ID "dcr-test"
 ENV KEYCLOAK_REALM "tdf"
 ENV ATTRIBUTES_HOST "http://localhost/attributes"
+ENV SVC_ROOT "http://localhost"
 EXPOSE 80
