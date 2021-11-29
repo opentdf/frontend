@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseURL = `${process.env.SVC_ROOT}/auth/`;
+const baseURL = `http://localhost/auth/`;
 
 const keyCloakClient = () => {
   const instance = axios.create({
