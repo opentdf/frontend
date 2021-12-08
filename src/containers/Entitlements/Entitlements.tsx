@@ -9,6 +9,8 @@ import UsersTable from "./UsersTable";
 import "./Entitlements.css";
 import { routes } from "../../routes";
 
+const realm = process.env.KEYCLOAK_QUERY_REALM || "tdf-pki";
+
 const Entitlements = () => {
   const history = useHistory();
   const [clients, setClients] = useState([]);
@@ -18,13 +20,13 @@ const Entitlements = () => {
     const { token, cancel } = getCancellationConfig();
 
     keyCloakClient
-      .get(`/admin/realms/tdf/clients`, { cancelToken: token })
+      .get(`/admin/realms/${realm}/clients`, { cancelToken: token })
       .then((res) => {
         setClients(res.data);
       });
 
     keyCloakClient
-      .get(`/admin/realms/tdf/users`, { cancelToken: token })
+        .get(`/admin/realms/${realm}/users`, { cancelToken: token })
       .then((res) => {
         setUsers(res.data);
       });

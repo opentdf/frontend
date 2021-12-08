@@ -4,6 +4,8 @@ import { useParams } from "react-router";
 import { getCancellationConfig, keyCloakClient } from "../../service";
 import { toast } from "react-toastify";
 
+const realm = process.env.KEYCLOAK_QUERY_REALM || "tdf-pki";
+
 const User = () => {
   const { id } = useParams<{ id: string }>();
 
@@ -13,7 +15,7 @@ const User = () => {
     const { token, cancel } = getCancellationConfig();
 
     keyCloakClient
-      .get(`/admin/realms/tdf/users/${id}`, { cancelToken: token })
+      .get(`/admin/realms/${realm}/users/${id}`, { cancelToken: token })
       .then((res) => {
         setUser(res.data);
       })
