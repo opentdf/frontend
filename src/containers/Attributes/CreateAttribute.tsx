@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 
 import { useLazyFetch } from "../../hooks/useFetch";
 import { Attribute } from "../../types/attributes";
-import { entityClient } from "../../service";
+import { attributesClient } from "../../service";
 import { Method } from "../../types/enums";
 import { CreateAttributeForm, CreateAuthorityForm } from "./components";
 
@@ -24,8 +24,8 @@ type CreateAuthorityValues = {
 const CreateAttribute: FC<Props> = (props) => {
   const { authorityNamespace, onAddAttr, onAddNamespace } = props;
 
-  const [createAuthority] = useLazyFetch(entityClient);
-  const [createAttributes] = useLazyFetch(entityClient);
+  const [createAuthority] = useLazyFetch(attributesClient);
+  const [createAttributes] = useLazyFetch(attributesClient);
 
   const handleCreateAuthority = useCallback(
     (values: CreateAuthorityValues) => {

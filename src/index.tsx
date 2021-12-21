@@ -10,7 +10,7 @@ import { ReactKeycloakProvider } from "@react-keycloak/web";
 const serverData = window.SERVER_DATA;
 // @ts-ignore
 const keycloak = new Keycloak({
-  url: serverData.authority,
+  url: process.env.REACT_APP_KEYCLOAK_HOST,
   clientId: serverData.clientId,
   realm: serverData.realm,
 });
