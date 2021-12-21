@@ -1,5 +1,13 @@
 # Abacus
 
+ENV VARIABLES to use:
+
+* REACT_APP_SERVER_DATA={'clientId':'','realm':''}
+* REACT_APP_BASE_URL =
+* REACT_APP_KEYCLOAK_HOST =
+* REACT_APP_ENTITLEMENTS_HOST =
+* REACT_APP_ATTRIBUTES_HOST =
+
 ## Development
 
 ### OpenAPI
@@ -12,7 +20,7 @@ npx openapi-typescript ../../service_attribute_authority/openapi.json --output s
 npx openapi-typescript ../../service_entitlement/openapi.json --output src/entitlement.ts
 ```
 
-Keycloak  
+Keycloak
 reference https://github.com/ccouzens/keycloak-openapi
 
 ```shell

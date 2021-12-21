@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-const baseURL = process.env.REACT_APP_KEYCLOAK_HOST;
+const baseURL = process.env.REACT_APP_ATTRIBUTES_HOST;
 
-const keyCloakClient = () => {
+const attributesClient = () => {
   const instance = axios.create({
     baseURL,
   });
@@ -22,4 +22,4 @@ const keyCloakClient = () => {
   return instance;
 };
 
-export default keyCloakClient();
+export default attributesClient();
