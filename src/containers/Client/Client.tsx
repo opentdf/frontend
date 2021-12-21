@@ -1,7 +1,7 @@
 import { Divider } from "antd";
 import { useCallback, useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { entityClient } from "../../service";
+import { entitlementsClient } from "../../service";
 import AssignAttributeForm from "./AssignAttributeForm";
 import ClientTable from "./ClientTable";
 import { useEntitlements } from "./hooks/useEntitlement";
@@ -37,7 +37,7 @@ const Client = () => {
 
   const onDeleteKey = useCallback(
     (attribute) => {
-      entityClient.delete(
+      entitlementsClient.delete(
         `/entitlement/v1/entity/${entityId}/attribute/${encodeURIComponent(
           attribute,
         )}`,

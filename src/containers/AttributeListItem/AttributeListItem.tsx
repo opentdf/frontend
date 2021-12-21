@@ -6,7 +6,7 @@ import { Attribute } from "../../types/attributes";
 import { EntityAttribute } from "../../types/entitlements";
 import { Method } from "../../types/enums";
 
-import { entityClient } from "../../service";
+import { attributesClient, entitlementsClient } from "../../service";
 import { useLazyFetch } from "../../hooks";
 import { TABLE_COLUMNS } from "./constants";
 
@@ -28,8 +28,8 @@ const AttributeListItem: FC<Props> = (props) => {
   const [activeRule, setActiveRule] = useState();
 
   const [getAttrEntities, { loading, data: entities }] =
-    useLazyFetch<EntityAttribute[]>(entityClient);
-  const [updateRules] = useLazyFetch(entityClient);
+    useLazyFetch<EntityAttribute[]>(entitlementsClient);
+  const [updateRules] = useLazyFetch(attributesClient);
 
   const toggleEdit = useCallback(() => {
     setIsEdit(!isEdit);
