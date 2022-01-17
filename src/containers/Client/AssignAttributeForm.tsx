@@ -1,6 +1,6 @@
 import { Button, Form } from "antd";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
-import { useAuthorities } from "../../hooks";
+import { AttributesFiltersStore } from "../../store";
 import { useUpdateEntitlement } from "./hooks/useEntitlement";
 import { useAttributesDefinitions } from "../../hooks";
 import { AutoComplete } from "../../components";
@@ -26,8 +26,8 @@ const AssignAttributeForm: FC<Props> = (props) => {
   const { onAssignAttribute, entityId } = props;
 
   const [form] = useForm();
-  const authorities = useAuthorities();
-  const [authority] = authorities;
+  const authorities = AttributesFiltersStore.useState(s => s.possibleAuthorities);
+  const authority = AttributesFiltersStore.useState(s => s.authority);
   const { attrs, getAttrs, loading } = useAttributesDefinitions(authority);
   const [updateEntitlement] = useUpdateEntitlement();
 

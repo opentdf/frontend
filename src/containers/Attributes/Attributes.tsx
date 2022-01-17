@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { List } from "antd";
 
-import { useAuthorities, useAttributesDefinitions } from "../../hooks";
+import { useAttributesDefinitions } from "../../hooks";
+import { AttributesFiltersStore } from "../../store";
 
 import { AttributeListItem } from "../AttributeListItem";
 import CreateAttribute from "./CreateAttribute";
@@ -11,8 +12,8 @@ import "./Attributes.css";
 import {AuthorityDefinition} from "../../types/attributes";
 
 const Attributes = () => {
-  const authorities = useAuthorities();
-  const [authority] = authorities;
+  const authorities = AttributesFiltersStore.useState(s => s.possibleAuthorities);
+  const authority = AttributesFiltersStore.useState(s => s.authority);
 
   const [stateAuthorities, setStateAuthorities] = useState(authorities);
   const [activeAuthority, setActiveAuthority] = useState(authority);
