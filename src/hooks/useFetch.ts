@@ -41,10 +41,10 @@ export const useLazyFetch = <T>(client: AxiosInstance): [<Q>(config: Config) => 
   const [loading, setLoading] = useState(false);
 
   const makeRequest = useCallback(async (config: Config) => {
-
+    console.log(config.params);
     setLoading(true);
     const methods = {
-      get: () => client.get(config.path, config.params),
+      get: () => client.get(config.path, { params: config.params }),
       post: () => client.post(config.path, config.data, config.params),
       put: () => client.put(config.path, config.data),
       delete: () => client.delete(config.path, config.params)
@@ -52,7 +52,6 @@ export const useLazyFetch = <T>(client: AxiosInstance): [<Q>(config: Config) => 
 
     try {
       const res = await methods[config.method]();
-      console.log(res);
       setData(res.data);
       return res;
     } catch (error) {

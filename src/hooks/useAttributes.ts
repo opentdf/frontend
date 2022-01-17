@@ -44,3 +44,18 @@ export const useAttributesDefinitions = (authorityDefinition: AuthorityDefinitio
 
   return { attrs, getAttrs: (namespace: string) => getAttrs(buildConfig(namespace)), loading };
 };
+
+export const useAttributesFilters = (authorityDefinition: AuthorityDefinition) => {
+  const [getAttrs, { data, loading }] = useLazyFetch<AttributeDefinition[]>(entityClient);
+
+  useEffect(() => {
+    const config = { method: Method.GET, path: serverData.attributes + '/definitions/attributes', params: {} };
+    if (authorityDefinition.authority) {
+      config.params = { ...config.params, ...authorityDefinition }
+    }
+    getAttrs(config);
+  }, [authorityDefinition, getAttrs]);
+
+  return { attrs: data || [], loading };
+};
+
