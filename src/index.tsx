@@ -12,7 +12,7 @@ const serverData = window.SERVER_DATA;
 const keycloak = new Keycloak({
   url: process.env.REACT_APP_KEYCLOAK_HOST,
   clientId: serverData.clientId,
-  realm: serverData.realm,
+  realm: process.env.REACT_APP_REALM ?? "",
 });
 
 ReactDOM.render(

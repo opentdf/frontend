@@ -13,7 +13,9 @@ const User = () => {
     const { token, cancel } = getCancellationConfig();
 
     keyCloakClient
-      .get(`/admin/realms/tdf/users/${id}`, { cancelToken: token })
+      .get(`/admin/realms/${process.env.REACT_APP_REALM}/users/${id}`, {
+        cancelToken: token,
+      })
       .then((res) => {
         setUser(res.data);
       })
