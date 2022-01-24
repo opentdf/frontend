@@ -25,7 +25,7 @@ const CreateAttributeForm: FC<Props> = (props) => {
     <>
       <Typography.Title level={3}>
         Attribute for
-        <Typography.Text italic> {authority}</Typography.Text>
+        <Typography.Text italic>{authority.authority}</Typography.Text>
       </Typography.Title>
 
       <Form onFinish={onFinish} initialValues={{ order: [undefined] }}>
