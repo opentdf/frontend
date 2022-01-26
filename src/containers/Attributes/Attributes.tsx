@@ -1,4 +1,4 @@
-import { useAttributesFilters } from "../../hooks";
+import {useAttributesFilters, useAuthorities} from "../../hooks";
 import { AttributesFiltersStore } from "../../store";
 
 import { AttributeListItem } from "../AttributeListItem";
@@ -9,6 +9,7 @@ import { List, Spin } from "antd";
 import "./Attributes.css";
 
 const Attributes = () => {
+  useAuthorities();
   const authority = AttributesFiltersStore.useState(s => s.authority);
   const { attrs, loading } = useAttributesFilters(authority);
 

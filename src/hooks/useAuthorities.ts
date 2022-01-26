@@ -9,7 +9,7 @@ import { AttributesFiltersStore } from "../store";
 const serverData = window.SERVER_DATA;
 
 export const useAuthorities = () => {
-  const [data] = useFetch<Authorities>(entityClient, { method: Method.GET, path: serverData.attributes + `/authorities` });
+  const [data] = useFetch<Authorities>(entityClient, { method: Method.GET, path: serverData.attributes + `authorities` });
 
   useEffect(() => {
     AttributesFiltersStore.update(s => {

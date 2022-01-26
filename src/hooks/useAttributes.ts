@@ -47,13 +47,13 @@ export const useAttributesDefinitions = (authorityDefinition: AuthorityDefinitio
 
 export const useAttributesFilters = (authorityDefinition: AuthorityDefinition) => {
   const [getAttrs, { data, loading }] = useLazyFetch<AttributeDefinition[]>(entityClient);
-
+  console.log(serverData);
   useEffect(() => {
-    const config = { method: Method.GET, path: serverData.attributes + '/definitions/attributes', params: {} };
     if (authorityDefinition.authority) {
-      config.params = { ...config.params, ...authorityDefinition }
+      const config = { method: Method.GET, path: serverData.attributes + 'definitions/attributes', params: {} };
+      config.params = { ...config.params, ...authorityDefinition };
+      getAttrs(config);
     }
-    getAttrs(config);
   }, [authorityDefinition, getAttrs]);
 
   return { attrs: data || [], loading };

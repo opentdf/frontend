@@ -8,7 +8,6 @@ import { Header } from "./containers";
 import { routes } from "./routes";
 
 import "./App.css";
-import {useAuthorities} from "./hooks";
 
 const Entitlements = lazy(() => import("./containers/Entitlements"));
 const Attributes = lazy(() => import("./containers/Attributes"));
@@ -20,8 +19,6 @@ const User = lazy(() => import("./containers/User"));
 export default function App() {
   // keycloak authentication
   const { keycloak, initialized } = useKeycloak();
-  // initialization of authorities
-  useAuthorities();
 
   keycloak.onAuthError = console.log;
 

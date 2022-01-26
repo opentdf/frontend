@@ -29,7 +29,7 @@ const CreateAttribute: FC<Props> = (props) => {
     (value: AuthorityDefinition) => {
       createAuthority<string[]>({
         method: Method.POST,
-        path: serverData.attributes + `/authorities`,
+        path: serverData.attributes + `authorities`,
         data: value,
       })
         .then((response) => {
