@@ -75,7 +75,7 @@ const AssignAttributeForm: FC<Props> = (props) => {
 
       await updateEntitlement({
         method: Method.PUT,
-        path: `/attributes/entitlements/${entityId}`,
+        path: `/entitlements/${entityId}`,
         data: [data],
       })
         .then(() => {
@@ -126,7 +126,12 @@ const AssignAttributeForm: FC<Props> = (props) => {
       </Item>
 
       <Item>
-        <Button type="primary" htmlType="submit" loading={loading}>
+        <Button
+          htmlType="submit"
+          id="assign-submit"
+          loading={loading}
+          type="primary"
+        >
           Submit
         </Button>
       </Item>

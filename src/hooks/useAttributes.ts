@@ -4,7 +4,6 @@ import { Attribute } from "../types/attributes";
 import { Method } from "../types/enums";
 import { useLazyFetch } from './useFetch';
 
-
 export const useDefinitionAttributes = (authority: string) => {
   const [attrs, setAttrs] = useState<Attribute[]>([]);
   const [getAttrs, { data, loading }] = useLazyFetch<Attribute[]>(attributesClient);
@@ -27,24 +26,29 @@ export const useDefinitionAttributes = (authority: string) => {
   return { attrs, getAttrs: (authority: string) => getAttrs(buildConfig(authority)), loading };
 };
 
-type AttrFilters = {
-  name: string
-  order: string
-  rule: string
+type DefAttrsQueryParams = {
+  name: string;
+  order: string;
+  limit: number;
+  offset: number;
+  sort: string;
 }
 
-export const useAttributesFilters = (authority: string, filters: AttrFilters, sort: string) => {
+export const useAttributesFilters = (authority: string, query: DefAttrsQueryParams) => {
   const [getAttrs, { data, loading, headers }] = useLazyFetch<Attribute[]>(attributesClient);
-  console.log(`Headers: ${headers}`);
+  const xTotalCount: number = Number(headers?.['x-total-count'] ?? 0);
 
   useEffect(() => {
     if (authority) {
       const config = { method: Method.GET, path: `/definitions/attributes`, params: {} };
-      config.params = { authority, ...filters, sort }
+
+      // Remove empty query params
+      const queryParams = Object.fromEntries(Object.entries(query).filter(([_, v]) => v));
+
+      config.params = { authority, ...queryParams }
       getAttrs(config);
     }
-    console.log('response: ', data)
-  }, [authority, filters, sort, getAttrs]);
+  }, [authority, query, getAttrs]);
 
-  return { attrs: data || [], loading };
+  return { attrs: data || [], loading, xTotalCount };
 };
