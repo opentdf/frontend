@@ -24,3 +24,17 @@ export const useDefinitionAttributes = (authority: string) => {
 
   return { attrs, getAttrs: (authority: string) => getAttrs(buildConfig(authority)), loading };
 };
+
+export const useAttributesFilters = (authority: string) => {
+  const [getAttrs, { data, loading }] = useLazyFetch<Attribute[]>(attributesClient);
+
+  useEffect(() => {
+    if (authority) {
+      const config = { method: Method.GET, path: `/attributes/definitions/attributes`, params: {} };
+      config.params = { authority }
+      getAttrs(config);
+    }
+  }, [authority, getAttrs]);
+
+  return { attrs: data || [], loading };
+};

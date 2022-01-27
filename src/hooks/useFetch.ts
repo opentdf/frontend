@@ -1,10 +1,14 @@
-import { AxiosInstance, AxiosResponse } from "axios";
+import { AxiosInstance, AxiosResponse, AxiosError } from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { getCancellationConfig } from "../service";
 
 export type Method = 'get' | 'delete' | "put" | 'post';
 export type Config = { method: Method, path: string, params?: Record<any, any>; data?: Record<any, any>; };
+
+function isAxiosError(error: any): error is AxiosError {
+  return (error as AxiosError).isAxiosError !== undefined;
+}
 
 export const useFetch = <T>(client: AxiosInstance, config: Config): [T | undefined,] => {
   const { method, path, params } = config;
@@ -40,7 +44,7 @@ export const useLazyFetch = <T>(client: AxiosInstance): [<Q>(config: Config) => 
     setLoading(true);
 
     const methods = {
-      get: () => client.get(config.path, config.params),
+      get: () => client.get(config.path, { params: config.params }),
       post: () => client.post(config.path, config.data, config.params),
       put: () => client.put(config.path, config.data),
       delete: () => client.delete(config.path, config.params)
@@ -51,7 +55,12 @@ export const useLazyFetch = <T>(client: AxiosInstance): [<Q>(config: Config) => 
       setData(res.data);
       return res;
     } catch (error) {
-      throw new Error(error as string);
+      if (isAxiosError(error) && error.response) {
+        toast.error(error.message);
+        return error.response;
+      } else {
+        throw new Error(error as string);
+      }
     } finally {
       setLoading(false);
     }
