@@ -76,7 +76,7 @@ const AssignAttributeForm: FC<Props> = (props) => {
 
       await updateEntitlement({
         method: Method.PUT,
-        path: `/attributes/entitlements/${entityId}`,
+        path: `/entitlements/${entityId}`,
         data: [data],
       })
         .then(() => {

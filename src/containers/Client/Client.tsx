@@ -59,7 +59,7 @@ const Client = () => {
   const onAssignAttribute = useCallback(() => {
     const config = {
       method: Method.GET,
-      path: `/attributes/entitlements`,
+      path: `/entitlements`,
       params: { params: { entityId } },
     };
 
