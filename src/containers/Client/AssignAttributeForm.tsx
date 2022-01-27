@@ -127,7 +127,12 @@ const AssignAttributeForm: FC<Props> = (props) => {
       </Item>
 
       <Item>
-        <Button type="primary" htmlType="submit" loading={loading}>
+        <Button
+          htmlType="submit"
+          id="assign-submit"
+          loading={loading}
+          type="primary"
+        >
           Submit
         </Button>
       </Item>

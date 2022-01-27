@@ -56,7 +56,7 @@ const AttributeListItem: FC<Props> = (props) => {
       try {
         await getAttrEntities({
           method: Method.GET,
-          path: `/entitlements/entitlements`,
+          path: `/entitlements`,
           params: {
             params: {
               authority: authority,
