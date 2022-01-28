@@ -22,7 +22,18 @@ const Entitlements = () => {
         cancelToken: token,
       })
       .then((res) => {
-        setClients(res.data);
+          const clientsWithMapper: any = res.data.filter((element: { protocolMappers: any[]; }) => {
+              const clientWithMapper = element.protocolMappers?.find((pm) => {
+                      if (pm.protocolMapper == 'virtru-oidc-protocolmapper') {
+                          return pm;
+                      }
+                  }
+              )
+              if (clientWithMapper) {
+                  return clientWithMapper;
+              }
+          })
+          setClients(clientsWithMapper);
       });
 
     keyCloakClient
