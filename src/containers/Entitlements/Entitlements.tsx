@@ -24,7 +24,7 @@ const Entitlements = () => {
       })
       .then((res) => {
           const clientsWithMapper = res.data.filter((element: components["schemas"]["ClientRepresentation"]) => {
-              return element.protocolMappers?.find((pm => pm.protocolMapper == 'virtru-oidc-protocolmapper'));
+              return element.protocolMappers?.find((pm => pm.protocolMapper === 'virtru-oidc-protocolmapper'));
           })
           setClients(clientsWithMapper);
       });
