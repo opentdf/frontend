@@ -36,8 +36,6 @@ test.describe('<Attributes/>', () => {
     await page.fill("#name", attributeName);
     await page.fill("#value", attributeValue);
     await page.click("#assign-submit");
-
-    // await page.pause();
   });
 
   test.fixme('delete attribute', async ({ page, authority, attributeName, attributeValue }) => {
@@ -50,7 +48,6 @@ test.describe('<Attributes/>', () => {
     await page.fill("#value", attributeValue);
     await page.click("#assign-submit");
 
-    const tableVal = `${authority}/attr/${attributeName}/value/${attributeValue}`;
-
+    // const tableVal = `${authority}/attr/${attributeName}/value/${attributeValue}`;
   });
 });
