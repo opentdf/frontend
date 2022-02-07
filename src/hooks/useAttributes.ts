@@ -9,8 +9,10 @@ export const useDefinitionAttributes = (authority: string) => {
   const [attrs, setAttrs] = useState<Attribute[]>([]);
   const [getAttrs, { data, loading }] = useLazyFetch<Attribute[]>(attributesClient);
 
-  //TODO: Does this work with authority param?
-  const buildConfig = useCallback((authority) => ({ method: Method.GET, path: `/attributes/definitions/attributes` }), []);
+  const buildConfig = useCallback((authority) => ({
+    method: Method.GET,
+    path: authority ? `/definitions/attributes?authority=${authority}` : '/definitions/attributes'
+  }), []);
 
   useEffect(() => {
     if (data) {
@@ -25,16 +27,24 @@ export const useDefinitionAttributes = (authority: string) => {
   return { attrs, getAttrs: (authority: string) => getAttrs(buildConfig(authority)), loading };
 };
 
-export const useAttributesFilters = (authority: string) => {
-  const [getAttrs, { data, loading }] = useLazyFetch<Attribute[]>(attributesClient);
+type AttrFilters = {
+  name: string
+  order: string
+  rule: string
+}
+
+export const useAttributesFilters = (authority: string, filters: AttrFilters, sort: string) => {
+  const [getAttrs, { data, loading, headers }] = useLazyFetch<Attribute[]>(attributesClient);
+  console.log(`Headers: ${headers}`);
 
   useEffect(() => {
     if (authority) {
-      const config = { method: Method.GET, path: `/attributes/definitions/attributes`, params: {} };
-      config.params = { authority }
+      const config = { method: Method.GET, path: `/definitions/attributes`, params: {} };
+      config.params = { authority, ...filters, sort }
       getAttrs(config);
     }
-  }, [authority, getAttrs]);
+    console.log('response: ', data)
+  }, [authority, filters, sort, getAttrs]);
 
   return { attrs: data || [], loading };
 };

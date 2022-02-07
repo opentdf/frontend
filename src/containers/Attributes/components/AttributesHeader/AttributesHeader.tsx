@@ -36,12 +36,17 @@ const AttributesHeader = () => {
     console.log(`value`, value);
   };
 
-  const handlePaginationChange = (pageNumber: number) => {
+  const handlePaginationChange = (pageNumber: number, pageSize: number) => {
+    debugger
     console.log(`pageNumber`, pageNumber);
   };
 
   const authorities = AttributesFiltersStore.useState(s => s.possibleAuthorities);
   const authority = AttributesFiltersStore.useState(s => s.authority);
+
+  const limit = 10;
+  const totalCount = 15;
+  // const totalPages = Math.ceil(totalCount / limit);
 
   return (
     <div className={styles.attributeHeader}>
@@ -61,7 +66,8 @@ const AttributesHeader = () => {
         </Select>
         <Pagination
           onChange={handlePaginationChange}
-          total={50}
+          total={totalCount}
+          pageSize={10}
           showTotal={(total) => `Total ${total} items`}
         />
 

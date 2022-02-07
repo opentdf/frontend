@@ -1,8 +1,6 @@
 import { List, Spin } from "antd";
-
 import { useAttributesFilters, useAuthorities } from "../../hooks";
 import { AttributesFiltersStore } from "../../store";
-
 import { AttributeListItem } from "../AttributeListItem";
 import CreateAttribute from "./CreateAttribute";
 import { AttributesHeader } from "./components";
@@ -12,7 +10,9 @@ import "./Attributes.css";
 const Attributes = () => {
   useAuthorities();
   const authority = AttributesFiltersStore.useState(s => s.authority);
-  const { attrs, loading } = useAttributesFilters(authority);
+  const attributesFilters = AttributesFiltersStore.useState(s => s.filters);
+  const attributesSort = AttributesFiltersStore.useState(s => s.sort);
+  const { attrs, loading } = useAttributesFilters(authority, attributesFilters, attributesSort);
 
   return (
     <>
