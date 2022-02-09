@@ -11,7 +11,7 @@ const FilterForm = () => {
       wrapperCol={{ span: 24 }}
       onFinish={(values) => {
         AttributesFiltersStore.update(store => {
-          store.filters = { ...values };
+          store.query = { ...values };
         })
       }}
       autoComplete="off"

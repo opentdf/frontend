@@ -4,25 +4,25 @@ import { Authorities } from "./types/attributes";
 interface AttributesFiltersStore {
 	possibleAuthorities: Authorities;
 	authority: string;
-	filters: {
+	query: {
 		name: string;
 		order: string;
-		rule: string;
+		limit: number;
+		offset: number;
+		sort: string;
 	}
-	sort: string,
-	limit: number;
-	offset: number;
+	pageNumber: number;
 }
 
 export const AttributesFiltersStore = new Store<AttributesFiltersStore>({
 	possibleAuthorities: [],
 	authority: '',
-	filters: {
+	query: {
 		name: '',
 		order: '',
-		rule: ''
+		limit: 10,
+		offset: 1,
+		sort: '',
 	},
-	sort: '-name',
-	limit: 10,
-	offset: 0,
+	pageNumber: 1
 });

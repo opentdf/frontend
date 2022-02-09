@@ -12,8 +12,8 @@ enum ORDER {
 }
 
 const ORDER_MAP = new Map([
-  [ORDER.ASC, "-"],
-  [ORDER.DES, "+"],
+  [ORDER.ASC, ''],
+  [ORDER.DES, '-'],
 ]);
 
 const SORT_OPTIONS = ["entity_id", "name", "namespace", "value"];
@@ -31,26 +31,42 @@ const CASCADER_OPTIONS = [
   },
 ];
 
-const AttributesHeader = () => {
-  const onChange = (value: any) => {
-    console.log(`value`, value);
+type AttributesHeaderProps = {
+  total: number;
+}
+
+const AttributesHeader = ({ total }: AttributesHeaderProps) => {
+  const onChange = (value: any): void => {
+    const sort = value.join('');
+    AttributesFiltersStore.update(s => {
+      s.query.sort = sort;
+    });
   };
 
-  const handlePaginationChange = (pageNumber: number, pageSize: number) => {
-    debugger
-    console.log(`pageNumber`, pageNumber);
+  const currentPageNumber = AttributesFiltersStore.useState(s => s.pageNumber);
+
+  const handlePaginationChange = (pageNumber: number): void => {
+    if (pageNumber > currentPageNumber) {
+      AttributesFiltersStore.update(s => {
+        s.query.offset += 1;
+        s.pageNumber += 1;
+      });
+    } else {
+      AttributesFiltersStore.update(s => {
+        s.query.offset -= 1;
+        s.pageNumber -= 1;
+      });
+    }
   };
 
   const authorities = AttributesFiltersStore.useState(s => s.possibleAuthorities);
   const authority = AttributesFiltersStore.useState(s => s.authority);
 
-  const limit = 10;
-  const totalCount = 15;
-  // const totalPages = Math.ceil(totalCount / limit);
-
   return (
     <div className={styles.attributeHeader}>
-      <Typography.Title level={2}>Attribute Rules</Typography.Title>
+      <Typography.Title level={2}>
+        Attribute Rules
+      </Typography.Title>
 
       <div className={styles.cascaderContainer}>
         <Select
@@ -66,13 +82,13 @@ const AttributesHeader = () => {
         </Select>
         <Pagination
           onChange={handlePaginationChange}
-          total={totalCount}
+          total={total}
           pageSize={10}
+          current={currentPageNumber}
           showTotal={(total) => `Total ${total} items`}
         />
 
         <Cascader
-          multiple
           onChange={onChange}
           options={CASCADER_OPTIONS}
           placeholder="Sort by..."

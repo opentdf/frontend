@@ -10,13 +10,12 @@ import "./Attributes.css";
 const Attributes = () => {
   useAuthorities();
   const authority = AttributesFiltersStore.useState(s => s.authority);
-  const attributesFilters = AttributesFiltersStore.useState(s => s.filters);
-  const attributesSort = AttributesFiltersStore.useState(s => s.sort);
-  const { attrs, loading } = useAttributesFilters(authority, attributesFilters, attributesSort);
+  const attrsQueryParams = AttributesFiltersStore.useState(s => s.query);
+  const { attrs, loading, xTotalCount } = useAttributesFilters(authority, attrsQueryParams);
 
   return (
     <>
-      <AttributesHeader />
+      <AttributesHeader total={xTotalCount} />
       { loading
         ? (
           <div style={{
