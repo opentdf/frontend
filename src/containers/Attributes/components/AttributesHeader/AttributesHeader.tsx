@@ -3,6 +3,7 @@ import { Button, Cascader, Popover, Typography, Pagination, Select } from "antd"
 
 import FilterForm from "../FilterForm";
 import { AttributesFiltersStore } from "../../../../store";
+import { toast } from "react-toastify";
 
 const { Option } = Select;
 
@@ -16,7 +17,7 @@ const ORDER_MAP = new Map([
   [ORDER.DES, '-'],
 ]);
 
-const SORT_OPTIONS = ["entity_id", "name", "namespace", "value"];
+const SORT_OPTIONS = ['name', 'id', 'rule', 'values'];
 
 const CASCADER_OPTIONS = [
   {
