@@ -1,11 +1,13 @@
 import {useCallback, useEffect, useMemo, useState} from "react";
 import { Divider } from "antd";
 import { useParams } from "react-router";
-import { getCancellationConfig, keyCloakClient } from "../../service";
+import {entitlementsClient, getCancellationConfig, keyCloakClient} from "../../service";
 import { toast } from "react-toastify";
 import {useEntitlements} from "../Client/hooks/useEntitlement";
 import {Method} from "../../types/enums";
 import AssignAttributeForm from "../Client/AssignAttributeForm";
+import ClientTable from "../Client/ClientTable";
+import {TableData} from "../../types/table";
 
 const User = () => {
     const {id} = useParams<{ id: string }>();
@@ -62,15 +64,46 @@ const User = () => {
         setEntityId(id);
     }, [id]);
 
+    const clientTableData = useMemo(
+        () =>
+            entityAttributes?.reduce((acc: TableData[], item): TableData[] => {
+                const transformedItem = Object.entries(item).flatMap(([key, values]) =>
+                    values.map((value) => ({
+                        attribute: key,
+                        entityId: value,
+                    })),
+                );
+
+                return [...acc, ...transformedItem];
+            }, []),
+        [entityAttributes],
+    );
+
+    const onDeleteKey = useCallback(
+        (entity: TableData) => {
+            entitlementsClient
+                .delete(`/entitlements/${entity.attribute}`, {
+                    data: [entity.entityId],
+                })
+                .then(() => getEntitlements(config));
+        },
+        [config, getEntitlements],
+    );
+
     return (
         <section>
-            <h2>User {id}</h2>
-
-            <Divider/>
-
             <AssignAttributeForm
                 entityId={entityId}
                 onAssignAttribute={onAssignAttribute}
+            />
+
+            <Divider/>
+
+            <h2>User {id}</h2>
+            <ClientTable
+                onDeleteKey={onDeleteKey}
+                data={clientTableData}
+                loading={loading}
             />
 
             <Divider/>
