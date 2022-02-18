@@ -4,15 +4,16 @@ import "./index.css";
 import "react-toastify/dist/ReactToastify.css";
 import App from "./App";
 import Keycloak from "keycloak-js";
-import { ReactKeycloakProvider } from "@react-keycloak/web";
+import {ReactKeycloakProvider} from "@react-keycloak/web";
+import Tutorial from "./Tutorial";
 
-const serverData = window.SERVER_DATA;
+const {authority, clientId, realm, app} = window.SERVER_DATA;
 
 // @ts-ignore
 const keycloak = new Keycloak({
-  url: serverData.authority,
-  clientId: serverData.clientId,
-  realm: serverData.realm,
+  url: authority,
+  clientId: clientId,
+  realm: realm,
 });
 
 ReactDOM.render(
@@ -30,7 +31,10 @@ ReactDOM.render(
         sessionStorage.setItem("keycloak", tokens.token || "");
       }}
     >
-      <App />
+        {app === 'tutorial' &&
+          <Tutorial/>}
+        {(!app || app === 'abacus') &&
+          <App />}
     </ReactKeycloakProvider>
   </React.StrictMode>,
   document.getElementById("root"),

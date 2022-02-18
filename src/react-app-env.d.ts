@@ -2,6 +2,7 @@
 
 interface Window {
   SERVER_DATA: {
+    app: string,
     access: string,
     attributes: string,
     authority: string,

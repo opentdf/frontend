@@ -24,5 +24,6 @@ ENV KEYCLOAK_CLIENT_ID ""
 ENV KEYCLOAK_REALM ""
 ENV ATTRIBUTES_HOST "http://localhost/attributes"
 ENV ENTITLEMENTS_HOST "http://localhost/entitlements"
+ENV APP "abacus"
 
 EXPOSE 80
