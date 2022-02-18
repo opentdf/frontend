@@ -4,17 +4,14 @@
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
-    "@playwright/test": "^1.18.0",
+    "@opentdf/client": "file:./opentdf-client-0.1.1.tgz",
     "@react-keycloak/web": "^3.4.0",
-    "@testing-library/jest-dom": "~5.14.1",
-    "@testing-library/react": "~11.2.7",
-    "@testing-library/user-event": "~12.8.3",
     "@types/jest": "~26.0.24",
     "@types/node": "~12.20.27",
     "@types/react": "~17.0.26",
     "@types/react-dom": "~17.0.9",
     "@types/react-redux": "^7.1.20",
-    "antd": "^4.17.2",
+    "antd": "^4.18.7",
     "axios": "^0.24.0",
     "keycloak-js": "^15.0.2",
     "oidc-client": "~1.11.5",
@@ -47,9 +44,9 @@
   "jest": {
     "coverageThreshold": {
       "global": {
-        "branches": 20,
-        "functions": 10,
-        "lines": 15,
+        "branches": 10,
+        "functions": 5,
+        "lines": 10,
         "statements": 10
       }
     }
@@ -70,6 +67,10 @@
     ]
   },
   "devDependencies": {
+    "@playwright/test": "^1.18.0",
+    "@testing-library/jest-dom": "~5.14.1",
+    "@testing-library/react": "~11.2.7",
+    "@testing-library/user-event": "~12.8.3",
     "@types/react-router-dom": "^5.3.2",
     "husky": "^7.0.4"
   }
