@@ -13,6 +13,10 @@ interface AttributesFiltersStore {
 	}
 	pageNumber: number;
 }
+interface IReamStore {
+	currentRealm: string,
+	realmList: string[]
+}
 
 export const AttributesFiltersStore = new Store<AttributesFiltersStore>({
 	possibleAuthorities: [],
@@ -25,4 +29,9 @@ export const AttributesFiltersStore = new Store<AttributesFiltersStore>({
 		sort: '',
 	},
 	pageNumber: 1
+});
+
+export const RealmStore = new Store<IReamStore>({
+	currentRealm: '',
+	realmList: []
 });
