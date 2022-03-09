@@ -1,13 +1,13 @@
 const serverData = window.SERVER_DATA;
-let realm = localStorage.getItem('realm');
+let realm = localStorage.getItem("realm");
 
 if(!serverData.realms.length){
-    throw Error('Realm did not found.');
+    throw Error("Realm didn't found.");
 }
 
 if(!realm) {
     realm = serverData.realms[0];
-    localStorage.setItem('realm', serverData.realms[0]);
+    localStorage.setItem("realm", serverData.realms[0]);
 }
 
 export const keycloakConfig = {
