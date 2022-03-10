@@ -23,7 +23,7 @@
     "react-router-dom": "^5.3.0",
     "react-scripts": "4.0.3",
     "react-toastify": "^8.0.3",
-    "tdf3-js": "github:virtru/tdf3-js#oidcWith4.1.5.2",
+    "tdf3-js": "file:tdf3-js-4.1.8.tgz",
     "typescript": "~4.4.3",
     "web-vitals": "~1.1.2"
   },

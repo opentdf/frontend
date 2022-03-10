@@ -17,7 +17,7 @@ const Home = lazy(() => import("./containers/Home"));
 const NotFound = lazy(() => import("./containers/NotFound"));
 const User = lazy(() => import("./containers/User"));
 // @ts-ignore
-const {access, clientId, realm, authority} = window.SERVER_DATA;
+const {access = 'http://localhost:8000', clientId, realm, authority} = window.SERVER_DATA;
 const plainText = 'Hello, World!';
 let cipherText: ArrayBuffer;
 
@@ -61,6 +61,8 @@ export default function App() {
                 const {refreshToken} = keycloak;
                 // @ts-ignore
                 if (!client && refreshToken) {
+                    const token = typeof refreshToken === 'boolean' ? keycloak.token : refreshToken;
+                    debugger;
                     // const oidcCredentials: RefreshTokenCredentials = {
                     //     clientId: clientId,
                     //     exchange: 'refresh',
@@ -76,7 +78,7 @@ export default function App() {
                     client = new virtru.Client.Client({
                         clientId,
                         organizationName: realm,
-                        oidcRefreshToken: refreshToken,
+                        oidcRefreshToken: token,
                         kasEndpoint: access,
                         virtruOIDCEndpoint: authority.replace('/auth/',''),
                     });

@@ -4,16 +4,17 @@ ARG NODE_VERSION=lts
 # depender - get production dependencies
 FROM node:${NODE_VERSION} as depender
 WORKDIR /build/
-COPY package-lock.json package.json ./
+ENV NODE_OPTIONS "--max-old-space-size=4096"
+COPY package-lock.json package.json tdf3-js-4.1.8.tgz ./
 RUN npm ci
 
 # builder - create-react-app build
 FROM depender as builder
 WORKDIR /build/
 COPY public/ public/
+COPY build/ build/
 COPY src/ src/
 COPY tsconfig.json/ .
-RUN npm run build
 
 # server - nginx alpine
 FROM nginx:stable-alpine as server
