@@ -9,12 +9,16 @@ import { routes } from "./routes";
 
 import "./App.css";
 
+import {Addon} from "./targetModes"
+
 const Entitlements = lazy(() => import("./containers/Entitlements"));
 const Attributes = lazy(() => import("./containers/Attributes"));
 const Client = lazy(() => import("./containers/Client"));
 const Home = lazy(() => import("./containers/Home"));
 const NotFound = lazy(() => import("./containers/NotFound"));
 const User = lazy(() => import("./containers/User"));
+
+
 
 export default function App() {
   // keycloak authentication
@@ -58,6 +62,7 @@ export default function App() {
                 <Attributes />
               </Route>
               <Route path={routes.HOME} exact>
+                <Addon />
                 <Home />
               </Route>
               <Route path={routes.CATCH}>
