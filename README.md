@@ -23,6 +23,7 @@ docker run -p 3000:80 \
   -e KEYCLOAK_HOST="http://localhost/auth/" \
   -e KEYCLOAK_CLIENT_ID="localhost-abacus" \
   -e KEYCLOAK_REALM="opentdf-realm" \
+  -e KEYCLOAK_REALMS="['opentdf-realms']" \
   -e ATTRIBUTES_HOST="http://localhost/v2/attributes" \
   -e ENTITLEMENTS_HOST="http://localhost/v2/entitlements" \
   $(docker build -q .)
