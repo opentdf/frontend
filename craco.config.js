@@ -7,7 +7,7 @@ module.exports = function () {
         webpack: {
             plugins: [
                 new webpack.NormalModuleReplacementPlugin(
-                    /(.*)APP_TARGET-(\.*)/,
+                    /APP_TARGET-(\.*)/,
                     function (resource) {
                         resource.request = resource.request.replace(
                             /APP_TARGET-/,
