@@ -18,8 +18,6 @@ const Home = lazy(() => import("./containers/Home"));
 const NotFound = lazy(() => import("./containers/NotFound"));
 const User = lazy(() => import("./containers/User"));
 
-
-
 export default function App() {
   // keycloak authentication
   const { keycloak, initialized } = useKeycloak();
