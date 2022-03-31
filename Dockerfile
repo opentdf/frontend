@@ -14,7 +14,12 @@ COPY public/ public/
 COPY src/ src/
 COPY tsconfig.json/ .
 COPY craco.config.js/ .
+RUN npm run build
 
+# server - nginx alpine
+FROM nginx:stable-alpine as server
+COPY --from=builder /build/build /usr/share/nginx/html
+COPY nginx-default.conf /etc/nginx/templates/default.conf.template
 ENV KEYCLOAK_HOST "http://localhost/keycloak/auth"
 ENV KEYCLOAK_CLIENT_ID ""
 ENV KEYCLOAK_REALM ""
@@ -24,4 +29,3 @@ ENV ENTITLEMENTS_HOST "http://localhost/entitlements"
 ENV KAS_HOST "http://localhost:8000/kas"
 
 EXPOSE 80
-CMD [ "npm", "start" ]
