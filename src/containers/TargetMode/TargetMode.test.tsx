@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { InputTDF } from "./InputTDF";
 const { ReactKeycloakProvider } = require('@react-keycloak/web')
 
-// wip
+// TODO mock tdf3 lib
 jest.mock(
     '@opentdf/client',
     () => {
@@ -46,22 +46,6 @@ jest.mock(
 );
 
 describe('InputTDF component', () => {
-    beforeEach(() => {
-        Object.defineProperty(window, 'matchMedia', {
-            writable: true,
-            value: jest.fn().mockImplementation(query => ({
-                matches: false,
-                media: query,
-                onchange: null,
-                addListener: jest.fn(),
-                removeListener: jest.fn(),
-                addEventListener: jest.fn(),
-                removeEventListener: jest.fn(),
-                dispatchEvent: jest.fn(),
-            })),
-        });
-    });
-
     it("should render", () => {
         const mockKeycloakStub = {
             init: jest.fn().mockResolvedValue(true),
@@ -80,6 +64,5 @@ describe('InputTDF component', () => {
         const element = screen.getByText("Secure Submit");
         // fireEvent.click(element);
         expect(element).toBeInTheDocument();
-
     });
 });
