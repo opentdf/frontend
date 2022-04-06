@@ -4,7 +4,7 @@ ARG NODE_VERSION=lts
 # depender - get production dependencies
 FROM node:${NODE_VERSION} as depender
 WORKDIR /build/
-COPY package-lock.json package.json ./
+COPY package-lock.json package.json tdf3-js-4.1.8.tgz ./
 RUN npm ci
 
 # builder - create-react-app build
