@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { InputTDF } from "./InputTDF";
 const { ReactKeycloakProvider } = require('@react-keycloak/web');
 
@@ -19,7 +19,6 @@ describe('InputTDF component', () => {
             </ReactKeycloakProvider>
         );
         const element = screen.getByText("Secure Submit");
-        // fireEvent.click(element);
         expect(element).toBeInTheDocument();
     });
 });
