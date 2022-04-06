@@ -39,8 +39,8 @@ Generate TypeScript types from OpenAPI specifications
 reference https://github.com/drwpow/openapi-typescript
 
 ```shell
-npx openapi-typescript https://raw.githubusercontent.com/opentdf/backend/main/containers/service_attribute_authority/openapi.json --output src/attributes.ts
-npx openapi-typescript https://raw.githubusercontent.com/opentdf/backend/main/containers/service_entitlement/openapi.json --output src/entitlement.ts
+npx openapi-typescript ../backend/containers/attributes/openapi.json --output src/attributes.ts
+npx openapi-typescript ../backend/containers/entitlements/openapi.json --output src/entitlement.ts
 ```
 
 Keycloak  

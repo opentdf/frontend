@@ -1,7 +1,7 @@
 import { Store } from "pullstate";
 import { Authorities } from "./types/attributes";
 
-interface IAttributesFiltersStore {
+export interface AttributesFilters {
 	possibleAuthorities: Authorities;
 	authority: string;
 	query: {
@@ -14,7 +14,7 @@ interface IAttributesFiltersStore {
 	pageNumber: number;
 }
 
-export const AttributesFiltersStore = new Store<IAttributesFiltersStore>({
+export const AttributesFiltersStore = new Store<AttributesFilters>({
 	possibleAuthorities: [],
 	authority: '',
 	query: {
