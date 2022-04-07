@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { useKeycloak } from "@react-keycloak/web";
 import { toast } from "react-toastify";
 import { AUTHORITY, CLIENT_ID, KAS_ENDPOINT, REALM } from "../../config";
-const virtru = require("@opentdf/client");
+const virtru = require("tdf3-js");
 
 // @ts-ignore
 const authority = AUTHORITY;
