@@ -4,7 +4,7 @@ ARG NODE_VERSION=lts
 # depender - get production dependencies
 FROM node:${NODE_VERSION} as depender
 WORKDIR /build/
-COPY package-lock.json package.json tdf3-js-*.tgz ./
+COPY package-lock.json package.json ./
 RUN npm ci
 
 # builder - create-react-app build
@@ -26,6 +26,6 @@ ENV KEYCLOAK_REALM ""
 ENV KEYCLOAK_REALMS "tdf"
 ENV ATTRIBUTES_HOST "http://localhost/attributes"
 ENV ENTITLEMENTS_HOST "http://localhost/entitlements"
-ENV KAS_HOST "http://localhost:8000/kas"
+ENV KAS_HOST "http://localhost:8000"
 
 EXPOSE 80

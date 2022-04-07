@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+// this file only for test mode
 import { Button, Input } from "antd";
 import { useEffect } from "react";
 import { useKeycloak } from "@react-keycloak/web";
