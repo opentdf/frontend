@@ -2,14 +2,14 @@ import { Button, Input } from "antd";
 import { useEffect } from "react";
 import { useKeycloak } from "@react-keycloak/web";
 import { toast } from "react-toastify";
-import { AUTHORITY, CLIENT_ID, REALM } from "../../config";
+import { AUTHORITY, CLIENT_ID, KAS_ENDPOINT, REALM } from "../../config";
 const virtru = require("@opentdf/client");
 
 // @ts-ignore
 const authority = AUTHORITY;
 const clientId= CLIENT_ID;
 // KAS endpoint
-const access = 'http://localhost:8000';
+const access = KAS_ENDPOINT;
 const realm = REALM;
 
 export const InputTDF = () => {
@@ -62,7 +62,7 @@ export const InputTDF = () => {
     return (
         <Input.Group compact>
             <Input style={{ width: '50%' }} defaultValue={plainText}/>
-            <Button type="primary" onClick={() => handleClick()}>Secure Submit</Button>
+            <Button type="primary" id={'encrypt-button'} onClick={() => handleClick()}>Secure Submit</Button>
         </Input.Group>
     );
 };
