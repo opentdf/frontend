@@ -13,7 +13,7 @@ test.describe('<TDF3JS/>', () => {
         await expect(header).toBeVisible();
 
 
-        await page.click("#root > section > main > span > button");
+        await page.click("#encrypt-button");
 
         const newAuthority = await page.locator(`span:has-text("Text deciphered!")`);
         test.expect(newAuthority).toBeTruthy();
