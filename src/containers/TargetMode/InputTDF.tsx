@@ -21,7 +21,7 @@ export const InputTDF = () => {
     // messaging
     async function handleClick() {
         const encryptParams = new virtru.Client.EncryptParamsBuilder()
-            .withStringSource("Hello world")
+            .withStringSource(plainText)
             .withOffline()
             .build();
         // @ts-ignore
@@ -35,7 +35,7 @@ export const InputTDF = () => {
         // @ts-ignore
         const plaintextStream = await client.decrypt(decryptParams);
         const plaintext = await plaintextStream.toString();
-        toast.success("Text deciphered!");
+        toast.success(`Text deciphered: ${plainText}`);
         console.log(`deciphered text :${plaintext}`);
     }
 

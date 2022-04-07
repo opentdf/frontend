@@ -4,8 +4,8 @@ export const authorize = async (page) => {
 
   loginButton.click();
 
-  await page.fill("#username", "entitlement-grantor");
-  await page.fill("#password", "password");
+  await page.fill("#username", "user1");
+  await page.fill("#password", "testuser123");
   await page.click("#kc-login");
 
   await page.waitForNavigation();

@@ -9,13 +9,16 @@ test.describe('<TDF3JS/>', () => {
     });
 
     test('should use TDF3JS encrypt/decrypt', async ({ page }) => {
+        const decryptedText = "Hello, world!";
         const header = page.locator('h2', { hasText: "Attributes" });
         await expect(header).toBeVisible();
 
+        const encryptButton = await page.locator("#encrypt-button span");
 
-        await page.click("#encrypt-button");
+        await expect(encryptButton).toBeVisible();
+        await encryptButton.click();
 
-        const newAuthority = await page.locator(`span:has-text("Text deciphered!")`);
-        test.expect(newAuthority).toBeTruthy();
+        const decryptedMessage = await page.locator( `text=Text deciphered: ${decryptedText}`);
+        await test.expect(decryptedMessage).toBeVisible();
     });
 });
