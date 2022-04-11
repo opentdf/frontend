@@ -76,6 +76,7 @@ export interface operations {
       query: {
         authority?: string;
         name?: string;
+        rule?: string;
         order?: string;
         sort?: string;
         offset?: number;
@@ -167,7 +168,7 @@ export interface operations {
   };
   delete_attributes_definitions_definitions_attributes_delete: {
     responses: {
-      /** Successful Response */
+      /** No Content */
       202: {
         content: {
           "application/json": unknown;
