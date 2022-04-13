@@ -1,8 +1,7 @@
 import { expect } from '@playwright/test';
 import { authorize, firstTableRowClick, getLastPartOfUrl } from './helpers/operations';
 import { test } from './helpers/fixtures';
-
-const selectors = require('./helpers/selectors');
+import {selectors} from "./helpers/selectors";
 
 test.describe('<Entitlements/>', () => {
   test.beforeEach(async ({ page }) => {

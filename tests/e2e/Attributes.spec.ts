@@ -1,8 +1,7 @@
 import { expect } from '@playwright/test';
 import { authorize, createAuthority, firstTableRowClick } from './helpers/operations';
 import { test } from './helpers/fixtures';
-
-const selectors = require('./helpers/selectors');
+import {selectors} from "./helpers/selectors";
 
 test.describe('<Attributes/>', () => {
   test.beforeEach(async ({ page, authority }) => {

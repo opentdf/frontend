@@ -1,4 +1,4 @@
-const selectors = require('./selectors');
+import {selectors} from "./selectors";
 
 export const authorize = async (page) => {
   await page.goto('/');

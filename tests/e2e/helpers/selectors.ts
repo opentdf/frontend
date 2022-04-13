@@ -1,4 +1,4 @@
-module.exports = {
+export const selectors = {
     sectionTab: '.nav-link',
     loginButton: '[data-test-id=login-button]',
     logoutButton: '[data-test-id=logout-button]',
@@ -24,5 +24,3 @@ module.exports = {
         submitAttributeButton: "#assign-submit"
     }
 }
-
-export {}

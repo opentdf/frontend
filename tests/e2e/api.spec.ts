@@ -1,7 +1,6 @@
 import { test } from './helpers/fixtures';
 import {APIRequestContext, chromium, expect, Page} from "@playwright/test";
-
-const selectors = require('./helpers/selectors');
+import { selectors } from "./helpers/selectors";
 
 let apiContext: APIRequestContext;
 let pageContext;

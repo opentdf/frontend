@@ -1,7 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { authorize } from './helpers/operations';
-
-const selectors = require('./helpers/selectors');
+import {selectors} from "./helpers/selectors";
 
 test.describe('<App/>', () => {
   test.beforeEach(async ({ page }) => {
