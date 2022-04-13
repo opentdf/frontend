@@ -2,6 +2,8 @@ import { expect } from '@playwright/test';
 import { authorize, firstTableRowClick, getLastPartOfUrl } from './helpers/operations';
 import { test } from './helpers/fixtures';
 
+const selectors = require('./helpers/selectors');
+
 test.describe('<Entitlements/>', () => {
   test.beforeEach(async ({ page }) => {
     await authorize(page);
@@ -21,7 +23,7 @@ test.describe('<Entitlements/>', () => {
     await page.waitForNavigation();
 
     const id = getLastPartOfUrl(page);
-    const header = page.locator('h2', { hasText: `User ${id}` });
+    const header = page.locator(selectors.secondaryHeader, { hasText: `User ${id}` });
     test.expect(header).toBeTruthy();
   });
 
@@ -30,16 +32,16 @@ test.describe('<Entitlements/>', () => {
     await page.waitForNavigation();
 
     const id = getLastPartOfUrl(page);
-    const header = page.locator('h2', { hasText: `Client ${id}` });
+    const header = page.locator(selectors.secondaryHeader, { hasText: `Client ${id}` });
     test.expect(header).toBeTruthy();
   });
 
   test('Add Entitlements To Entity', async ({ page , authority, attributeName, attributeValue}) => {
     firstTableRowClick('clients-table', page);
     await page.waitForNavigation();
-    await page.fill("#authority", authority);
-    await page.fill("#name", attributeName);
-    await page.fill("#value", attributeValue);
-    await page.click("#assign-submit");
+    await page.fill(selectors.entitlementsPage.authorityNamespaceField, authority);
+    await page.fill(selectors.entitlementsPage.attributeNameField, attributeName);
+    await page.fill(selectors.entitlementsPage.attributeValueField, attributeValue);
+    await page.click(selectors.entitlementsPage.submitAttributeButton);
   });
 });

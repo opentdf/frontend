@@ -2,6 +2,8 @@ import { expect } from '@playwright/test';
 import { authorize, createAuthority, firstTableRowClick } from './helpers/operations';
 import { test } from './helpers/fixtures';
 
+const selectors = require('./helpers/selectors');
+
 test.describe('<Attributes/>', () => {
   test.beforeEach(async ({ page, authority }) => {
     await authorize(page);
@@ -27,26 +29,15 @@ test.describe('<Attributes/>', () => {
   //   await page.click("#create-attribute-button");
   // });
 
-  test('assign attribute to client', async ({ page, authority, attributeName, attributeValue }) => {
-    await page.goto("/entitlements");
-    firstTableRowClick('clients-table', page);
-    await page.waitForNavigation();
-
-    await page.fill("#authority", authority);
-    await page.fill("#name", attributeName);
-    await page.fill("#value", attributeValue);
-    await page.click("#assign-submit");
-  });
-
   test.fixme('delete attribute', async ({ page, authority, attributeName, attributeValue }) => {
     await page.goto("/entitlements");
     firstTableRowClick('clients-table', page);
     await page.waitForNavigation();
 
-    await page.fill("#authority", authority);
-    await page.fill("#name", attributeName);
-    await page.fill("#value", attributeValue);
-    await page.click("#assign-submit");
+    await page.fill(selectors.entitlementsPage.authorityNamespaceField, authority);
+    await page.fill(selectors.entitlementsPage.attributeNameField, attributeName);
+    await page.fill(selectors.entitlementsPage.attributeValueField, attributeValue);
+    await page.click(selectors.entitlementsPage.submitAttributeButton);
 
     // const tableVal = `${authority}/attr/${attributeName}/value/${attributeValue}`;
   });

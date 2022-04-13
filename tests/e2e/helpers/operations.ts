@@ -1,22 +1,21 @@
+const selectors = require('./selectors');
+
 export const authorize = async (page) => {
   await page.goto('/');
-  const loginButton = page.locator('[data-test-id=login-button]');
+  await page.locator(selectors.loginButton).click()
 
-  loginButton.click();
-
-  await page.fill("#username", "user1");
-  await page.fill("#password", "testuser123");
-  await page.click("#kc-login");
+  await page.fill(selectors.loginScreen.usernameField, "user1");
+  await page.fill(selectors.loginScreen.passwordField, "testuser123");
+  await page.click(selectors.loginScreen.submitButton);
 
   await page.waitForNavigation();
-  await page.waitForSelector('[data-test-id=logout-button]');
+  await page.waitForSelector(selectors.logoutButton);
 };
 
 export const createAuthority = async (page, authority) => {
-  const collapseHeader = page.locator('.ant-collapse-header');
-  collapseHeader.click();
-  page.fill('#authority', authority);
-  await page.locator('#authority-submit').click();
+  await page.locator(selectors.attributesPage.openNewSectionBtn).click();
+  page.fill(selectors.attributesPage.newSection.authorityField, authority);
+  await page.locator(selectors.attributesPage.newSection.submitAuthorityBtn).click();
 };
 
 export const firstTableRowClick = async (table, page) => {

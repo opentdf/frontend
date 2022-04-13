@@ -1,6 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { authorize } from './helpers/operations';
 
+const selectors = require('./helpers/selectors');
+
 test.describe('<App/>', () => {
   test.beforeEach(async ({ page }) => {
     await authorize(page);
@@ -12,7 +14,7 @@ test.describe('<App/>', () => {
   });
 
   test('should get authorization token', async ({ page }) => {
-    const loginButton = page.locator('[data-test-id=logout-button]');
-    expect(loginButton).toBeTruthy();
+    const logoutButton = page.locator(selectors.logoutButton);
+    expect(logoutButton).toBeTruthy();
   });
 });
