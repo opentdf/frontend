@@ -96,7 +96,8 @@ test.describe('API:', () => {
         })
         expect(updateAttributeResponse.status()).toBe(200)
         expect(updateAttributeResponse.ok()).toBeTruthy()
-        expect(await getAttributesResponse.json()).toMatchObject([originalAttributeData])
+        const updateAttributesResponseBody = await updateAttributeResponse.json();
+        expect(updateAttributesResponseBody).toMatchObject(updatedAttributeData)
 
         // DELETE Attribute
         const deleteAttributeResponse = await apiContext.delete('http://localhost:65432/api/attributes/definitions/attributes', {
