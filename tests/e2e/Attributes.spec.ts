@@ -33,7 +33,7 @@ test.describe('<Attributes/>', () => {
     await expect(attributeCreatedMsg).toBeVisible()
   });
 
-  test.only('should delete attribute', async ({ page, authority, attributeName, attributeValue }) => {
+  test('should delete attribute', async ({ page, authority, attributeName, attributeValue }) => {
     await page.goto("/entitlements");
     firstTableRowClick('clients-table', page);
     await page.waitForNavigation();
