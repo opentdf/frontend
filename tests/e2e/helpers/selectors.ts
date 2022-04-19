@@ -23,7 +23,12 @@ export const selectors = {
         authorityNamespaceField:'#authority',
         attributeNameField: '#name',
         attributeValueField: '#value',
-        submitAttributeButton: "#assign-submit"
+        submitAttributeButton: "#assign-submit",
+        entityDetailsPage: {
+            tableCell: '.ant-table-cell',
+            tableRow: '.ant-table-row',
+            deleteAttributeBtn: '.ant-btn-link',
+        }
     },
     alertMessage: '.Toastify__toast-body',
     tokenMessage: '.Toastify__toast'

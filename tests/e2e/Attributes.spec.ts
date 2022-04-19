@@ -33,21 +33,21 @@ test.describe('<Attributes/>', () => {
     await expect(attributeCreatedMsg).toBeVisible()
   });
 
-  test('should delete attribute', async ({ page, authority, attributeName, attributeValue }) => {
+  test.only('should delete attribute', async ({ page, authority, attributeName, attributeValue }) => {
     await page.goto("/entitlements");
     firstTableRowClick('clients-table', page);
     await page.waitForNavigation();
 
-    await page.click('.ant-table-cell')
-    const originalTableElements = await page.$$('.ant-table-row')
-    const originalTableSize = originalTableElements.length
+    await page.click(selectors.entitlementsPage.entityDetailsPage.tableCell)
+    const originalTableRows = await page.$$(selectors.entitlementsPage.entityDetailsPage.tableRow)
+    const originalTableSize = originalTableRows.length
 
     // Delete single item
-    await page.click('.ant-btn-link')
+    await page.click(selectors.entitlementsPage.entityDetailsPage.deleteAttributeBtn)
 
-    await page.click('.ant-table-cell')
-    const updatedTableElements = await page.$$('.ant-table-row')
-    const updatedTableSize = updatedTableElements.length
+    await page.click(selectors.entitlementsPage.entityDetailsPage.tableCell)
+    const updatedTableRows = await page.$$(selectors.entitlementsPage.entityDetailsPage.tableRow)
+    const updatedTableSize = updatedTableRows.length
 
     expect(updatedTableSize == (originalTableSize-1)).toBeTruthy()
   });
