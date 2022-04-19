@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import {authorize, createAuthority, firstTableRowClick, getLastPartOfUrl} from './helpers/operations';
+import {authorize, createAuthority, firstTableRowClick} from './helpers/operations';
 import { test } from './helpers/fixtures';
 import {selectors} from "./helpers/selectors";
 
