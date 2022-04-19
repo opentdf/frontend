@@ -7,6 +7,8 @@ test.describe('<Entitlements/>', () => {
   test.beforeEach(async ({ page }) => {
     await authorize(page);
     await page.goto('/entitlements');
+    // click the token message to close it and overcome potential overlapping problem
+    await page.locator(selectors.tokenMessage).click()
   });
 
   test('has tables', async ({ page }) => {
@@ -17,7 +19,7 @@ test.describe('<Entitlements/>', () => {
     await expect(tableHeader).toBeVisible();
   });
 
-  test('redirect to user', async ({ page }) => {
+  test('redirect to user/PE', async ({ page }) => {
     firstTableRowClick('users-table', page);
     await page.waitForNavigation();
 
@@ -26,7 +28,7 @@ test.describe('<Entitlements/>', () => {
     test.expect(header).toBeTruthy();
   });
 
-  test('redirect to client', async ({ page }) => {
+  test('redirect to client/NPE', async ({ page }) => {
     firstTableRowClick('clients-table', page);
     await page.waitForNavigation();
 
@@ -42,5 +44,8 @@ test.describe('<Entitlements/>', () => {
     await page.fill(selectors.entitlementsPage.attributeNameField, attributeName);
     await page.fill(selectors.entitlementsPage.attributeValueField, attributeValue);
     await page.click(selectors.entitlementsPage.submitAttributeButton);
+    const successfulEntitlementMsg = await page.locator(selectors.alertMessage, {hasText: "Entitlement updated!"})
+    await expect(successfulEntitlementMsg).toBeVisible()
+    // const tableVal = `${authority}/attr/${attributeName}/value/${attributeValue}`;
   });
 });

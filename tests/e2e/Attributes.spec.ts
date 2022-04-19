@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { authorize, createAuthority, firstTableRowClick } from './helpers/operations';
+import {authorize, createAuthority, firstTableRowClick, getLastPartOfUrl} from './helpers/operations';
 import { test } from './helpers/fixtures';
 import {selectors} from "./helpers/selectors";
 
@@ -7,7 +7,12 @@ test.describe('<Attributes/>', () => {
   test.beforeEach(async ({ page, authority }) => {
     await authorize(page);
     await page.goto('/attributes');
+    // click the token message to close it and overcome potential overlapping problem
+    await page.locator(selectors.tokenMessage).click()
     await createAuthority(page, authority);
+    // click success message to close it and overcome potential overlapping problem
+    await page.locator(selectors.alertMessage).click()
+
   });
 
   test('renders initially', async ({ page }) => {
@@ -20,24 +25,30 @@ test.describe('<Attributes/>', () => {
     test.expect(newAuthority).toBeTruthy();
   });
 
-  // Failing test
-  // test('should add attribute', async ({ page, attributeName, authority, attributeValue }) => {
-  //   await page.click(`span:has-text("${authority}")`);
-  //   await page.fill("#name", attributeName);
-  //   await page.fill("#order_0", attributeValue);
-  //   await page.click("#create-attribute-button");
-  // });
+  test('should add attribute', async ({ page, attributeName, authority, attributeValue }) => {
+    await page.fill(selectors.attributesPage.newSection.attributeNameField, attributeName);
+    await page.fill(selectors.attributesPage.newSection.orderField, attributeValue);
+    await page.click(selectors.attributesPage.newSection.submitAttributeBtn);
+    const attributeCreatedMsg = await page.locator(selectors.alertMessage, {hasText: `Attribute created for`})
+    await expect(attributeCreatedMsg).toBeVisible()
+  });
 
-  test.fixme('delete attribute', async ({ page, authority, attributeName, attributeValue }) => {
+  test('should delete attribute', async ({ page, authority, attributeName, attributeValue }) => {
     await page.goto("/entitlements");
     firstTableRowClick('clients-table', page);
     await page.waitForNavigation();
 
-    await page.fill(selectors.entitlementsPage.authorityNamespaceField, authority);
-    await page.fill(selectors.entitlementsPage.attributeNameField, attributeName);
-    await page.fill(selectors.entitlementsPage.attributeValueField, attributeValue);
-    await page.click(selectors.entitlementsPage.submitAttributeButton);
+    await page.click('.ant-table-cell')
+    const originalTableElements = await page.$$('.ant-table-row')
+    const originalTableSize = originalTableElements.length
 
-    // const tableVal = `${authority}/attr/${attributeName}/value/${attributeValue}`;
+    // Delete single item
+    await page.click('.ant-btn-link')
+
+    await page.click('.ant-table-cell')
+    const updatedTableElements = await page.$$('.ant-table-row')
+    const updatedTableSize = updatedTableElements.length
+
+    expect(updatedTableSize == (originalTableSize-1)).toBeTruthy()
   });
 });

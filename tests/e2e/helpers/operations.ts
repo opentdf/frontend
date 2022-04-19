@@ -10,6 +10,8 @@ export const authorize = async (page) => {
 
   await page.waitForNavigation();
   await page.waitForSelector(selectors.logoutButton);
+  // click the token message to close it and overcome potential overlapping problem
+  await page.locator(selectors.tokenMessage).click()
 };
 
 export const createAuthority = async (page, authority) => {

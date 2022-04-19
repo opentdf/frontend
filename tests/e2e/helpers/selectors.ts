@@ -14,7 +14,9 @@ export const selectors = {
         newSection: {
             authorityField: '#authority',
             submitAuthorityBtn: '#authority-submit',
-
+            attributeNameField: "#name",
+            orderField: '#order_0',
+            submitAttributeBtn: '#create-attribute-button',
         }
     },
     entitlementsPage: {
@@ -22,5 +24,7 @@ export const selectors = {
         attributeNameField: '#name',
         attributeValueField: '#value',
         submitAttributeButton: "#assign-submit"
-    }
+    },
+    alertMessage: '.Toastify__toast-body',
+    tokenMessage: '.Toastify__toast'
 }
