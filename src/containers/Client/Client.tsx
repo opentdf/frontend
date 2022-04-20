@@ -66,9 +66,9 @@ const Client = () => {
     () =>
       entityAttributes?.reduce((acc: TableData[], item): TableData[] => {
         const transformedItem = Object.entries(item).flatMap(([key, values]) =>
-          values.map((value) => ({
-            attribute: key,
-            entityId: value,
+          values.map((attribute) => ({
+            attribute,
+            entityId: key,
           })),
         );
 

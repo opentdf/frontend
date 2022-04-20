@@ -69,9 +69,9 @@ const User = () => {
         () =>
             entityAttributes?.reduce((acc: TableData[], item): TableData[] => {
                 const transformedItem = Object.entries(item).flatMap(([key, values]) =>
-                    values.map((value) => ({
-                        attribute: key,
-                        entityId: value,
+                    values.map((attribute) => ({
+                        attribute,
+                        entityId: key,
                     })),
                 );
 
@@ -113,5 +113,7 @@ const User = () => {
         </section>
     );
 };
+
+User.displayName = 'User';
 
 export default User;
