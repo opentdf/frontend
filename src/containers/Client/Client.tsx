@@ -9,7 +9,8 @@ import { useEntitlements } from "./hooks/useEntitlement";
 
 import AssignAttributeForm from "./AssignAttributeForm";
 import ClientTable from "./ClientTable";
-import {TableData} from "../../types/table";
+import { TableData } from "../../types/table";
+import { toast } from "react-toastify";
 
 const Client = () => {
   const { id } = useParams<{ id: string }>();
@@ -44,10 +45,14 @@ const Client = () => {
   const onDeleteKey = useCallback(
     (entity: TableData) => {
       entitlementsClient
-        .delete(`/entitlements/${entity.attribute}`, {
+        .delete(`/entitlements/${encodeURIComponent(entity.attribute)}`, {
           data: [entity.entityId],
         })
-        .then(() => getEntitlements(config));
+        .then(() => {
+          getEntitlements(config);
+          toast.success(`Entity ${entity.entityId} deleted`);
+        })
+        .catch((error) => toast.error(error.message));
     },
     [config, getEntitlements],
   );
