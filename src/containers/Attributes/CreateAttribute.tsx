@@ -1,7 +1,6 @@
 import { FC, memo, useCallback } from "react";
 import { Affix, Card, Collapse, Typography } from "antd";
 import { toast } from "react-toastify";
-
 import { useLazyFetch } from "../../hooks/useFetch";
 import { Attribute } from "../../types/attributes";
 import { attributesClient } from "../../service";
@@ -54,8 +53,8 @@ const CreateAttribute: FC<Props> = (props) => {
       path: `/definitions/attributes`,
       data: { ...values, authority },
     })
-      .then((response) => {
-        onAddAttr(response.data);
+      .then(({ data }) => {
+        onAddAttr(data);
         toast.success(`Attribute created for ${authority}`);
       })
       .catch(() => {
@@ -89,5 +88,7 @@ const CreateAttribute: FC<Props> = (props) => {
     </Affix>
   );
 };
+
+CreateAttribute.displayName = 'CreateAttribute';
 
 export default memo(CreateAttribute);

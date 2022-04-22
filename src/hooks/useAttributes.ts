@@ -39,7 +39,9 @@ export const useAttributesFilters = (authority: string, query: DefAttrsQueryPara
   const [getAttrs, { data, loading, headers }] = useLazyFetch<Attribute[]>(attributesClient);
   const xTotalCount: number = Number(headers?.['x-total-count'] ?? 0);
 
-  useEffect(() => {
+  useEffect(() => fetchAttrs(), [authority, query, getAttrs]);
+
+  const fetchAttrs = () => {
     if (authority) {
       const config = { method: Method.GET, path: `/definitions/attributes`, params: {} };
 
@@ -49,7 +51,7 @@ export const useAttributesFilters = (authority: string, query: DefAttrsQueryPara
       config.params = { authority, ...queryParams }
       getAttrs(config);
     }
-  }, [authority, query, getAttrs]);
+  };
 
-  return { attrs: data || [], loading, xTotalCount };
+  return { attrs: data || [], loading, xTotalCount, fetchAttrs };
 };
