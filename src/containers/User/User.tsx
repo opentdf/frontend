@@ -44,7 +44,7 @@ const User = () => {
         () => ({
             method: Method.GET,
             path: `/entitlements`,
-            params: {params: {entityId}},
+            params: {entityId},
         }),
         [entityId],
     );
@@ -52,7 +52,7 @@ const User = () => {
         const config = {
             method: Method.GET,
             path: `/entitlements`,
-            params: {params: {entityId}},
+            params: {entityId},
         };
 
         getEntitlements(config);
@@ -69,9 +69,9 @@ const User = () => {
         () =>
             entityAttributes?.reduce((acc: TableData[], item): TableData[] => {
                 const transformedItem = Object.entries(item).flatMap(([key, values]) =>
-                    values.map((value) => ({
-                        attribute: key,
-                        entityId: value,
+                    values.map((attribute) => ({
+                        attribute,
+                        entityId: key,
                     })),
                 );
 
@@ -83,8 +83,8 @@ const User = () => {
     const onDeleteKey = useCallback(
         (entity: TableData) => {
             entitlementsClient
-                .delete(`/entitlements/${entity.attribute}`, {
-                    data: [entity.entityId],
+                .delete(`/entitlements/${entity.entityId}`, {
+                    data: [entity.attribute],
                 })
                 .then(() => getEntitlements(config));
         },
@@ -113,5 +113,7 @@ const User = () => {
         </section>
     );
 };
+
+User.displayName = 'User';
 
 export default User;
