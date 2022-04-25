@@ -14,7 +14,7 @@ COPY public/ public/
 COPY src/ src/
 COPY tsconfig.json/ .
 COPY craco.config.js/ .
-COPY build/ build/
+RUN npm run build:test
 
 # server - nginx alpine
 FROM nginx:stable-alpine as server
