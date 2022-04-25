@@ -1,10 +1,9 @@
 import axios from 'axios';
-
-const baseURL = window.SERVER_DATA.attributes;
+import { ATTRIBUTES_PATH } from "../config";
 
 const attributesClient = () => {
   const instance = axios.create({
-    baseURL,
+    baseURL: ATTRIBUTES_PATH,
   });
 
   instance.interceptors.request.use((config) => {

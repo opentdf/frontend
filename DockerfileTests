@@ -27,5 +27,6 @@ ENV KEYCLOAK_REALMS "tdf"
 ENV ATTRIBUTES_HOST "http://localhost/attributes"
 ENV ENTITLEMENTS_HOST "http://localhost/entitlements"
 ENV KAS_HOST "http://localhost:8000"
+ENV SERVER_BASE_PATH ""
 
 EXPOSE 80

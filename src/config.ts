@@ -11,10 +11,13 @@ if(!realm) {
     localStorage.setItem("realm", realm);
 }
 
+export const BASE_PATH = serverData.basePath;
 export const CLIENT_ID = serverData.clientId;
 export const REALM = realm;
 export const AUTHORITY = serverData.authority;
 export const KAS_ENDPOINT = serverData.access;
+export const ENTITLEMENTS_PATH = serverData.entitlements;
+export const ATTRIBUTES_PATH = serverData.attributes;
 
 export const keycloakConfig = {
     realm: REALM,

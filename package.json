@@ -25,6 +25,7 @@
     "cross-env": "^7.0.3",
     "@craco/craco": "^6.4.3"
   },
+  "homepage": ".",
   "scripts": {
     "start": "craco start",
     "start:test": "cross-env REACT_APP_TEST_MODE=1 craco start",

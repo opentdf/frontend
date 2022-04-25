@@ -1,6 +1,7 @@
 import axios from 'axios';
+import { AUTHORITY } from "../config";
 
-const baseURL = window.SERVER_DATA.authority;
+const baseURL = AUTHORITY;
 
 const keyCloakClient = () => {
   const instance = axios.create({

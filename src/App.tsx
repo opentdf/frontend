@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Layout } from "antd";
 import { toast, ToastContainer } from "react-toastify";
 import { useKeycloak } from "@react-keycloak/web";
+import { BASE_PATH } from "./config";
 
 import { Header } from "./containers";
 import { routes } from "./routes";
@@ -40,7 +41,7 @@ export default function App() {
   // attributes
 
   return (
-    <Router>
+    <Router basename={BASE_PATH}>
       <Layout style={{ minHeight: "100vh" }}>
         <Header />
 

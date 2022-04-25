@@ -26,6 +26,7 @@ docker run -p 3000:80 \
   -e KEYCLOAK_REALMS="opentdf-realms" \
   -e ATTRIBUTES_HOST="http://localhost/v2/attributes" \
   -e ENTITLEMENTS_HOST="http://localhost/v2/entitlements" \
+  -e SERVER_BASE_PATH="" \
   $(docker build -q .)
 ```
 Input Format : 

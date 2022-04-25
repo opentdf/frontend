@@ -14,7 +14,7 @@ COPY public/ public/
 COPY src/ src/
 COPY tsconfig.json/ .
 COPY craco.config.js/ .
-RUN npm run build
+COPY build/ build/
 
 # server - nginx alpine
 FROM nginx:stable-alpine as server
@@ -27,5 +27,6 @@ ENV KEYCLOAK_REALMS "tdf"
 ENV ATTRIBUTES_HOST "http://localhost/attributes"
 ENV ENTITLEMENTS_HOST "http://localhost/entitlements"
 ENV KAS_HOST "http://localhost:8000"
+ENV SERVER_BASE_PATH ""
 
 EXPOSE 80

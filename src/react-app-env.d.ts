@@ -8,5 +8,6 @@ interface Window {
     clientId: string,
     entitlements: string,
     realms: string,
+    basePath: string,
   };
 }

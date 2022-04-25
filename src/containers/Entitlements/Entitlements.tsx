@@ -9,7 +9,7 @@ import UsersTable from "./UsersTable";
 
 import "./Entitlements.css";
 import {components} from "../../keycloak";
-import {keycloakConfig} from "../../config";
+import { REALM } from "../../config";
 
 const Entitlements = () => {
   const history = useHistory();
@@ -20,7 +20,7 @@ const Entitlements = () => {
     const { token, cancel } = getCancellationConfig();
 
     keyCloakClient
-      .get(`/admin/realms/${keycloakConfig.realm}/clients`, {
+      .get(`/admin/realms/${REALM}/clients`, {
         cancelToken: token,
       })
       .then((res) => {
@@ -31,7 +31,7 @@ const Entitlements = () => {
       });
 
     keyCloakClient
-      .get(`/admin/realms/${window.SERVER_DATA.realms}/users`, {
+      .get(`/admin/realms/${REALM}/users`, {
         cancelToken: token,
       })
       .then((res) => {

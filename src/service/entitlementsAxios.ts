@@ -1,6 +1,7 @@
 import axios from 'axios';
+import { ENTITLEMENTS_PATH } from "../config";
 
-const baseURL = window.SERVER_DATA.entitlements;
+const baseURL = ENTITLEMENTS_PATH;
 
 const entitlementsClient = () => {
   const instance = axios.create({
