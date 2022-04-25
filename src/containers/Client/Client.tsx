@@ -22,7 +22,7 @@ const Client = () => {
     () => ({
       method: Method.GET,
       path: `/entitlements`,
-      params: { params: { entityId } },
+      params: { entityId },
     }),
     [entityId],
   );
@@ -44,8 +44,8 @@ const Client = () => {
   const onDeleteKey = useCallback(
     (entity: TableData) => {
       entitlementsClient
-        .delete(`/entitlements/${entity.attribute}`, {
-          data: [entity.entityId],
+        .delete(`/entitlements/${entity.entityId}`, {
+          data: [entity.attribute],
         })
         .then(() => getEntitlements(config));
     },
@@ -56,7 +56,7 @@ const Client = () => {
     const config = {
       method: Method.GET,
       path: `/entitlements`,
-      params: { params: { entityId } },
+      params: { entityId },
     };
 
     getEntitlements(config);
