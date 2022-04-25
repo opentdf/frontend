@@ -40,7 +40,7 @@ export default function App() {
   // attributes
 
   return (
-    <Router>
+    <Router basename="{window.SERVER_DATA.basename}">
       <Layout style={{ minHeight: "100vh" }}>
         <Header />
 
