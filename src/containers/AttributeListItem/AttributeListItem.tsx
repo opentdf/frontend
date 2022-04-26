@@ -1,15 +1,12 @@
 import { FC, useCallback, useMemo, useState } from "react";
 import { List, Table, Divider } from "antd";
 import { toast } from "react-toastify";
-
 import { Attribute } from "../../types/attributes";
 import { EntityAttribute } from "../../types/entitlements";
 import { Method } from "../../types/enums";
-
 import { attributesClient, entitlementsClient } from "../../service";
 import { useLazyFetch } from "../../hooks";
 import { TABLE_COLUMNS } from "./constants";
-
 import { AttributeRule, OrderCard, OrderList } from "../../components";
 
 type Props = {
@@ -19,8 +16,7 @@ type Props = {
 
 const AttributeListItem: FC<Props> = (props) => {
   const { attr, activeAuthority } = props;
-  const { name, order, state } = attr;
-
+  const { name, order, state, rule } = attr;
   const [activeTabKey, setActiveTab] = useState("");
   const [isEdit, setIsEdit] = useState(false);
   const [activeOrderList, setActiveOrderList] = useState<string[]>([]);
@@ -133,6 +129,7 @@ const AttributeListItem: FC<Props> = (props) => {
         onSaveClick={handleSaveClick}
         onTabChange={handleTabChange}
         state={state}
+        rule={rule}
         tabList={tabList}
         toggleEdit={toggleEdit}
       >
@@ -148,11 +145,12 @@ const AttributeListItem: FC<Props> = (props) => {
             {isEdit && (
               <>
                 <Divider orientation="left">Edit rule</Divider>
-
                 <AttributeRule onRuleChange={handleRuleChange} />
-
                 <div>
-                  <OrderList list={activeOrderList} onReorder={handleReorder} />
+                  <OrderList
+                    list={activeOrderList}
+                    onReorder={handleReorder}
+                  />
                 </div>
               </>
             )}
@@ -162,5 +160,7 @@ const AttributeListItem: FC<Props> = (props) => {
     </List.Item>
   );
 };
+
+AttributeListItem.displayName = 'AttributeListItem';
 
 export default AttributeListItem;

@@ -5,6 +5,7 @@ import { ATTRIBUTE_RULE_TYPES } from "../../constants/attributeRules";
 import { LABELS_MAP } from "./constants";
 
 import "./AttributeRule.css";
+import AttributeListItem from "../../containers/AttributeListItem/AttributeListItem";
 
 type Props = {
   onRuleChange: (rule: string) => void;
@@ -46,5 +47,7 @@ const AttributeRule: FC<Props> = (props) => {
     </Form>
   );
 };
+
+AttributeRule.displayName = 'AttributeRule';
 
 export default memo(AttributeRule);

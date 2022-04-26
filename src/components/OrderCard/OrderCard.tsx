@@ -17,6 +17,7 @@ type Props = {
   onSaveClick: () => void;
   onTabChange: (item: string) => void;
   state?: string;
+  rule?: string;
   tabList: ListItem[];
   toggleEdit: () => void;
 };
@@ -31,6 +32,7 @@ const OrderCard: FC<Props> = (props) => {
     onSaveClick,
     onTabChange,
     state,
+    rule,
     tabList,
     toggleEdit,
   } = props;
@@ -63,6 +65,9 @@ const OrderCard: FC<Props> = (props) => {
         <Title level={3}>{name}</Title>
         <Text strong>{state}</Text>
         <Text type="secondary"> Access</Text>
+        <br/>
+        <Text strong>{rule}</Text>
+        <Text type="secondary"> Rule</Text>
       </div>
     ),
     [name, state],
@@ -85,5 +90,7 @@ const OrderCard: FC<Props> = (props) => {
     </Card>
   );
 };
+
+OrderCard.displayName = 'OrderCard';
 
 export default OrderCard;
