@@ -88,7 +88,7 @@ const User = () => {
               })
               .then(() => {
                 getEntitlements(config);
-                toast.success(`Entity ${entity.entityId} deleted`);
+                toast.success(`Attribute ${entity.attribute} deleted`);
               })
               .catch(({ message }) => toast.error(message));
         },

@@ -47,10 +47,10 @@ const Client = () => {
       entitlementsClient
         .delete(`/entitlements/${entity.entityId}`, {
           data: [entity.attribute],
-        })
+        }) 
         .then(() => {
           getEntitlements(config);
-          toast.success(`Entity ${entity.entityId} deleted`);
+          toast.success(`Attribute ${entity.attribute} deleted`);
         })
         .catch(({ message }) => toast.error(message));
     },
