@@ -32,6 +32,11 @@ docker run -p 3000:80 \
 Input Format : 
 KEYCLOAK_REALMS="item1,item2,item3"
 
+SERVER_BASE_PATH - for abacus relative path support , 
+example : SERVER_BASE_PATH="/abacus"
+
+
+
 The environment variables becomes `window.__SERVER_DATA__` via an NGINX sub_filter defined in nginx-default.conf
 
 ### OpenAPI
