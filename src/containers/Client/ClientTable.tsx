@@ -50,4 +50,6 @@ const ClientTable: FC<Props> = (props) => {
   );
 };
 
+ClientTable.displayName = 'ClientTable';
+
 export default ClientTable;

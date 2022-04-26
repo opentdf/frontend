@@ -11,7 +11,7 @@ const Attributes = () => {
   useAuthorities();
   const authority = AttributesFiltersStore.useState(s => s.authority);
   const attrsQueryParams = AttributesFiltersStore.useState(s => s.query);
-  const { attrs, loading, xTotalCount } = useAttributesFilters(authority, attrsQueryParams);
+  const { attrs, loading, xTotalCount, fetchAttrs } = useAttributesFilters(authority, attrsQueryParams);
 
   return (
     <>
@@ -25,7 +25,13 @@ const Attributes = () => {
             justifyContent: 'center',
             height: '300px',
           }}>
-            <h1 style={{ marginBottom: '0', marginRight: '15px', fontSize: '30px' }}>loading... </h1>
+            <h1 style={{
+              marginBottom: '0',
+              marginRight: '15px',
+              fontSize: '30px'
+            }}>
+              loading...
+            </h1>
             <Spin size="large" />
           </div>
         )
@@ -42,7 +48,7 @@ const Attributes = () => {
             </List>
             <CreateAttribute
               authority={authority}
-              onAddAttr={() => {}}
+              onAddAttr={() => fetchAttrs()}
               onAddNamespace={() => {}}
             />
           </>
@@ -51,5 +57,7 @@ const Attributes = () => {
     </>
   );
 };
+
+Attributes.displayName = 'Attributes';
 
 export default Attributes;
