@@ -44,7 +44,7 @@ const User = () => {
         () => ({
             method: Method.GET,
             path: `/entitlements`,
-            params: {params: {entityId}},
+            params: {entityId},
         }),
         [entityId],
     );
@@ -52,7 +52,7 @@ const User = () => {
         const config = {
             method: Method.GET,
             path: `/entitlements`,
-            params: {params: {entityId}},
+            params: {entityId},
         };
 
         getEntitlements(config);

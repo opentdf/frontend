@@ -31,7 +31,7 @@ const Entitlements = () => {
       });
 
     keyCloakClient
-      .get(`/admin/realms/${window.SERVER_DATA.realms}/users`, {
+      .get(`/admin/realms/${keycloakConfig.realm}/users`, {
         cancelToken: token,
       })
       .then((res) => {

@@ -106,4 +106,42 @@ test.describe('API:', () => {
         expect(deleteAttributeResponse.status()).toBe(202)
         expect(deleteAttributeResponse.ok()).toBeTruthy()
     })
+
+    test('Entitlements: create, read, delete', async ({ authority, attributeName, attributeValue}) => {
+
+        // GET Entitlements to parse existed entityID
+        const getEntitlementsResponse = await apiContext.get(`http://localhost:65432/api/entitlements/entitlements`)
+        expect(getEntitlementsResponse.status()).toBe(200)
+        expect(getEntitlementsResponse.ok()).toBeTruthy()
+
+        // Get ID of existed entity to work with (response returns list of ordered maps)
+        const getEntitlementsResponseBody = await getEntitlementsResponse.json()
+        const firstEntity = getEntitlementsResponseBody[0]
+        const existedEntityId = Object.keys(firstEntity)[0]
+
+        // CREATE Entitlement
+        const entitlementPayload = `${authority}/attr/${attributeName}/value/${attributeValue}`;
+
+        const createAttributeResponse = await apiContext.post(`http://localhost:65432/api/entitlements/entitlements/${existedEntityId}`, {
+            data: [entitlementPayload]
+        })
+        expect(createAttributeResponse.status()).toBe(200)
+        expect(createAttributeResponse.ok()).toBeTruthy()
+
+        // GET and check created entitlement
+        const checkCreatedEntitlementResponse = await apiContext.get(`http://localhost:65432/api/entitlements/entitlements`)
+        expect(checkCreatedEntitlementResponse.status()).toBe(200)
+        expect(checkCreatedEntitlementResponse.ok()).toBeTruthy()
+
+        const checkCreatedEntitlementResponseBody = await checkCreatedEntitlementResponse.text()
+        expect(checkCreatedEntitlementResponseBody).toContain(existedEntityId)
+        expect(checkCreatedEntitlementResponseBody).toContain(entitlementPayload)
+
+        // DELETE Entitlement
+        const deleteEntitlementResponse = await apiContext.delete(`http://localhost:65432/api/entitlements/entitlements/${existedEntityId}`, {
+            data: [entitlementPayload]
+        })
+        expect(deleteEntitlementResponse.status()).toBe(202)
+        expect(deleteEntitlementResponse.ok()).toBeTruthy()
+    })
 })
