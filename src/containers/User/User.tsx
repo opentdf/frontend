@@ -9,11 +9,12 @@ import AssignAttributeForm from "../Client/AssignAttributeForm";
 import ClientTable from "../Client/ClientTable";
 import {TableData} from "../../types/table";
 import {keycloakConfig} from "../../config";
+import {components} from "../../keycloak";
 
 const User = () => {
     const {id} = useParams<{ id: string }>();
 
-    const [user, setUser] = useState();
+    const [user, setUser] = useState<components["schemas"]["UserRepresentation"]>();
 
     useEffect(() => {
         const {token, cancel} = getCancellationConfig();
@@ -102,7 +103,7 @@ const User = () => {
                 onAssignAttribute={onAssignAttribute}
             />
             <Divider/>
-            <h2>User {id}</h2>
+            <h2>User {user?.username}</h2>
             <ClientTable
                 onDeleteKey={onDeleteKey}
                 data={clientTableData}
