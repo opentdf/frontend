@@ -45,14 +45,14 @@ const Client = () => {
   const onDeleteKey = useCallback(
     (entity: TableData) => {
       entitlementsClient
-        .delete(`/entitlements/${encodeURIComponent(entity.attribute)}`, {
-          data: [entity.entityId],
+        .delete(`/entitlements/${entity.entityId}`, {
+          data: [entity.attribute],
         })
         .then(() => {
           getEntitlements(config);
           toast.success(`Entity ${entity.entityId} deleted`);
         })
-        .catch((error) => toast.error(error.message));
+        .catch(({ message }) => toast.error(message));
     },
     [config, getEntitlements],
   );
@@ -88,23 +88,21 @@ const Client = () => {
         entityId={entityId}
         onAssignAttribute={onAssignAttribute}
       />
-
       <Divider />
-
       <article>
         <h2>Client {id}</h2>
-
         <ClientTable
           onDeleteKey={onDeleteKey}
           data={clientTableData}
           loading={loading}
         />
         <Divider />
-
         <pre>{JSON.stringify(client, null, 2)}</pre>
       </article>
     </section>
   );
 };
+
+Client.displayName = 'Client';
 
 export default Client;
