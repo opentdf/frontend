@@ -90,7 +90,7 @@ const Client = () => {
       />
       <Divider />
       <article>
-        <h2>Client {id}</h2>
+        <h2>Client {client?.clientId}</h2>
         <ClientTable
           onDeleteKey={onDeleteKey}
           data={clientTableData}
