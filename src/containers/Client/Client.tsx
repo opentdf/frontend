@@ -9,7 +9,8 @@ import { useEntitlements } from "./hooks/useEntitlement";
 
 import AssignAttributeForm from "./AssignAttributeForm";
 import ClientTable from "./ClientTable";
-import {TableData} from "../../types/table";
+import { TableData } from "../../types/table";
+import { toast } from "react-toastify";
 
 const Client = () => {
   const { id } = useParams<{ id: string }>();
@@ -46,8 +47,12 @@ const Client = () => {
       entitlementsClient
         .delete(`/entitlements/${entity.entityId}`, {
           data: [entity.attribute],
+        }) 
+        .then(() => {
+          getEntitlements(config);
+          toast.success(`Attribute ${entity.attribute} deleted`);
         })
-        .then(() => getEntitlements(config));
+        .catch(({ message }) => toast.error(message));
     },
     [config, getEntitlements],
   );
@@ -83,23 +88,21 @@ const Client = () => {
         entityId={entityId}
         onAssignAttribute={onAssignAttribute}
       />
-
       <Divider />
-
       <article>
         <h2>Client {id}</h2>
-
         <ClientTable
           onDeleteKey={onDeleteKey}
           data={clientTableData}
           loading={loading}
         />
         <Divider />
-
         <pre>{JSON.stringify(client, null, 2)}</pre>
       </article>
     </section>
   );
 };
+
+Client.displayName = 'Client';
 
 export default Client;
