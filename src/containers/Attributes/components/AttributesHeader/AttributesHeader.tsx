@@ -16,7 +16,7 @@ const ORDER_MAP = new Map([
   [ORDER.DES, '-'],
 ]);
 
-const SORT_OPTIONS = ['name', 'id', 'rule', 'values'];
+const SORT_OPTIONS = ['name', 'id', 'rule', 'values_array'];
 
 const CASCADER_OPTIONS = [
   {
@@ -106,5 +106,7 @@ const AttributesHeader = ({ total }: AttributesHeaderProps) => {
     </div>
   );
 };
+
+AttributesHeader.displayName = 'AttributesHeader';
 
 export default AttributesHeader;
