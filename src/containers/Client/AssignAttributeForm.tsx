@@ -69,12 +69,10 @@ const AssignAttributeForm: FC<Props> = (props) => {
     setSelectedName(selectedVal);
   }, []);
 
-  const onFinish = useCallback(
-    async (values: FormValues) => {
+  const onFinish = useCallback((values: FormValues) => {
       const data = `${values.authority}/attr/${values.name}/value/${values.value}`;
-      form.resetFields();
 
-      await updateEntitlement({
+      updateEntitlement({
         method: Method.POST,
         path: `/entitlements/${entityId}`,
         data: [data],
@@ -83,7 +81,8 @@ const AssignAttributeForm: FC<Props> = (props) => {
           toast.success("Entitlement updated!");
           onAssignAttribute();
         })
-        .catch(() => toast.error("Could not update entitlement"));
+        .catch(() => toast.error("Could not update entitlement"))
+        .finally(form.resetFields);
     },
     [entityId, form, onAssignAttribute, updateEntitlement],
   );
