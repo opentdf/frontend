@@ -72,6 +72,7 @@ const AssignAttributeForm: FC<Props> = (props) => {
   const onFinish = useCallback(
     async (values: FormValues) => {
       const data = `${values.authority}/attr/${values.name}/value/${values.value}`;
+      form.resetFields();
 
       await updateEntitlement({
         method: Method.POST,
@@ -82,11 +83,9 @@ const AssignAttributeForm: FC<Props> = (props) => {
           toast.success("Entitlement updated!");
           onAssignAttribute();
         })
-        .catch(() => {
-          toast.error("Could not update entitlement");
-        });
+        .catch(() => toast.error("Could not update entitlement"));
     },
-    [entityId, onAssignAttribute, updateEntitlement],
+    [entityId, form, onAssignAttribute, updateEntitlement],
   );
 
   const handleAuthorityChange = async (namespace: string) => {
@@ -94,7 +93,12 @@ const AssignAttributeForm: FC<Props> = (props) => {
   };
 
   return (
-    <Form form={form} layout="inline" size="middle" onFinish={onFinish}>
+    <Form
+      form={form}
+      layout="inline"
+      size="middle"
+      onFinish={onFinish}
+    >
       <Item
           label="Authority Namespace"
           name="authority"
@@ -150,5 +154,7 @@ const AssignAttributeForm: FC<Props> = (props) => {
     </Form>
   );
 };
+
+AssignAttributeForm.displayName = 'AssignAttributeForm';
 
 export default AssignAttributeForm;
