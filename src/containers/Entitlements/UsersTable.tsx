@@ -14,8 +14,18 @@ const UsersTable: FC<Props> = (props) => {
 
   const columns = useMemo(
     () => [
-      { title: "Username", key: "username", dataIndex: "username" },
-      { title: "ID", key: "id", dataIndex: "id" },
+      {
+        title: "Username",
+        key: "username",
+        dataIndex: "username",
+        width: '33.3%',
+      },
+      {
+        title: "ID",
+        key: "id",
+        dataIndex: "id",
+        width: '33.3%',
+      },
       {
         title: "enabled",
         key: "enabled",
