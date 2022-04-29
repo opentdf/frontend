@@ -1,5 +1,5 @@
-import { FC, useMemo } from "react";
-import { Table, Button } from "antd";
+import {FC, useCallback, useMemo} from "react";
+import {Table, Button, Modal} from "antd";
 
 type TableData = { attribute: string; entityId: string };
 
@@ -11,6 +11,14 @@ type Props = {
 
 const ClientTable: FC<Props> = (props) => {
   const { onDeleteKey, data, loading } = props;
+
+  const onDelete = useCallback((row: TableData): void => {
+    Modal.confirm({
+      title: 'Delete Attribute',
+      content: 'Are you sure you want to remove an attribute for the Entity?  Removal may affect access to correspondent data',
+      onOk: () => onDeleteKey(row),
+      okText: 'Delete',
+    })}, [onDeleteKey]);
 
   const columns = useMemo(
     () => [
@@ -29,13 +37,16 @@ const ClientTable: FC<Props> = (props) => {
         dataIndex: "",
         key: "x",
         render: (row: TableData) => (
-          <Button type="link" onClick={() => onDeleteKey(row)}>
+          <Button
+            type="link"
+            onClick={() => onDelete(row)}
+          >
             Delete
           </Button>
         ),
       },
     ],
-    [onDeleteKey],
+    [onDelete],
   );
 
   return (
