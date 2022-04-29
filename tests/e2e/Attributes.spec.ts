@@ -11,8 +11,8 @@ test.describe('<Attributes/>', () => {
     await page.locator(selectors.tokenMessage).click()
     await createAuthority(page, authority);
     // click success message to close it and overcome potential overlapping problem
-    await page.locator(selectors.alertMessage).click()
-
+    // fixme: error page.locator(selectors.alertMessage) matches 2 elements instead of 1
+    // await page.locator(selectors.alertMessage).click()
   });
 
   test('renders initially', async ({ page }) => {
@@ -43,12 +43,13 @@ test.describe('<Attributes/>', () => {
     const originalTableSize = originalTableRows.length
 
     // Delete single item
-    await page.click(selectors.entitlementsPage.entityDetailsPage.deleteAttributeBtn)
+    await page.click(selectors.entitlementsPage.entityDetailsPage.deleteAttributeBtn);
+    await page.click(selectors.entitlementsPage.entityDetailsPage.deleteAttributeModalBtn);
 
     await page.click(selectors.entitlementsPage.entityDetailsPage.tableCell)
     const updatedTableRows = await page.$$(selectors.entitlementsPage.entityDetailsPage.tableRow)
     const updatedTableSize = updatedTableRows.length
 
-    expect(updatedTableSize == (originalTableSize-1)).toBeTruthy()
+    expect(updatedTableSize === (originalTableSize - 1)).toBeTruthy()
   });
 });

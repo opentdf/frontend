@@ -18,6 +18,9 @@ const ClientTable: FC<Props> = (props) => {
       content: 'Are you sure you want to remove an attribute for the Entity?  Removal may affect access to correspondent data',
       onOk: () => onDeleteKey(row),
       okText: 'Delete',
+      okButtonProps: {
+        id: 'delete-attr'
+      }
     })}, [onDeleteKey]);
 
   const columns = useMemo(

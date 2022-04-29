@@ -28,6 +28,7 @@ export const selectors = {
             tableCell: '.ant-table-cell',
             tableRow: '.ant-table-row',
             deleteAttributeBtn: '.ant-btn-link',
+            deleteAttributeModalBtn: '#delete-attr',
         }
     },
     alertMessage: '.Toastify__toast-body',
