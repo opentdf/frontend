@@ -12,10 +12,11 @@ import { AttributeRule, OrderCard, OrderList } from "../../components";
 type Props = {
   activeAuthority: string;
   attr: Attribute;
+  onChange: () => void;
 };
 
 const AttributeListItem: FC<Props> = (props) => {
-  const { attr, activeAuthority } = props;
+  const { attr, activeAuthority, onChange } = props;
   const { name, order, state, rule } = attr;
   const [activeTabKey, setActiveTab] = useState("");
   const [isEdit, setIsEdit] = useState(false);
@@ -46,19 +47,15 @@ const AttributeListItem: FC<Props> = (props) => {
   );
 
   const handleOrderClick = useCallback(
-    async (attribute: Attribute, order: string) => {
-      const { authority, name } = attribute;
+    async (attribute: Attribute, order: string): Promise<void> => {
+      const {authority, name} = attribute;
 
       try {
         await getAttrEntities({
           method: Method.GET,
           path: `/entitlements`,
           params: {
-            params: {
-              authority: authority,
-              name,
-              order,
-            },
+            params: { authority, name, order },
           },
         });
       } catch (error) {
@@ -73,11 +70,13 @@ const AttributeListItem: FC<Props> = (props) => {
   );
 
   const handleTabChange = useCallback(
-    (tab: string) => {
-      handleOrderClick(attr, tab);
-    },
+    (tab: string) => handleOrderClick(attr, tab),
     [attr, handleOrderClick],
   );
+
+  const handleClose = useCallback(() => {
+    setActiveTab("");
+  }, []);
 
   const handleSaveClick = useCallback(async () => {
     const data = {
@@ -98,12 +97,17 @@ const AttributeListItem: FC<Props> = (props) => {
     } catch (error) {
       toast.error("Could not update rules!");
     }
+    handleClose();
+    onChange();
   }, [
     activeAttribute,
     activeAuthority,
     activeOrderList,
+    activeTabKey,
     activeRule,
     updateRules,
+    handleClose,
+    onChange
   ]);
 
   const handleRuleChange = useCallback((rule) => {
@@ -112,10 +116,6 @@ const AttributeListItem: FC<Props> = (props) => {
 
   const handleReorder = useCallback((list) => {
     setActiveOrderList(list);
-  }, []);
-
-  const handleClose = useCallback(() => {
-    setActiveTab("");
   }, []);
 
   return (

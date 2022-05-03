@@ -41,6 +41,7 @@ const Attributes = () => {
               {attrs.map((attr) => (
                 <AttributeListItem
                   activeAuthority={authority}
+                  onChange={() => fetchAttrs()}
                   attr={attr}
                   key={attr.name}
                 />
