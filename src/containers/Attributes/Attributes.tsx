@@ -4,6 +4,8 @@ import { AttributesFiltersStore } from "../../store";
 import { AttributeListItem } from "../AttributeListItem";
 import CreateAttribute from "./CreateAttribute";
 import { AttributesHeader } from "./components";
+import { useEffect } from "react";
+import { useKeycloak } from "@react-keycloak/web";
 
 import "./Attributes.css";
 
@@ -12,6 +14,13 @@ const Attributes = () => {
   const authority = AttributesFiltersStore.useState(s => s.authority);
   const attrsQueryParams = AttributesFiltersStore.useState(s => s.query);
   const { attrs, loading, xTotalCount, fetchAttrs } = useAttributesFilters(authority, attrsQueryParams);
+  const { keycloak, initialized } = useKeycloak();
+
+  useEffect(() => {
+    if (initialized && keycloak.authenticated) {
+      fetchAttrs();
+    }
+  }, [fetchAttrs, keycloak, initialized]);
 
   return (
     <>

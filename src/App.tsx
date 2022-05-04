@@ -19,7 +19,7 @@ const Home = lazy(() => import("./containers/Home"));
 const NotFound = lazy(() => import("./containers/NotFound"));
 const User = lazy(() => import("./containers/User"));
 
-export default function App() {
+function App() {
   // keycloak authentication
   const { keycloak, initialized } = useKeycloak();
 
@@ -38,7 +38,6 @@ export default function App() {
       }
     }
   }, [initialized, keycloak]);
-  // attributes
 
   return (
     <Router basename={BASE_PATH}>
@@ -75,3 +74,7 @@ export default function App() {
     </Router>
   );
 }
+
+App.displayName = 'App';
+
+export default App;

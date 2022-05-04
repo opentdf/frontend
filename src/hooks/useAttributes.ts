@@ -4,7 +4,6 @@ import { Attribute } from "../types/attributes";
 import { Method } from "../types/enums";
 import { useLazyFetch } from './useFetch';
 
-
 export const useDefinitionAttributes = (authority: string) => {
   const [attrs, setAttrs] = useState<Attribute[]>([]);
   const [getAttrs, { data, loading }] = useLazyFetch<Attribute[]>(attributesClient);
@@ -39,11 +38,13 @@ export const useAttributesFilters = (authority: string, query: DefAttrsQueryPara
   const [getAttrs, { data, loading, headers }] = useLazyFetch<Attribute[]>(attributesClient);
   const xTotalCount: number = Number(headers?.['x-total-count'] ?? 0);
 
-  useEffect(() => fetchAttrs(), [authority, query, getAttrs]);
-
-  const fetchAttrs = () => {
+  const fetchAttrs = useCallback(() => {
     if (authority) {
-      const config = { method: Method.GET, path: `/definitions/attributes`, params: {} };
+      const config = {
+        method: Method.GET,
+        path: `/definitions/attributes`,
+        params: {}
+      };
 
       // Remove empty query params
       const queryParams = Object.fromEntries(Object.entries(query).filter(([_, v]) => v));
@@ -51,7 +52,11 @@ export const useAttributesFilters = (authority: string, query: DefAttrsQueryPara
       config.params = { authority, ...queryParams }
       getAttrs(config);
     }
-  };
+  }, [
+    authority,
+    query,
+    getAttrs
+  ]);
 
   return { attrs: data || [], loading, xTotalCount, fetchAttrs };
 };

@@ -13,7 +13,7 @@ export const useAuthorities = () => {
 
   useEffect(() => {
     AttributesFiltersStore.update(s => {
-      if (data !== undefined) {
+      if (data) {
         s.possibleAuthorities = data;
         s.authority = data[0] || '';
       }

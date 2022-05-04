@@ -2,6 +2,7 @@ import { AxiosInstance, AxiosResponse, AxiosError, AxiosResponseHeaders } from "
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { getCancellationConfig } from "../service";
+import { useKeycloak } from "@react-keycloak/web";
 
 export type Method = 'get' | 'delete' | "put" | 'post';
 export type Config = { method: Method, path: string, params?: Record<any, any>; data?: Record<any, any>; };
@@ -11,6 +12,7 @@ function isAxiosError(error: any): error is AxiosError {
 }
 
 export const useFetch = <T>(client: AxiosInstance, config: Config): [T | undefined,] => {
+  const { keycloak, initialized } = useKeycloak();
   const { method, path, params } = config;
 
   const [data, setData] = useState<T>();
@@ -22,16 +24,11 @@ export const useFetch = <T>(client: AxiosInstance, config: Config): [T | undefin
       cancelToken: token,
       ...params
     })
-      .then((res) => {
-        setData(res.data);
-      })
+      .then(({ data }) => setData(data))
       .catch((error) => toast.error(error));
 
-    return () => {
-      cancel("Operation canceled by the user.");
-    };
-  }, [client, method, params, path]);
-
+    return () => cancel("Operation canceled by the user.");
+  }, [client, method, params, path, keycloak, initialized]);
 
   return [data];
 };
