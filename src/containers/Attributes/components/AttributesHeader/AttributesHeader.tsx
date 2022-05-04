@@ -72,6 +72,7 @@ const AttributesHeader = ({ total }: AttributesHeaderProps) => {
       <div className={styles.cascaderContainer}>
         <Select
           value={authority}
+          className={styles.selectAuthority}
           placeholder="Loading Authorities"
           onChange={(value) => {
             AttributesFiltersStore.update(s => {

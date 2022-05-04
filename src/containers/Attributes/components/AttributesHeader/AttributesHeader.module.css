@@ -11,3 +11,7 @@
   justify-content: flex-end;
   gap: 10px;
 }
+
+.selectAuthority {
+  min-width: 6rem;
+}
