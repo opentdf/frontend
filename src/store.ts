@@ -24,5 +24,5 @@ export const AttributesFiltersStore = new Store<AttributesFilters>({
     offset: 1,
     sort: '',
   },
-pageNumber: 1
+  pageNumber: 1
 });

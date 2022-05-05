@@ -12,10 +12,10 @@ export const useAuthorities = () => {
   });
 
   useEffect(() => {
-    AttributesFiltersStore.update(s => {
-      if (data) {
-        s.possibleAuthorities = data;
-        s.authority = s.authority || data[0] || '';
+    AttributesFiltersStore.update(store => {
+      if (data && store) {
+        store.possibleAuthorities = data;
+        store.authority = store.authority || data[0] || '';
       }
     })
   }, [data]);
