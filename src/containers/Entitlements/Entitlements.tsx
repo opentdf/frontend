@@ -1,47 +1,44 @@
-import {useCallback, useEffect, useMemo, useState} from "react";
-import {useHistory} from "react-router";
-import {Divider} from "antd";
-
-import {getCancellationConfig, keyCloakClient} from "../../service";
-import {routes} from "../../routes";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useHistory } from "react-router";
+import { Divider } from "antd";
+import { getCancellationConfig, keyCloakClient } from "../../service";
+import { routes } from "../../routes";
 import ClientsTable from "./ClientsTable";
 import UsersTable from "./UsersTable";
-
-import "./Entitlements.css";
-import {components} from "../../keycloak";
+import { components } from "../../keycloak";
 import { REALM } from "../../config";
+import { useKeycloak } from "@react-keycloak/web";
+import "./Entitlements.css";
 
 const Entitlements = () => {
   const history = useHistory();
   const [clients, setClients] = useState([]);
   const [users, setUsers] = useState([]);
+  const { keycloak, initialized } = useKeycloak();
 
   useEffect(() => {
     const { token, cancel } = getCancellationConfig();
 
-    keyCloakClient
-      .get(`/admin/realms/${REALM}/clients`, {
-        cancelToken: token,
-      })
-      .then((res) => {
-          const clientsWithMapper = res.data.filter((element: components["schemas"]["ClientRepresentation"]) => {
-              return element.protocolMappers?.find((pm => pm.protocolMapper === 'virtru-oidc-protocolmapper'));
+    if (initialized && keycloak.authenticated) {
+      keyCloakClient
+        .get(`/admin/realms/${REALM}/clients`, {
+          cancelToken: token,
+        })
+        .then(({ data }) => {
+          const clientsWithMapper = data.filter((element: components["schemas"]["ClientRepresentation"]) => {
+            return element.protocolMappers?.find((pm => pm.protocolMapper === 'virtru-oidc-protocolmapper'));
           })
           setClients(clientsWithMapper);
-      });
+        });
 
-    keyCloakClient
-      .get(`/admin/realms/${REALM}/users`, {
-        cancelToken: token,
-      })
-      .then((res) => {
-        setUsers(res.data);
-      });
+      keyCloakClient
+        .get(`/admin/realms/${REALM}/users`, { cancelToken: token })
+        .then(({ data }) => setUsers(data));
+    }
 
-    return () => {
-      cancel("Operation canceled by the user.");
-    };
-  }, []);
+
+    return () => cancel("Operation canceled by the user.");
+  }, [keycloak, initialized]);
 
   const onClientRecordClick = useCallback(
     (id) => {
@@ -86,5 +83,7 @@ const Entitlements = () => {
     </section>
   );
 };
+
+Entitlements.displayName = 'Entitlements';
 
 export default Entitlements;
