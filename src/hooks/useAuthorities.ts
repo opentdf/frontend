@@ -15,7 +15,7 @@ export const useAuthorities = () => {
     AttributesFiltersStore.update(s => {
       if (data) {
         s.possibleAuthorities = data;
-        s.authority = data[0] || '';
+        s.authority = s.authority || data[0] || '';
       }
     })
   }, [data]);
