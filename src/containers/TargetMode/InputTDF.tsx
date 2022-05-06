@@ -5,7 +5,8 @@ import { useEffect } from "react";
 import { useKeycloak } from "@react-keycloak/web";
 import { toast } from "react-toastify";
 import { AUTHORITY, CLIENT_ID, KAS_ENDPOINT, REALM } from "../../config";
-const virtru = require("tdf3-js");
+// @ts-ignore
+import { Client } from "@opentdf/client";
 
 // @ts-ignore
 const authority = AUTHORITY;
@@ -22,7 +23,7 @@ export const InputTDF = () => {
 
     // messaging
     async function handleClick() {
-        const encryptParams = new virtru.Client.EncryptParamsBuilder()
+        const encryptParams = new Client.EncryptParamsBuilder()
             .withStringSource(plainText)
             .withOffline()
             .build();
@@ -31,7 +32,7 @@ export const InputTDF = () => {
         const ciphertext = await ct.toString();
         console.log(`ciphered text :${ciphertext}`);
 
-        const decryptParams = new virtru.Client.DecryptParamsBuilder()
+        const decryptParams = new Client.DecryptParamsBuilder()
             .withStringSource(ciphertext)
             .build();
         // @ts-ignore
@@ -49,7 +50,7 @@ export const InputTDF = () => {
                 if (!client && refreshToken) {
                     const token = typeof refreshToken === 'boolean' ? keycloak.token : refreshToken;
 
-                    client = new virtru.Client.Client({
+                    client = new Client.Client({
                         clientId,
                         organizationName: realm,
                         oidcRefreshToken: token,
