@@ -6,5 +6,7 @@ data:
   KEYCLOAK_HOST: {{ .Values.oidc.serverUrl }}
   KEYCLOAK_CLIENT_ID: {{ .Values.oidc.clientId }}
   KEYCLOAK_REALM: {{ .Values.oidc.realm }}
+  KEYCLOAK_REALMS: {{ .Values.oidc.queryRealms }}
   ATTRIBUTES_HOST: {{ .Values.attributes.serverUrl }}
   ENTITLEMENTS_HOST: {{ .Values.entitlements.serverUrl }}
+  SERVER_BASE_PATH: {{ .Values.basePath }}
