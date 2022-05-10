@@ -14,8 +14,8 @@ const Header = () => {
   const routes = useMemo(
     () => [
       {
-        path: HOME,
         breadcrumbName: "Abacus",
+        path: HOME,
       },
       {
         breadcrumbName: "Attributes",
@@ -35,12 +35,8 @@ const Header = () => {
         className="nav-link"
         activeClassName="nav-link--active"
         to={route.path}
-        isActive={(match) => {
-          if (match && match.isExact) {
-            return true;
-          }
-
-          return false;
+        isActive={(match, location): boolean => {
+          return Boolean(match && location && location.pathname.includes(match.url))
         }}
       >
         {route.breadcrumbName}
@@ -90,10 +86,16 @@ const Header = () => {
   );
 
   return (
-    <PageHeader title={pageTitle} extra={extra} breadcrumb={breadcrumb}>
+    <PageHeader
+      title={pageTitle}
+      extra={extra}
+      breadcrumb={breadcrumb}
+    >
       {pageDescription}
     </PageHeader>
   );
 };
+
+Header.displayName = 'Header';
 
 export default memo(Header);
