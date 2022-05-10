@@ -16,7 +16,7 @@ oidc:
 replicaCount: 1
 
 image:
-  repository: opentdf/abacus
+  repository: ghcr.io/opentdf/abacus
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
   tag: main
