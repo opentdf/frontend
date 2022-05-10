@@ -9,7 +9,9 @@ entitlements:
 oidc:
   serverUrl: ""
   clientId: ""
-  realm: ""
+  # Comma separated list of realms to allow access to in keycloak
+  # Assigned to the KEYCLOAK_REALMS environment varibable
+  realms: ""
 
 replicaCount: 1
 
