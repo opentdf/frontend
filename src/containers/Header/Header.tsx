@@ -35,9 +35,6 @@ const Header = () => {
         className="nav-link"
         activeClassName="nav-link--active"
         to={route.path}
-        isActive={(match, location): boolean => {
-          return Boolean(match && location && location.pathname.includes(match.url))
-        }}
       >
         {route.breadcrumbName}
       </NavLink>
