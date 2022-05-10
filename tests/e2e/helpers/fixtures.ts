@@ -10,7 +10,7 @@ export const test = baseTest.extend<{ attributeName: string; authority: string; 
     await use(attributeName);
   },
   authority: async ({ page }, use) => {
-    const authority = `https://opentdf${generateRandomDigit(10000, 1)}.ua`;
+    const authority = `https://opentdf${generateRandomDigit(10000000, 1)}.ua`;
 
     await use(authority);
   },

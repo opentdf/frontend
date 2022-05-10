@@ -31,34 +31,37 @@ test.describe('<Attributes/>', () => {
     const attributeCreatedMsg = await page.locator(selectors.alertMessage, {hasText: `Attribute created for`})
     await expect(attributeCreatedMsg).toBeVisible()
 
+    const attributesHeader = selectors.attributesPage.attributesHeader;
+    const filterModal = attributesHeader.filterModal;
+
     // filter by existed Name
-    await page.click(selectors.attributesPage.attributesHeader.filtersToolbarButton)
-    await page.fill(selectors.attributesPage.attributesHeader.filterModal.nameInputField, attributeName)
-    await page.click(selectors.attributesPage.attributesHeader.filterModal.submitBtn)
-    await page.click(selectors.attributesPage.attributesHeader.itemsQuantityIndicator)
+    await page.click(attributesHeader.filtersToolbarButton)
+    await page.fill(filterModal.nameInputField, attributeName)
+    await page.click(filterModal.submitBtn)
+    await page.click(attributesHeader.itemsQuantityIndicator)
     const filteredAttributesListByName = await page.$$(selectors.attributesPage.attributeItem)
     expect(filteredAttributesListByName.length).toBe(1)
 
     // filter by non-existed Name
-    await page.click(selectors.attributesPage.attributesHeader.filtersToolbarButton)
-    await page.click(selectors.attributesPage.attributesHeader.filterModal.clearBtn)
-    await page.fill(selectors.attributesPage.attributesHeader.filterModal.nameInputField, 'invalidAttributeName')
-    await page.click(selectors.attributesPage.attributesHeader.filterModal.submitBtn)
-    await expect(page.locator(selectors.attributesPage.attributesHeader.itemsQuantityIndicator)).toHaveText('Total 0 items')
+    await page.click(attributesHeader.filtersToolbarButton)
+    await page.click(filterModal.clearBtn)
+    await page.fill(filterModal.nameInputField, 'invalidAttributeName')
+    await page.click(filterModal.submitBtn)
+    await expect(page.locator(attributesHeader.itemsQuantityIndicator)).toHaveText('Total 0 items')
 
     // filter by Order
-    await page.click(selectors.attributesPage.attributesHeader.filterModal.clearBtn)
-    await page.fill(selectors.attributesPage.attributesHeader.filterModal.orderInputField, attributeValue)
-    await page.click(selectors.attributesPage.attributesHeader.filterModal.submitBtn)
-    await page.click(selectors.attributesPage.attributesHeader.itemsQuantityIndicator)
+    await page.click(filterModal.clearBtn)
+    await page.fill(filterModal.orderInputField, attributeValue)
+    await page.click(filterModal.submitBtn)
+    await page.click(attributesHeader.itemsQuantityIndicator)
     const filteredAttributesListByOrder = await page.$$(selectors.attributesPage.attributeItem)
     expect(filteredAttributesListByOrder.length).toBe(1)
 
     // TODO: enable after fixing PLAT-1781 (filtering by Rule doesn't work for now)
-    // await page.click(selectors.attributesPage.attributesHeader.filterModal.clearBtn)
-    // await page.fill(selectors.attributesPage.attributesHeader.filterModal.ruleInputField, 'hierarchy')
-    // await page.fill(selectors.attributesPage.attributesHeader.filterModal.nameInputField, attributeName)
-    // await page.click(selectors.attributesPage.attributesHeader.filterModal.submitBtn)
+    // await page.click(filterModal.clearBtn)
+    // await page.fill(filterModal.ruleInputField, 'hierarchy')
+    // await page.fill(filterModal.nameInputField, attributeName)
+    // await page.click(filterModal.submitBtn)
     // const filteredAttributesListByRule = await page.$$(selectors.attributesPage.attributeItem)
     // expect(filteredAttributesListByRule.length).toBe(1)
   });
