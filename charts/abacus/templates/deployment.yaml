@@ -35,7 +35,7 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           envFrom:
             - configMapRef:
-                name: abacus-cm
+                name: {{ include "abacus.name" . }}-cm
           ports:
             - name: http
               containerPort: 80
