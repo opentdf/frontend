@@ -48,18 +48,16 @@ const AttributeListItem: FC<Props> = (props) => {
 
   const handleOrderClick = useCallback(
     async (attribute: Attribute, order: string): Promise<void> => {
-      const {authority, name} = attribute;
+      const { name } = attribute;
 
       try {
         await getAttrEntities({
           method: Method.GET,
-          path: `/entitlements`,
-          params: {
-            params: { authority, name, order },
-          },
+          path: '/v1/entity/attribute',
+          params: { name }
         });
       } catch (error) {
-        toast.error("Could not get entities");
+        toast.error('Could not get entities');
       }
 
       setActiveTab(order);
@@ -103,7 +101,6 @@ const AttributeListItem: FC<Props> = (props) => {
     activeAttribute,
     activeAuthority,
     activeOrderList,
-    activeTabKey,
     activeRule,
     updateRules,
     handleClose,
