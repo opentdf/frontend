@@ -9,8 +9,8 @@ const config: PlaywrightTestConfig = {
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
-  /* Opt out of parallel tests on CI. */
-  //   workers: process.env.CI ? 1 : undefined,
+  /* Opt out of parallel tests on CI and Local env for now (due to test failures with multiple workers - PLAT-1774  */
+  workers: process.env.CI ? 1 : 1,
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
@@ -24,7 +24,7 @@ const config: PlaywrightTestConfig = {
     headless: false,
     launchOptions: {
       slowMo: 50,
-      devtools: true,
+      // devtools: true,
     }
   },
   expect: {

@@ -101,7 +101,7 @@ const AttributesHeader = ({ total }: AttributesHeaderProps) => {
           placement="bottomRight"
           trigger="click"
         >
-          <Button>Filters</Button>
+          <Button id="filters-button">Filters</Button>
         </Popover>
       </div>
     </div>

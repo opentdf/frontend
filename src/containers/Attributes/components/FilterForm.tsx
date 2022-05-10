@@ -41,14 +41,14 @@ const FilterForm = () => {
       <Row gutter={[8, 8]}>
         <Col offset={12} span={6}>
           <Item>
-            <Button block type="primary" htmlType="submit">
+            <Button block type="primary" htmlType="submit" id="submit-filter-button">
               Submit
             </Button>
           </Item>
         </Col>
         <Col span={6}>
           <Item>
-            <Button block type="primary" htmlType="reset">
+            <Button block type="primary" htmlType="reset" id="clear-filter-button">
               Clear
             </Button>
           </Item>

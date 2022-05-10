@@ -10,6 +10,19 @@ export const selectors = {
     secondaryHeader: 'h2',
     realmSelector: '#rc_select_0',
     attributesPage: {
+        attributesHeader: {
+            authorityDropdownButton: "#rc_select_9",
+            itemsQuantityIndicator: '.ant-pagination-total-text',
+            sortByToolbarButton: "#rc_select_10",
+            filtersToolbarButton: "#filters-button",
+            filterModal: {
+                ruleInputField: '#filter_rule',
+                nameInputField: '#filter_name',
+                orderInputField: '#filter_order',
+                submitBtn: '#submit-filter-button',
+                clearBtn: '#clear-filter-button'
+            },
+        },
         openNewSectionBtn: '.ant-collapse-header',
         newSection: {
             authorityField: '#authority',
@@ -17,7 +30,8 @@ export const selectors = {
             attributeNameField: "#name",
             orderField: '#order_0',
             submitAttributeBtn: '#create-attribute-button',
-        }
+        },
+        attributeItem: '.ant-list-item',
     },
     entitlementsPage: {
         authorityNamespaceField:'#authority',
