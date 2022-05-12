@@ -10,8 +10,8 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: {{ include "abacus.fullname" . }}
-  minReplicas: {{ .Values.autoscaling.minReplicas }}
-  maxReplicas: {{ .Values.autoscaling.maxReplicas }}
+  minReplicas: {{ int .Values.autoscaling.minReplicas }}
+  maxReplicas: {{ int .Values.autoscaling.maxReplicas }}
   metrics:
     {{- if .Values.autoscaling.targetCPUUtilizationPercentage }}
     - type: Resource

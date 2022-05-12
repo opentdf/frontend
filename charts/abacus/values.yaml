@@ -11,7 +11,10 @@ oidc:
   clientId: ""
   # Comma separated list of realms to allow access to in keycloak
   # Assigned to the KEYCLOAK_REALMS environment varibable
-  realms: ""
+  queryRealms: ""
+# Where the root for the web app should be, e.g. "/abacus"
+# Defaults to the empty path
+basePath: ""
 
 replicaCount: 1
 
