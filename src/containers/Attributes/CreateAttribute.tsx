@@ -16,9 +16,6 @@ type Props = {
 };
 
 type CreateAttributeValues = Omit<Attribute, "authority">;
-type CreateAuthorityValues = {
-  authority: string;
-};
 
 const CreateAttribute: FC<Props> = (props) => {
   const { authority, onAddAttr, onAddNamespace } = props;
@@ -27,22 +24,18 @@ const CreateAttribute: FC<Props> = (props) => {
   const [createAttributes] = useLazyFetch(attributesClient);
 
   const handleCreateAuthority = useCallback(
-    (values: CreateAuthorityValues) => {
+    ({ authority }) => {
       createAuthority<string[]>({
         method: Method.POST,
-        path: `/authorities`,
-        data: {
-          authority: values.authority,
-        },
+        path: '/authorities',
+        data: { authority },
       })
-        .then((response) => {
-          const [lastItem] = response.data.slice(-1);
+        .then(({ data }) => {
+          const [lastItem] = data.slice(-1);
           toast.success("Authority was created");
           onAddNamespace(lastItem);
         })
-        .catch(() => {
-          toast.error("Authority was not created");
-        });
+        .catch(() => toast.error("Authority was not created"));
     },
     [createAuthority, onAddNamespace],
   );

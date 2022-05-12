@@ -14,7 +14,6 @@ const CreateAuthorityForm: FC<Props> = (props) => {
   return (
     <>
       <Title level={3}>Authority</Title>
-
       <Form onFinish={props.onFinish}>
         <Item
           name="authority"
@@ -23,9 +22,12 @@ const CreateAuthorityForm: FC<Props> = (props) => {
         >
           <Input />
         </Item>
-
         <Item>
-          <Button type="primary" htmlType="submit" id="authority-submit">
+          <Button
+            type="primary"
+            htmlType="submit"
+            id="authority-submit"
+          >
             Submit
           </Button>
         </Item>
@@ -33,5 +35,7 @@ const CreateAuthorityForm: FC<Props> = (props) => {
     </>
   );
 };
+
+CreateAuthorityForm.displayName = 'CreateAuthorityForm';
 
 export default memo(CreateAuthorityForm);

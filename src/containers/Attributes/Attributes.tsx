@@ -4,7 +4,7 @@ import { AttributesFiltersStore } from "../../store";
 import { AttributeListItem } from "../AttributeListItem";
 import CreateAttribute from "./CreateAttribute";
 import { AttributesHeader } from "./components";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import { useKeycloak } from "@react-keycloak/web";
 
 import "./Attributes.css";
@@ -21,6 +21,15 @@ const Attributes = () => {
       fetchAttrs();
     }
   }, [fetchAttrs, keycloak, initialized]);
+
+  const onNamespaceUpdate = useCallback((authority: string): void => {
+    AttributesFiltersStore.update(store => {
+      if (authority && store) {
+        store.possibleAuthorities = [ ...store.possibleAuthorities, authority ];
+        store.authority = authority || store.authority || '';
+      }
+    })
+  }, []);
 
   return (
     <>
@@ -50,7 +59,7 @@ const Attributes = () => {
               {attrs.map((attr) => (
                 <AttributeListItem
                   activeAuthority={authority}
-                  onChange={() => fetchAttrs()}
+                  onChange={fetchAttrs}
                   attr={attr}
                   key={attr.name}
                 />
@@ -58,8 +67,8 @@ const Attributes = () => {
             </List>
             <CreateAttribute
               authority={authority}
-              onAddAttr={() => fetchAttrs()}
-              onAddNamespace={() => {}}
+              onAddAttr={fetchAttrs}
+              onAddNamespace={onNamespaceUpdate}
             />
           </>
         )
