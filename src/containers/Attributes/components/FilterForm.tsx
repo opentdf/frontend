@@ -81,7 +81,7 @@ const FilterForm = () => {
               type="primary"
               htmlType="reset"
               id="clear-filter-button"
-              onClick={() => onClear()}
+              onClick={onClear}
             >
               Clear
             </Button>
