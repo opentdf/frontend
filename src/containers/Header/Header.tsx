@@ -35,6 +35,15 @@ const Header = () => {
         className="nav-link"
         activeClassName="nav-link--active"
         to={route.path}
+        isActive={(match, location): boolean => {
+          if (match && match.url) {
+            if (match.url === '/' && match.isExact) {
+              return true;
+            }
+            return location.pathname.includes(match.url);
+          }
+          return false;
+        }}
       >
         {route.breadcrumbName}
       </NavLink>
