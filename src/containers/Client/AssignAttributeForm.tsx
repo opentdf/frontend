@@ -108,7 +108,7 @@ const AssignAttributeForm: FC<Props> = (props) => {
           name="authority"
           onSelect={handleAuthorityChange}
           options={authoritiesOptions}
-          placeholder="Authority..."
+          placeholder="Add authority"
           style={{ width: 200 }}
         />
       </Item>
@@ -122,7 +122,7 @@ const AssignAttributeForm: FC<Props> = (props) => {
           name="name"
           onSelect={onAttributeName}
           options={nameOptions}
-          placeholder="input here"
+          placeholder="Add name"
           style={{ width: 200 }}
         />
       </Item>
@@ -135,7 +135,7 @@ const AssignAttributeForm: FC<Props> = (props) => {
         <AutoComplete
           name="value"
           options={attributeValOptions}
-          placeholder="input here"
+          placeholder="Add value"
           style={{ width: 200 }}
         />
       </Item>
