@@ -70,7 +70,7 @@ const OrderCard: FC<Props> = (props) => {
         <Text type="secondary"> Rule</Text>
       </div>
     ),
-    [name, state],
+    [name, state, rule],
   );
 
   const extra = useMemo(() => {

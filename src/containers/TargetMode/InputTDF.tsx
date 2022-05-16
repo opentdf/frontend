@@ -1,23 +1,12 @@
 /* istanbul ignore file */
 // this file only for test mode
 import { Button, Input } from "antd";
-import { useEffect } from "react";
-import { useKeycloak } from "@react-keycloak/web";
 import { toast } from "react-toastify";
-import { AUTHORITY, CLIENT_ID, KAS_ENDPOINT, REALM } from "../../config";
 // @ts-ignore
 import { Client } from "@opentdf/client";
 
-// @ts-ignore
-const authority = AUTHORITY;
-const clientId= CLIENT_ID;
-// KAS endpoint
-const access = KAS_ENDPOINT;
-const realm = REALM;
-
 export const InputTDF = () => {
     const plainText = 'Hello, World!';
-    const { keycloak, initialized } = useKeycloak();
     // @ts-ignore
     let client;
 
@@ -29,7 +18,7 @@ export const InputTDF = () => {
             .build();
         // @ts-ignore
         const ct = await client.encrypt(encryptParams);
-        const ciphertext = await ct.toString();
+        const ciphertext = ct.toString();
         console.log(`ciphered text :${ciphertext}`);
 
         const decryptParams = new Client.DecryptParamsBuilder()
@@ -37,30 +26,10 @@ export const InputTDF = () => {
             .build();
         // @ts-ignore
         const plaintextStream = await client.decrypt(decryptParams);
-        const plaintext = await plaintextStream.toString();
+        const plaintext = plaintextStream.toString();
         toast.success(`Text deciphered: ${plainText}`);
         console.log(`deciphered text :${plaintext}`);
     }
-
-    useEffect(() => {
-        (async () => {
-            if (initialized) {
-                const { refreshToken } = keycloak;
-                // @ts-ignore
-                if (!client && refreshToken) {
-                    const token = typeof refreshToken === 'boolean' ? keycloak.token : refreshToken;
-
-                    client = new Client.Client({
-                        clientId,
-                        organizationName: realm,
-                        oidcRefreshToken: token,
-                        kasEndpoint: access,
-                        virtruOIDCEndpoint: authority.replace('/auth/', ''),
-                    });
-                }
-            }
-        })()
-    }, [initialized, keycloak]);
 
     return (
         <Input.Group compact>

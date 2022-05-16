@@ -1,11 +1,10 @@
-import { List, Spin } from "antd";
-import { useAttributesFilters, useAuthorities } from "../../hooks";
-import { AttributesFiltersStore } from "../../store";
-import { AttributeListItem } from "../AttributeListItem";
+import {List, Spin} from "antd";
+import {useAttributesFilters, useAuthorities} from "../../hooks";
+import {AttributesFiltersStore} from "../../store";
+import {AttributeListItem} from "../AttributeListItem";
 import CreateAttribute from "./CreateAttribute";
-import { AttributesHeader } from "./components";
-import { useEffect, useCallback } from "react";
-import { useKeycloak } from "@react-keycloak/web";
+import {AttributesHeader} from "./components";
+import {useCallback} from "react";
 
 import "./Attributes.css";
 
@@ -14,13 +13,6 @@ const Attributes = () => {
   const authority = AttributesFiltersStore.useState(s => s.authority);
   const attrsQueryParams = AttributesFiltersStore.useState(s => s.query);
   const { attrs, loading, xTotalCount, fetchAttrs } = useAttributesFilters(authority, attrsQueryParams);
-  const { keycloak, initialized } = useKeycloak();
-
-  useEffect(() => {
-    if (initialized && keycloak.authenticated) {
-      fetchAttrs();
-    }
-  }, [fetchAttrs, keycloak, initialized]);
 
   const onNamespaceUpdate = useCallback((authority: string): void => {
     AttributesFiltersStore.update(store => {

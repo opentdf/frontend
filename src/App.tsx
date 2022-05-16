@@ -1,8 +1,7 @@
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense } from "react";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { Layout } from "antd";
-import { toast, ToastContainer } from "react-toastify";
-import { useKeycloak } from "@react-keycloak/web";
+import { ToastContainer } from "react-toastify";
 import { BASE_PATH } from "./config";
 
 import { Header } from "./containers";
@@ -20,25 +19,6 @@ const NotFound = lazy(() => import("./containers/NotFound"));
 const User = lazy(() => import("./containers/User"));
 
 function App() {
-  // keycloak authentication
-  const { keycloak, initialized } = useKeycloak();
-
-  keycloak.onAuthError = console.log;
-
-  useEffect(() => {
-    if (initialized) {
-      toast.success(keycloak.idToken);
-      sessionStorage.setItem("keycloak", keycloak.token || "");
-      const tmp = localStorage.getItem('realm-tmp');
-
-      if (!keycloak.authenticated && tmp) {
-        localStorage.setItem('realm', tmp);
-        localStorage.removeItem('realm-tmp');
-        window.document.location.href = "/";
-      }
-    }
-  }, [initialized, keycloak]);
-
   return (
     <Router basename={BASE_PATH}>
       <Layout style={{ minHeight: "100vh" }}>
