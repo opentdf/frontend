@@ -13,6 +13,7 @@ const FilterForm = () => {
         order: '',
         limit: store.query.limit,
         offset: store.query.offset,
+        rule: '',
         sort: '',
       };
     })
