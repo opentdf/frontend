@@ -24,7 +24,6 @@ const config: PlaywrightTestConfig = {
     headless: Boolean(process.env.CI),
     launchOptions: {
       slowMo: 50,
-      // devtools: true,
     }
   },
   expect: {
@@ -36,9 +35,9 @@ const config: PlaywrightTestConfig = {
   },
   /* Maximum time one test can run for. */
   timeout: 30 * 1000,
-  //   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
+  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: process.env.CI ? 'line' : 'html',
-  //   /* Configure projects for major browsers */
+  /* Configure projects for major browsers */
   // projects: [
   //   {
   //     name: 'chromium',

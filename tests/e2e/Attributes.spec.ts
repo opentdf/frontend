@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
-import {authorize, createAuthority, firstTableRowClick} from './helpers/operations';
+import { authorize, createAuthority, firstTableRowClick } from './helpers/operations';
 import { test } from './helpers/fixtures';
-import {selectors} from "./helpers/selectors";
+import { selectors } from "./helpers/selectors";
 
 test.describe('<Attributes/>', () => {
   test.beforeEach(async ({ page, authority }) => {
@@ -21,10 +21,11 @@ test.describe('<Attributes/>', () => {
 
   test('should add authority', async ({ page, authority }) => {
     const newAuthority = await page.locator(`span:has-text("${authority}")`);
-    test.expect(newAuthority).toBeTruthy();
+    expect(newAuthority).toBeTruthy();
   });
 
-  test('should add attribute' + ',should filter attributes by Name, Order', async ({ page, attributeName, authority, attributeValue }) => {
+  test('should add attribute, should filter attributes by Name, Order', async ({ page, attributeName, authority, attributeValue }) => {
+    await page.locator(selectors.attributesPage.openNewSectionBtn).click();
     await page.fill(selectors.attributesPage.newSection.attributeNameField, attributeName);
     await page.fill(selectors.attributesPage.newSection.orderField, attributeValue);
     await page.click(selectors.attributesPage.newSection.submitAttributeBtn);
