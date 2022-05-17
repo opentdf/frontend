@@ -1,12 +1,12 @@
-import { memo, useCallback, useMemo } from "react";
-import { PageHeader } from "antd";
-import { NavLink, useLocation } from "react-router-dom";
-import { Route } from "antd/lib/breadcrumb/Breadcrumb";
-import UserStatus from "../UserStatus";
+import {memo, useCallback, useMemo} from "react";
+import {PageHeader} from "antd";
+import {NavLink, useLocation} from "react-router-dom";
+import {Route} from "antd/lib/breadcrumb/Breadcrumb";
 
-import { ATTRIBUTES, HOME, ENTITLEMENTS } from "../../routes";
+import {ATTRIBUTES, ENTITLEMENTS, HOME} from "../../routes";
 
 import "./Header.css";
+import UserStatus from "../UserStatus";
 
 const Header = () => {
   const { pathname } = useLocation();
