@@ -106,10 +106,7 @@ const AttributesHeader = ({ total }: AttributesHeaderProps) => {
         >
           <Button
             id="filters-button"
-            style={{
-              display: 'flex',
-              alignItems: 'center'
-            }}
+            className={styles.filterBtn}
           >
             Filters
             &nbsp;

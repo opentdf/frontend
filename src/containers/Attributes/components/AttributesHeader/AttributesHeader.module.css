@@ -15,3 +15,8 @@
 .selectAuthority {
   min-width: 6rem;
 }
+
+.filterBtn {
+  display: flex;
+  align-items: center;
+}
