@@ -88,7 +88,7 @@ const AssignAttributeForm: FC<Props> = (props) => {
     [entityId, form, onAssignAttribute, updateEntitlement],
   );
 
-  const handleAuthorityChange = async (namespace: string): Promise<void> => {
+  const handleAuthorityChange = async (namespace: string) => {
     await getAttrs(namespace);
   };
 
@@ -107,7 +107,7 @@ const AssignAttributeForm: FC<Props> = (props) => {
         <Select
           defaultActiveFirstOption
           name="authority"
-          onSelect={handleAuthorityChange}
+          onChange={handleAuthorityChange}
           options={authoritiesOptions}
           placeholder="Add authority"
           style={{ width: 200 }}

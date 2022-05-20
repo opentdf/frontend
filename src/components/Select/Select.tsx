@@ -10,7 +10,7 @@ const Select = (props: SelectProps & { name: string }) => {
     placeholder,
     style,
     options,
-    onSelect,
+    onChange,
     name,
   } = props;
 
@@ -31,6 +31,13 @@ const Select = (props: SelectProps & { name: string }) => {
     [options],
   );
 
+  const filterOptionCb = useCallback((input, option) => {
+    if (option && option.children) {
+      return String(option.children).toLowerCase().indexOf(input.toLowerCase()) >= 0;
+    }
+    return false;
+  }, []);
+
   return (
     <Form.Item name={name}>
       <AntdSelect
@@ -40,14 +47,8 @@ const Select = (props: SelectProps & { name: string }) => {
         showSearch
         placeholder={placeholder}
         onSearch={onSearch}
-        //@ts-ignore
-        onChange={onSelect}
-        filterOption={(input, option) => {
-          if (option && option.children) {
-            return String(option.children).toLowerCase().indexOf(input.toLowerCase()) >= 0;
-          }
-          return false;
-        }}
+        onChange={onChange}
+        filterOption={filterOptionCb}
       >
         {componentOptions?.map(opt => <Option key={opt.key + '-opt'} value={opt.value}>{opt.value}</Option>)}
       </AntdSelect>
