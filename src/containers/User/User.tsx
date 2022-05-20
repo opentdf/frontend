@@ -109,8 +109,6 @@ const User = () => {
                 data={clientTableData}
                 loading={loading}
             />
-            <Divider/>
-            <pre>{JSON.stringify(user, null, 2)}</pre>
         </section>
     );
 };

@@ -50,4 +50,6 @@ const AutoComplete = (props: AutoCompleteProps & { name: string }) => {
   );
 };
 
+AutoComplete.displayName = 'AutoComplete';
+
 export default AutoComplete;
