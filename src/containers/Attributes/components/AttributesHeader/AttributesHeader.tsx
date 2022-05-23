@@ -79,6 +79,7 @@ const AttributesHeader = ({ total }: AttributesHeaderProps) => {
               s.authority = value
             })
           }}
+          id="select-authorities-button"
         >
           {authorities.map(val => <Option key={String(val)} value={String(val)}>{val}</Option>)}
         </Select>
@@ -94,6 +95,7 @@ const AttributesHeader = ({ total }: AttributesHeaderProps) => {
           onChange={onChange}
           options={CASCADER_OPTIONS}
           placeholder="Sort by..."
+          id="sort-by-button"
         />
 
         <Popover

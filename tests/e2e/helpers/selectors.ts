@@ -11,9 +11,9 @@ export const selectors = {
     realmSelector: '#rc_select_0',
     attributesPage: {
         attributesHeader: {
-            authorityDropdownButton: "#rc_select_9",
+            authorityDropdownButton: "rc_select_10", //"#select-authorities-button",
             itemsQuantityIndicator: '.ant-pagination-total-text',
-            sortByToolbarButton: "#rc_select_10",
+            sortByToolbarButton: "#sort-by-button",
             filtersToolbarButton: "#filters-button",
             filterModal: {
                 ruleInputField: '#filter_rule',
@@ -28,6 +28,12 @@ export const selectors = {
             authorityField: '#authority',
             submitAuthorityBtn: '#authority-submit',
             attributeNameField: "#name",
+            ruleField: '[data-test-id=rule-form-item]',
+            ruleOptions: {
+              hierarchical: '',
+              permissive:'',
+              restrictive: '',
+            },
             orderField: '#order_0',
             submitAttributeBtn: '#create-attribute-button',
         },

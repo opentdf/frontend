@@ -47,7 +47,7 @@ const CreateAttributeForm: FC<Props> = (props) => {
           rules={[{ required: true }]}
           data-test-id="rule-form-item"
         >
-          <Select options={stateOptions} />
+          <Select options={stateOptions} id="rule-options"/>
         </Item>
 
         <Item
