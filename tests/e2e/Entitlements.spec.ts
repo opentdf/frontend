@@ -1,11 +1,17 @@
 import { expect } from '@playwright/test';
-import { authorize, firstTableRowClick, getLastPartOfUrl } from './helpers/operations';
+import {authorize, createAuthority, firstTableRowClick, getLastPartOfUrl} from './helpers/operations';
 import { test } from './helpers/fixtures';
 import {selectors} from "./helpers/selectors";
 
 test.describe('<Entitlements/>', () => {
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(async ({ page , authority}) => {
     await authorize(page);
+    await page.goto('/attributes');
+    // click the token message to close it and overcome potential overlapping problem
+    await page.locator(selectors.tokenMessage).click()
+    await createAuthority(page, authority);
+    // click success message to close it and overcome potential overlapping problem
+    await page.locator(selectors.alertMessage).click()
     await page.goto('/entitlements');
     // click the token message to close it and overcome potential overlapping problem
     await page.locator(selectors.tokenMessage).click()
@@ -40,7 +46,8 @@ test.describe('<Entitlements/>', () => {
   test('Add Entitlements To Entity', async ({ page , authority, attributeName, attributeValue}) => {
     firstTableRowClick('clients-table', page);
     await page.waitForNavigation();
-    await page.fill(selectors.entitlementsPage.authorityNamespaceField, authority);
+    await page.type(selectors.entitlementsPage.authorityNamespaceField, authority);
+    await page.keyboard.press('Enter')
     await page.fill(selectors.entitlementsPage.attributeNameField, attributeName);
     await page.fill(selectors.entitlementsPage.attributeValueField, attributeValue);
     await page.click(selectors.entitlementsPage.submitAttributeButton);

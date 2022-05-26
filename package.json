@@ -2,6 +2,7 @@
   "name": "abacus",
   "version": "0.1.0",
   "private": true,
+  "license": "BSD-3-Clause-Clear",
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@craco/craco": "^7.0.0-alpha.0",
