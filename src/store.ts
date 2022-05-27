@@ -10,6 +10,7 @@ export interface AttributesFilters {
     limit: number;
     offset: number;
     sort: string;
+    rule: string;
   }
   pageNumber: number;
 }
@@ -23,6 +24,7 @@ export const AttributesFiltersStore = new Store<AttributesFilters>({
     limit: 10,
     offset: 1,
     sort: '',
+    rule: ''
   },
   pageNumber: 1
 });

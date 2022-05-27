@@ -2,8 +2,8 @@ import { Button, Form } from "antd";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { AttributesFiltersStore } from "../../store";
 import { useUpdateEntitlement } from "./hooks/useEntitlement";
-import { useDefinitionAttributes } from "../../hooks";
-import { AutoComplete } from "../../components";
+import { useAuthorities, useDefinitionAttributes } from "../../hooks";
+import { Select, AutoComplete } from "../../components";
 import { Method } from "../../types/enums";
 import { toast } from "react-toastify";
 
@@ -24,6 +24,7 @@ type FormValues = {
 
 const AssignAttributeForm: FC<Props> = (props) => {
   const { entityId, onAssignAttribute } = props;
+  useAuthorities();
 
   const [form] = useForm();
   const authorities = AttributesFiltersStore.useState(s => s.possibleAuthorities);
@@ -103,12 +104,12 @@ const AssignAttributeForm: FC<Props> = (props) => {
           name="authority"
           rules={[{ required: true, message: 'Please select Authority Namespace!' }]}
       >
-        <AutoComplete
+        <Select
           defaultActiveFirstOption
           name="authority"
-          onSelect={handleAuthorityChange}
+          onChange={handleAuthorityChange}
           options={authoritiesOptions}
-          placeholder="Authority..."
+          placeholder="Add authority"
           style={{ width: 200 }}
         />
       </Item>
@@ -122,7 +123,7 @@ const AssignAttributeForm: FC<Props> = (props) => {
           name="name"
           onSelect={onAttributeName}
           options={nameOptions}
-          placeholder="input here"
+          placeholder="Add name"
           style={{ width: 200 }}
         />
       </Item>
@@ -135,7 +136,7 @@ const AssignAttributeForm: FC<Props> = (props) => {
         <AutoComplete
           name="value"
           options={attributeValOptions}
-          placeholder="input here"
+          placeholder="Add value"
           style={{ width: 200 }}
         />
       </Item>

@@ -96,8 +96,6 @@ const Client = () => {
           data={clientTableData}
           loading={loading}
         />
-        <Divider />
-        <pre>{JSON.stringify(client, null, 2)}</pre>
       </article>
     </section>
   );

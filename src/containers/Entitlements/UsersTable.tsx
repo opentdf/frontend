@@ -62,4 +62,6 @@ const UsersTable: FC<Props> = (props) => {
   );
 };
 
+UsersTable.displayName = 'UsersTable';
+
 export default UsersTable;

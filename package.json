@@ -2,10 +2,11 @@
   "name": "abacus",
   "version": "0.1.0",
   "private": true,
+  "license": "BSD-3-Clause-Clear",
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
+    "@craco/craco": "^7.0.0-alpha.0",
     "@types/jest": "~26.0.24",
-    "@types/node": "~12.20.27",
     "@types/react": "~17.0.26",
     "@types/react-dom": "~17.0.9",
     "@types/react-redux": "^7.1.20",
@@ -18,12 +19,9 @@
     "react-dom": "~17.0.2",
     "react-oidc-context": "^1.1.0",
     "react-router-dom": "^5.3.0",
-    "react-scripts": "4.0.3",
+    "react-scripts": "^5.0.1",
     "react-toastify": "^8.0.3",
-    "typescript": "~4.4.3",
-    "web-vitals": "~1.1.2",
-    "cross-env": "^7.0.3",
-    "@craco/craco": "^6.4.3"
+    "typescript": "~4.4.3"
   },
   "homepage": ".",
   "scripts": {
@@ -31,11 +29,11 @@
     "start:test": "cross-env REACT_APP_TEST_MODE=1 craco start",
     "build": "REACT_APP_SERVER_DATA=__SERVER_DATA__ craco build",
     "build:test": "REACT_APP_SERVER_DATA=__SERVER_DATA__ cross-env REACT_APP_TEST_MODE=1 craco build",
-    "test": "craco test",
-    "test:prod": "craco test --watchAll=false --coverage",
+    "test": "craco test --coverage",
+    "test:prod": "craco test --watchAll=false",
     "test:debug": "craco --inspect-brk test --runInBand --no-cache --setupFilesAfterEnv='./src/setupTests.ts'",
     "test:playwright": "playwright test --config=tests/e2e/playwright.config.ts",
-    "eject": "react-scripts eject",
+    "eject": "craco eject",
     "prepare": "husky install"
   },
   "eslintConfig": {
@@ -47,7 +45,7 @@
   "jest": {
     "coverageThreshold": {
       "global": {
-        "branches": 20,
+        "branches": 18,
         "functions": 10,
         "lines": 15,
         "statements": 10
@@ -70,12 +68,14 @@
     ]
   },
   "devDependencies": {
-    "@types/react-router-dom": "^5.3.2",
-    "husky": "^7.0.4",
     "@playwright/test": "^1.18.0",
     "@react-keycloak/web": "^3.4.0",
     "@testing-library/jest-dom": "~5.14.1",
     "@testing-library/react": "~11.2.7",
-    "@testing-library/user-event": "~12.8.3"
+    "@testing-library/user-event": "~12.8.3",
+    "@types/node": "^17.0.35",
+    "@types/react-router-dom": "^5.3.2",
+    "cross-env": "^7.0.3",
+    "husky": "^7.0.4"
   }
 }

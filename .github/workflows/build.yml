@@ -1,0 +1,127 @@
+name: Build Frontend
+env:
+  CONTAINER_ARCHS: linux/amd64,linux/arm64
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+    types: [ opened, synchronize, reopened ]
+  release:
+    types: [ published ]
+jobs:
+  app:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    outputs:
+      VERSION: ${{ steps.version.outputs.VERSION }}
+      CHART_VERSION: ${{ steps.chart-version.outputs.VERSION }}
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '16.x'
+    - run: npm ci
+    - run: npm run test
+    - run: echo '::set-output name=VERSION::'$(jq -r .version package.json)
+      id: version
+    - run: echo '::set-output name=VERSION::'$(jq -r .version package.json)-$(git rev-parse --short HEAD)
+      id: chart-version
+    # - name: Install Playwright
+      # run: npx playwright install --with-deps
+    # - name: Run Playwright tests
+      # run: xvfb-run npm run test:playwright
+    # - name: Upload test results
+      # if: always()
+      # uses: actions/upload-artifact@v2
+      # with:
+        # name: playwright-test-results
+        # path: test-results
+
+  image:
+    needs:
+      - app
+    permissions:
+      contents: read
+      packages: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    outputs:
+      IMAGE_TAGS: ${{ steps.meta.outputs.tags }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: ghcr.io/opentdf/abacus
+          tags: |
+            type=ref,event=branch
+            type=sha
+            type=semver,pattern={{version}},value=${{ github.event.release.tag_version }},enabled=${{ !!github.event.release }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: publish
+        uses: docker/build-push-action@v2
+        with:
+          build-args: |-
+            NODE_VERSION=16
+          platforms: ${{ env.CONTAINER_ARCHS }}
+          push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'opentdf/frontend' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  chart:
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    needs:
+      - image
+    permissions:
+      packages: write
+      contents: read
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v2
+      - uses: yokawasa/action-setup-kube-tools@v0.8.0
+        with:
+          setup-tools: helm
+          helm: "3.8.0"
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          logout: false
+      - name: push
+        run: |
+          sha_ver=sha-$(git rev-parse --short HEAD)
+          tag_ver=${{ github.event.release.tag_version }}
+          explicit_version=$(printf '%s\n' "${app_ver}-${sha_ver}" | sed -e 's/[\/.]/\\./g')
+          chart_ver="${tag_ver:-${explicit_version}}"
+          image_tag="${tag_ver:-${sha_ver}}"
+          cd charts
+          for d in */ ; do
+              if [ -f "$d/Chart.yaml" ]; then
+                echo "Setting Chart.yaml version to ${chart_ver}..."
+                sed -i "s/^version\: .*/version\: ${chart_ver}/" $d/Chart.yaml
+                sed -i "s/^appVersion\: .*/appVersion\: ${app_ver}/" $d/Chart.yaml
+                sed -i "s/^  tag\: main/  tag\: ${image_tag}/" $d/values.yaml
+                echo "Packaging Helm chart $d..."
+                helm package $d --app-version="${app_ver}"
+                echo "Packaged Helm chart $d with chart version [${chart_ver}] and appVersion to [${app_ver}]"
+                echo *.tgz
+                helm push *.tgz oci://ghcr.io/${{ github.repository_owner }}/charts
+                rm *.tgz
+              fi
+          done
+        env:
+          app_ver: ${{ needs.app.outputs.VERSION || '0.0.0' }}

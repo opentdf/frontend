@@ -129,7 +129,7 @@ test.describe('API:', () => {
         expect(createAttributeResponse.ok()).toBeTruthy()
 
         // GET and check created entitlement
-        const checkCreatedEntitlementResponse = await apiContext.get(`http://localhost:65432/api/entitlements/entitlements`)
+        const checkCreatedEntitlementResponse = await apiContext.get(`http://localhost:65432/api/entitlements/entitlements?entityId=${existedEntityId}`)
         expect(checkCreatedEntitlementResponse.status()).toBe(200)
         expect(checkCreatedEntitlementResponse.ok()).toBeTruthy()
 

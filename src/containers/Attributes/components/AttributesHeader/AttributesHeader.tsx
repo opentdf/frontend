@@ -1,5 +1,5 @@
 import styles from "./AttributesHeader.module.css";
-import { Button, Cascader, Popover, Typography, Pagination, Select } from "antd";
+import { Button, Cascader, Popover, Typography, Pagination, Select, Badge } from "antd";
 
 import FilterForm from "../FilterForm";
 import { AttributesFiltersStore } from "../../../../store";
@@ -62,6 +62,9 @@ const AttributesHeader = ({ total }: AttributesHeaderProps) => {
 
   const authorities = AttributesFiltersStore.useState(s => s.possibleAuthorities);
   const authority = AttributesFiltersStore.useState(s => s.authority);
+  const { name, order, rule } = AttributesFiltersStore.useState(s => s.query);
+
+  const selectedFilters = Number(Boolean(name)) + Number(Boolean(order)) + Number(Boolean(rule));
 
   return (
     <div className={styles.attributeHeader}>
@@ -103,7 +106,14 @@ const AttributesHeader = ({ total }: AttributesHeaderProps) => {
           placement="bottomRight"
           trigger="click"
         >
-          <Button id="filters-button">Filters</Button>
+          <Button
+            id="filters-button"
+            className={styles.filterBtn}
+          >
+            Filters
+            &nbsp;
+            <Badge count={selectedFilters} />
+          </Button>
         </Popover>
       </div>
     </div>
