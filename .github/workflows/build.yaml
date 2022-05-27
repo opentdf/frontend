@@ -131,7 +131,7 @@ jobs:
     steps:
     - uses: actions/github-script@v6
       with:
-        github-token: ${{ secrets.PAT_TOKEN }}
+        github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
         # TODO: 
         # https://octokit.github.io/rest.js/v18#actions-create-workflow-dispatch
         script: |
