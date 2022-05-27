@@ -2,13 +2,13 @@ env:
   CONTAINER_ARCHS: linux/amd64,linux/arm64
 on:
   push:
-    branches: [ main ]
-    tags: [ "*" ]
+    branches: [main]
+    tags: ["*"]
   pull_request:
-    branches: [ main ]
-    types: [ opened, synchronize, reopened ]
+    branches: [main]
+    types: [opened, synchronize, reopened]
   release:
-    types: [ published ]
+    types: [published]
 jobs:
   app:
     timeout-minutes: 60
@@ -17,26 +17,26 @@ jobs:
       VERSION: ${{ steps.version.outputs.VERSION }}
       CHART_VERSION: ${{ steps.chart-version.outputs.VERSION }}
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-node@v2
-      with:
-        node-version: '16.x'
-    - run: npm ci
-    - run: npm run test
-    - run: echo '::set-output name=VERSION::'$(jq -r .version package.json)
-      id: version
-    - run: echo '::set-output name=VERSION::'$(jq -r .version package.json)-$(git rev-parse --short HEAD)
-      id: chart-version
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "16.x"
+      - run: npm ci
+      - run: npm run test
+      - run: echo '::set-output name=VERSION::'$(jq -r .version package.json)
+        id: version
+      - run: echo '::set-output name=VERSION::'$(jq -r .version package.json)-$(git rev-parse --short HEAD)
+        id: chart-version
     # - name: Install Playwright
-      # run: npx playwright install --with-deps
+    # run: npx playwright install --with-deps
     # - name: Run Playwright tests
-      # run: xvfb-run npm run test:playwright
+    # run: xvfb-run npm run test:playwright
     # - name: Upload test results
-      # if: always()
-      # uses: actions/upload-artifact@v2
-      # with:
-        # name: playwright-test-results
-        # path: test-results
+    # if: always()
+    # uses: actions/upload-artifact@v2
+    # with:
+    # name: playwright-test-results
+    # path: test-results
 
   image:
     needs:
@@ -129,18 +129,18 @@ jobs:
   dispatch:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/github-script@v6
-      with:
-        github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-        # TODO: 
-        # https://octokit.github.io/rest.js/v18#actions-create-workflow-dispatch
-        script: |
-          await github.rest.actions.createWorkflowDispatch({
-            owner: 'opentdf',
-            repo: 'tests',
-            workflow_id: 'xtest.yml',
-            ref: 'main'
-          })
+      - uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          # TODO:
+          # https://octokit.github.io/rest.js/v18#actions-create-workflow-dispatch
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: 'opentdf',
+              repo: 'tests',
+              workflow_id: 'xtest.yml',
+              ref: 'main'
+            })
 
   ci:
     needs: image
