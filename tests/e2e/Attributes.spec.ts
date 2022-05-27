@@ -24,7 +24,7 @@ test.describe('<Attributes/>', () => {
     expect(newAuthority).toBeTruthy();
   });
 
-  test.only('should add attribute, should filter attributes by Name, Order, Rule', async ({ page, attributeName, authority, attributeValue }) => {
+  test('should add attribute, should filter attributes by Name, Order, Rule', async ({ page, attributeName, authority, attributeValue }) => {
     await page.locator(selectors.attributesPage.openNewSectionBtn).click();
     await page.fill(selectors.attributesPage.newSection.attributeNameField, attributeName);
     await page.fill(selectors.attributesPage.newSection.orderField, attributeValue);
