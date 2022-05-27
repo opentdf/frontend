@@ -135,11 +135,10 @@ jobs:
           # TODO:
           # https://octokit.github.io/rest.js/v18#actions-create-workflow-dispatch
           script: |
-            await github.rest.actions.createWorkflowDispatch({
+            await github.rest.actions.createRepositoryDispatch({
               owner: 'opentdf',
               repo: 'tests',
               workflow_id: 'xtest.yml',
-              ref: 'main'
             })
 
   ci:
