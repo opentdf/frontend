@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: opentdf-abacus-cm
+  name: {{ include "abacus.name" . }}-cm
 data:
-  ATTRIBUTES_HOST: http://localhost:65432/api/attributes/
-  ENTITLEMENTS_HOST: http://localhost:65432/api/entitlements/
-  KAS_HOST: http://localhost:65432/api/kas
-  KEYCLOAK_CLIENT_ID: dcr-test
-  KEYCLOAK_HOST: http://localhost:65432/auth/
-  KEYCLOAK_REALM: tdf
-  SERVER_BASE_PATH:
+  KEYCLOAK_HOST: {{ .Values.oidc.serverUrl | quote }}
+  KEYCLOAK_CLIENT_ID: {{ .Values.oidc.clientId | quote }}
+  KEYCLOAK_REALMS: {{ .Values.oidc.queryRealms | quote }}
+  ATTRIBUTES_HOST: {{ .Values.attributes.serverUrl | quote }}
+  ENTITLEMENTS_HOST: {{ .Values.entitlements.serverUrl | quote }}
+  SERVER_BASE_PATH: {{ .Values.basePath | quote }}
+  KAS_HOST: {{ .Values.kas.serverUrl | quote }}

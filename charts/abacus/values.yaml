@@ -3,15 +3,18 @@
 # Declare variables to be passed into your templates.
 
 attributes:
-  serverUrl: ""
+  serverUrl: "http://localhost:65432/api/attributes/"
 entitlements:
-  serverUrl: ""
+  serverUrl: "http://localhost:65432/api/entitlements/"
+kas:
+  serverUrl: "http://localhost:65432/api/kas"
 oidc:
-  serverUrl: ""
-  clientId: ""
+  serverUrl: "http://localhost:65432/auth/"
+  clientId: "dcr-test"
   # Comma separated list of realms to allow access to in keycloak
   # Assigned to the KEYCLOAK_REALMS environment varibable
-  queryRealms: ""
+  queryRealms: "tdf"
+
 # Where the root for the web app should be, e.g. "/abacus"
 # Defaults to the empty path
 basePath: ""
@@ -25,7 +28,7 @@ image:
   tag: main
 
 imagePullSecrets: []
-nameOverride: ""
+nameOverride: "opentdf-abacus"
 fullnameOverride: ""
 
 serviceAccount:
