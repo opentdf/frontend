@@ -16,7 +16,12 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: {{ $fullName }}
+{{/*  labels:*/}}
+{{/*    {{- include "abacus.labels" . | nindent 4 }}*/}}
+  {{- with .Values.ingress.annotations }}
   annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
     kubernetes.io/ingress.class: nginx
 {{- end }}
 spec:
@@ -27,9 +32,9 @@ spec:
   tls:
     {{- range .Values.ingress.tls }}
     - hosts:
-      {{- range .hosts }}
-      - {{ . | quote }}
-      {{- end }}
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
       secretName: {{ .secretName }}
     {{- end }}
   {{- end }}
@@ -49,10 +54,12 @@ spec:
                 name: {{ $fullName | quote }}
                 port:
                   number: {{ int $svcPort }}
-                  {{- else }}
-                  serviceName: {{ $fullName | quote }}
-                  servicePort: {{ int $svcPort }}
-                  {{- end }}
-                {{- end }}
+              {{- else }}
+              serviceName: {{ $fullName | quote }}
+              servicePort: {{ int $svcPort }}
               {{- end }}
             {{- end }}
+            {{- end }}
+    {{- end }}
+  {{- end }}
+{{- end }}
