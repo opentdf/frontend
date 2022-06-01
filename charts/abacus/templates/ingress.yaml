@@ -58,8 +58,6 @@ spec:
               serviceName: {{ $fullName | quote }}
               servicePort: {{ int $svcPort }}
               {{- end }}
-            {{- end }}
-            {{- end }}
+        {{- end }}
     {{- end }}
-  {{- end }}
 {{- end }}
