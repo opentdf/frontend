@@ -10,8 +10,7 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-      app.kubernetes.io/instance: opentdf
-      app.kubernetes.io/name: abacus
+      {{- include "abacus.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -19,8 +18,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        app.kubernetes.io/instance: opentdf
-        app.kubernetes.io/name: abacus
+        {{- include "abacus.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:

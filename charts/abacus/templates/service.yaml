@@ -12,5 +12,4 @@ spec:
       protocol: TCP
       name: http
   selector:
-    app.kubernetes.io/instance: opentdf
-    app.kubernetes.io/name: abacus
+    {{- include "abacus.selectorLabels" . | nindent 4 }}
