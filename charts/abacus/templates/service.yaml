@@ -3,8 +3,7 @@ kind: Service
 metadata:
   name: {{ include "abacus.fullname" . }}
   labels:
-    app.kubernetes.io/instance: opentdf
-    app.kubernetes.io/name: abacus
+    {{- include "abacus.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type | quote }}
   ports:

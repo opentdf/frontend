@@ -33,11 +33,11 @@ spec:
         - name: abacus
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
+          image: opentdf/abacus
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           envFrom:
             - configMapRef:
                 name: {{ include "abacus.name" . }}-cm
-          image: opentdf/abacus
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
               containerPort: 80
