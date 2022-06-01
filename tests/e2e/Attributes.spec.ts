@@ -24,7 +24,7 @@ test.describe('<Attributes/>', () => {
     expect(newAuthority).toBeTruthy();
   });
 
-  test('should add attribute, should filter attributes by Name, Order', async ({ page, attributeName, authority, attributeValue }) => {
+  test('should add attribute, should filter attributes by Name, Order, Rule', async ({ page, attributeName, authority, attributeValue }) => {
     await page.locator(selectors.attributesPage.openNewSectionBtn).click();
     await page.fill(selectors.attributesPage.newSection.attributeNameField, attributeName);
     await page.fill(selectors.attributesPage.newSection.orderField, attributeValue);
@@ -58,13 +58,18 @@ test.describe('<Attributes/>', () => {
     const filteredAttributesListByOrder = await page.$$(selectors.attributesPage.attributeItem)
     expect(filteredAttributesListByOrder.length).toBe(1)
 
-    // TODO: enable after fixing PLAT-1781 (filtering by Rule doesn't work for now)
-    // await page.click(filterModal.clearBtn)
-    // await page.fill(filterModal.ruleInputField, 'hierarchy')
-    // await page.fill(filterModal.nameInputField, attributeName)
-    // await page.click(filterModal.submitBtn)
-    // const filteredAttributesListByRule = await page.$$(selectors.attributesPage.attributeItem)
-    // expect(filteredAttributesListByRule.length).toBe(1)
+    // filter by Rule
+    await page.click(attributesHeader.filtersToolbarButton)
+    await page.click(filterModal.clearBtn)
+    await page.fill(filterModal.ruleInputField, 'allOf')
+    await page.click(filterModal.submitBtn)
+    await expect(page.locator(attributesHeader.itemsQuantityIndicator)).toHaveText('Total 0 items')
+    await page.fill(filterModal.ruleInputField, 'hierarchy')
+    await page.click(filterModal.submitBtn)
+    await expect(page.locator(attributesHeader.itemsQuantityIndicator)).toHaveText('Total 1 items')
+    await page.click(attributesHeader.itemsQuantityIndicator)
+    const filteredAttributesListByRule = await page.$$(selectors.attributesPage.attributeItem)
+    expect(filteredAttributesListByRule.length).toBe(1)
   });
 
   test('should delete attribute', async ({ page, authority, attributeName, attributeValue }) => {
