@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: opentdf-abacus
+  name: {{ include "abacus.fullname" . }}
   labels:
     app.kubernetes.io/instance: opentdf
     app.kubernetes.io/name: abacus
 spec:
   type: {{ .Values.service.type | quote }}
   ports:
-    - port: 80
+    - port: {{ int .Values.service.port }}
       targetPort: http
       protocol: TCP
       name: http

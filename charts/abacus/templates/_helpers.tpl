@@ -48,6 +48,8 @@ Selector labels
 {{- define "abacus.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "abacus.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+{{/*app.kubernetes.io/instance: opentdf*/}}
+{{/*app.kubernetes.io/name: abacus*/}}
 {{- end }}
 
 {{/*

@@ -28,7 +28,7 @@ image:
   tag: main
 
 imagePullSecrets: []
-nameOverride: "opentdf-abacus"
+nameOverride: ""
 fullnameOverride: ""
 
 serviceAccount:
