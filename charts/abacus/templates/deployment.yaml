@@ -24,18 +24,20 @@ spec:
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
-              {{- toYaml . | nindent 8 }}
-            {{- end }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       serviceAccountName: {{ include "abacus.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: abacus
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
           envFrom:
             - configMapRef:
-                name: opentdf-abacus-cm
+                name: {{ include "abacus.name" . }}-cm
           image: opentdf/abacus
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - name: http
               containerPort: 80
