@@ -1,20 +1,34 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: opentdf-abacus
+  name: {{ include "abacus.fullname" . }}
+  labels:
+    {{- include "abacus.labels" . | nindent 4 }}
 spec:
-  replicas: 1
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
   selector:
     matchLabels:
       app.kubernetes.io/instance: opentdf
       app.kubernetes.io/name: abacus
   template:
     metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       labels:
         app.kubernetes.io/instance: opentdf
         app.kubernetes.io/name: abacus
     spec:
-      serviceAccountName: opentdf-abacus
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+              {{- toYaml . | nindent 8 }}
+            {{- end }}
+      serviceAccountName: {{ include "abacus.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: abacus
           envFrom:
@@ -34,3 +48,17 @@ spec:
             httpGet:
               path: /
               port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
