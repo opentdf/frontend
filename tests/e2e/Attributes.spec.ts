@@ -127,13 +127,10 @@ test.describe('<Attributes/>', () => {
 
     const assertItemsOrderAfterSorting = async (expectedFirstItemName: string, expectedSecondItemName: string, expectedLastItemName: string) => {
       const firstItemNameAfterSorting = await page.innerText(".ant-col h3 >> nth=0")
-      console.log(`>>>, ${firstItemNameAfterSorting}`)
       expect(firstItemNameAfterSorting == expectedFirstItemName).toBeTruthy()
       const secondItemNameAfterSorting = await page.innerText(".ant-col h3 >> nth=1")
-      console.log(`>>>, ${secondItemNameAfterSorting}`)
       expect(secondItemNameAfterSorting == expectedSecondItemName).toBeTruthy()
       const lastItemNameAfterSorting = await page.innerText('.ant-col h3 >> nth=-1')
-      console.log(`>>>, ${lastItemNameAfterSorting}`)
       expect(lastItemNameAfterSorting == expectedLastItemName).toBeTruthy()
     }
 
