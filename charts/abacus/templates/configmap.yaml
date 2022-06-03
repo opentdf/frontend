@@ -9,3 +9,4 @@ data:
   ATTRIBUTES_HOST: {{ .Values.attributes.serverUrl | quote }}
   ENTITLEMENTS_HOST: {{ .Values.entitlements.serverUrl | quote }}
   SERVER_BASE_PATH: {{ .Values.basePath | quote }}
+  KAS_HOST: {{ .Values.kas.serverUrl | quote }}
