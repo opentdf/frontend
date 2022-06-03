@@ -11,7 +11,7 @@ export const selectors = {
     realmSelector: '#rc_select_0',
     attributesPage: {
         attributesHeader: {
-            authorityDropdownButton: "rc_select_10", //"#select-authorities-button",
+            authorityDropdownButton: "#select-authorities-button",
             itemsQuantityIndicator: '.ant-pagination-total-text',
             sortByToolbarButton: "#sort-by-button",
             filtersToolbarButton: "#filters-button",

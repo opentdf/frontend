@@ -72,6 +72,141 @@ test.describe('<Attributes/>', () => {
     expect(filteredAttributesListByRule.length).toBe(1)
   });
 
+  test('should sort attributes by Name, ID, rule, values_array', async ({ playwright, page, authority, attributeName, attributeValue }) => {
+
+    const ascendingSortingOption = page.locator('.ant-cascader-menu-item-content', {hasText: 'ASC'})
+    const descendingSortingOption = page.locator('.ant-cascader-menu-item-content', {hasText: 'DES'})
+    const nameSortingSubOption = page.locator('.ant-cascader-menu-item-content', {hasText: 'name'})
+    const ruleSortingSubOption = page.locator('.ant-cascader-menu-item-content', {hasText: 'rule'})
+    const idSortingSubOption = page.locator('.ant-cascader-menu-item-content', {hasText: 'id'})
+    const valuesSortingSubOption = page.locator('.ant-cascader-menu-item-content', {hasText: 'values_array'})
+    const sortByToolbarButton = selectors.attributesPage.attributesHeader.sortByToolbarButton
+    const firstAttributeName = '1st attribute'
+    const secondAttributeName = 'Z 2nd attribute'
+    const thirdAttributeName = '3rd attribute'
+
+    const accessToken = await page.evaluate(() => {
+      return sessionStorage.getItem("keycloak");
+    });
+
+    const apiContext = await playwright.request.newContext({
+      extraHTTPHeaders: {
+        'Authorization': `Bearer ${accessToken}`,
+      },
+    });
+
+    const createAttributeViaAPI = async (attrName: string, attrRule: string, attrOrder: string) => {
+      const createAttributeResponse = await apiContext.post('http://localhost:65432/api/attributes/definitions/attributes', {
+        data: {
+          "authority": authority,
+          "name": attrName,
+          "rule": attrRule,
+          "state": "published",
+          "order": [
+            attrOrder
+          ]
+        }
+      })
+      expect(createAttributeResponse.ok()).toBeTruthy()
+    }
+
+    const deleteAttributeViaAPI = async (attrName: string, attrRule: string, attrOrder: string) => {
+      const deleteAttributeResponse = await apiContext.delete('http://localhost:65432/api/attributes/definitions/attributes', {
+        data: {
+          "authority": authority,
+          "name": attrName,
+          "rule": attrRule,
+          "state": "published",
+          "order": [
+            attrOrder
+          ]
+        }
+      })
+      expect(deleteAttributeResponse.ok()).toBeTruthy()
+    }
+
+    const assertItemsOrderAfterSorting = async (expectedFirstItemName: string, expectedSecondItemName: string, expectedLastItemName: string) => {
+      const firstItemNameAfterSorting = await page.innerText(".ant-col h3 >> nth=0")
+      console.log(`>>>, ${firstItemNameAfterSorting}`)
+      expect(firstItemNameAfterSorting == expectedFirstItemName).toBeTruthy()
+      const secondItemNameAfterSorting = await page.innerText(".ant-col h3 >> nth=1")
+      console.log(`>>>, ${secondItemNameAfterSorting}`)
+      expect(secondItemNameAfterSorting == expectedSecondItemName).toBeTruthy()
+      const lastItemNameAfterSorting = await page.innerText('.ant-col h3 >> nth=-1')
+      console.log(`>>>, ${lastItemNameAfterSorting}`)
+      expect(lastItemNameAfterSorting == expectedLastItemName).toBeTruthy()
+    }
+
+    // data setup
+    await createAttributeViaAPI(firstAttributeName, 'anyOf', 'A')
+    await createAttributeViaAPI(secondAttributeName, 'allOf', 'C')
+    await createAttributeViaAPI(thirdAttributeName, 'hierarchy', 'B')
+
+    // switch between section to renew data
+    await page.goto('/entitlements');
+    await page.goto('/attributes');
+
+    // select proper authority
+    await page.click(selectors.attributesPage.attributesHeader.authorityDropdownButton, {force: true})
+    await page.keyboard.press("ArrowUp")
+    await page.keyboard.press("Enter")
+
+    await expect(page.locator(selectors.attributesPage.attributesHeader.itemsQuantityIndicator)).toHaveText('Total 3 items')
+
+    // sort by Name ASC
+    await page.click(sortByToolbarButton)
+    await ascendingSortingOption.click()
+    await nameSortingSubOption.click()
+    await assertItemsOrderAfterSorting(firstAttributeName, thirdAttributeName, secondAttributeName)
+
+    // sort by Name DESC
+    await page.click(sortByToolbarButton, {force: true})
+    await descendingSortingOption.click()
+    await nameSortingSubOption.click()
+    await assertItemsOrderAfterSorting(secondAttributeName, thirdAttributeName, firstAttributeName)
+
+    // sort by Rule ASC
+    await page.click(sortByToolbarButton, {force: true})
+    await ascendingSortingOption.click()
+    await ruleSortingSubOption.click()
+    await assertItemsOrderAfterSorting(secondAttributeName, firstAttributeName, thirdAttributeName)
+
+    // sort by Rule DESC
+    await page.click(sortByToolbarButton, {force: true})
+    await descendingSortingOption.click()
+    await ruleSortingSubOption.click()
+    await assertItemsOrderAfterSorting(thirdAttributeName, firstAttributeName, secondAttributeName)
+
+    // sort by ID ASC
+    await page.click(sortByToolbarButton, {force: true})
+    await ascendingSortingOption.click()
+    await idSortingSubOption.click()
+    await assertItemsOrderAfterSorting(firstAttributeName, secondAttributeName, thirdAttributeName)
+
+    // sort by ID DESC
+    await page.click(sortByToolbarButton, {force: true})
+    await descendingSortingOption.click()
+    await idSortingSubOption.click()
+    await assertItemsOrderAfterSorting(thirdAttributeName, secondAttributeName, firstAttributeName)
+
+    // sort by Order values ASC
+    await page.click(sortByToolbarButton, {force: true})
+    await ascendingSortingOption.click()
+    await valuesSortingSubOption.click()
+    await assertItemsOrderAfterSorting(firstAttributeName, thirdAttributeName, secondAttributeName)
+
+    // sort by Order values DESC
+    await page.click(sortByToolbarButton, {force: true})
+    await descendingSortingOption.click()
+    await valuesSortingSubOption.click()
+    await assertItemsOrderAfterSorting(secondAttributeName, thirdAttributeName, firstAttributeName)
+
+    // data teardown
+    await deleteAttributeViaAPI(firstAttributeName, 'anyOf', 'A')
+    await deleteAttributeViaAPI(secondAttributeName, 'allOf', 'C')
+    await deleteAttributeViaAPI(thirdAttributeName, 'hierarchy', 'B')
+  });
+
   test('should delete attribute', async ({ page, authority, attributeName, attributeValue }) => {
     await page.goto("/entitlements");
     firstTableRowClick('clients-table', page);
