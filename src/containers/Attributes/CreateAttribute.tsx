@@ -1,4 +1,4 @@
-import {FC, memo, useCallback, useEffect, useState} from "react";
+import { FC, memo, useCallback } from "react";
 import { Affix, Card, Collapse, Typography } from "antd";
 import { toast } from "react-toastify";
 import { useLazyFetch } from "../../hooks/useFetch";
@@ -6,7 +6,6 @@ import { Attribute } from "../../types/attributes";
 import { attributesClient } from "../../service";
 import { Method } from "../../types/enums";
 import { CreateAttributeForm, CreateAuthorityForm } from "./components";
-import app from "../../App";
 
 const { Panel } = Collapse;
 
