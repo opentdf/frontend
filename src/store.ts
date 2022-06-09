@@ -13,6 +13,7 @@ export interface AttributesFilters {
     rule: string;
   }
   pageNumber: number;
+  collapseValue: string;
 }
 
 export const AttributesFiltersStore = new Store<AttributesFilters>({
@@ -26,5 +27,6 @@ export const AttributesFiltersStore = new Store<AttributesFilters>({
     sort: '',
     rule: ''
   },
-  pageNumber: 1
+  pageNumber: 1,
+  collapseValue: '0'
 });

@@ -13,6 +13,7 @@ const Attributes = () => {
   useAuthorities();
   const authority = AttributesFiltersStore.useState(s => s.authority);
   const attrsQueryParams = AttributesFiltersStore.useState(s => s.query);
+  const collapseValue = AttributesFiltersStore.useState(s => s.collapseValue);
   const { attrs, loading, xTotalCount, fetchAttrs } = useAttributesFilters(authority, attrsQueryParams);
   const { keycloak, initialized } = useKeycloak();
 
@@ -30,6 +31,14 @@ const Attributes = () => {
       }
     })
   }, []);
+
+  const onCollapseChange = useCallback((): void => {
+    AttributesFiltersStore.update(store => {
+      if (store) {
+        store.collapseValue = Number(store.collapseValue) ? '0' : '1';
+      }
+    })
+  }, [])
 
   return (
     <>
@@ -67,8 +76,10 @@ const Attributes = () => {
             </List>
             <CreateAttribute
               authority={authority}
+              collapseValue={collapseValue}
               onAddAttr={fetchAttrs}
               onAddNamespace={onNamespaceUpdate}
+              onCollapseChange={onCollapseChange}
             />
           </>
         )
