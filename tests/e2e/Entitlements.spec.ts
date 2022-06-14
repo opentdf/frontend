@@ -53,6 +53,10 @@ test.describe('<Entitlements/>', () => {
     await page.click(selectors.entitlementsPage.submitAttributeButton);
     const successfulEntitlementMsg = await page.locator(selectors.alertMessage, {hasText: "Entitlement updated!"})
     await expect(successfulEntitlementMsg).toBeVisible()
+    // assert that input fields are cleared after successful submission
+    await expect(page.locator(selectors.entitlementsPage.authorityNamespaceField)).toHaveText("")
+    await expect(page.locator(selectors.entitlementsPage.attributeNameField)).toHaveText("")
+    await expect(page.locator(selectors.entitlementsPage.attributeValueField)).toHaveText("")
     // const tableVal = `${authority}/attr/${attributeName}/value/${attributeValue}`;
   });
 });
