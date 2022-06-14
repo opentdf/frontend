@@ -230,18 +230,19 @@ test.describe('<Attributes/>', () => {
   });
 
   test('should edit attribute rule', async ({ page , attributeName, attributeValue}) => {
+    const existedOrderValue = page.locator('.ant-tabs-tab-btn >> nth=0')
+    const editRuleBtn = page.locator('.ant-btn',{hasText: "Edit Rule"})
+    const ruleDropdown = page.locator('.attribute-rule__select')
+    const restrictiveAccessDropdownOption = page.locator('.ant-select-item-option', {hasText:'Restrictive Access'})
+    const saveRuleBtn = page.locator('.ant-btn',{hasText: "Save rule"})
+    const ruleUpdatedMsg = page.locator(selectors.alertMessage, {hasText: `Rule was updated!`})
+
     await createAttributeAndVerifyResultMsg(page, attributeName, attributeValue)
-    const orderValueOption = await page.locator('.ant-tabs-tab-btn >> nth=0')
-    await orderValueOption.click({force:true})
-    const editRuleBtn = await page.locator('.ant-btn',{hasText: "Edit Rule"})
+    await existedOrderValue.click({force:true})
     await editRuleBtn.click()
-    const ruleDropdown = await page.locator('.attribute-rule__select')
     await ruleDropdown.click()
-    const restrictiveAccessDropdownOption = await page.locator('.ant-select-item-option', {hasText:'Restrictive Access'})
     await restrictiveAccessDropdownOption.click()
-    const saveRuleBtn = await page.locator('.ant-btn',{hasText: "Save rule"})
     await saveRuleBtn.click()
-    const ruleUpdatedMsg = await page.locator(selectors.alertMessage, {hasText: `Rule was updated!`})
     await expect(ruleUpdatedMsg).toBeVisible()
   });
 
