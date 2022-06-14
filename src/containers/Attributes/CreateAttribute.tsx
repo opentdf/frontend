@@ -11,33 +11,39 @@ const { Panel } = Collapse;
 
 type Props = {
   authority: string;
+  collapseValue: string;
   onAddAttr: (attr: Attribute) => void;
   onAddNamespace: (namespace: string) => void;
+  onCollapseChange: () => void;
 };
 
 type CreateAttributeValues = Omit<Attribute, "authority">;
 
 const CreateAttribute: FC<Props> = (props) => {
-  const { authority, onAddAttr, onAddNamespace } = props;
+  const { authority, collapseValue, onAddAttr, onAddNamespace, onCollapseChange } = props;
 
   const [createAuthority] = useLazyFetch(attributesClient);
   const [createAttributes] = useLazyFetch(attributesClient);
 
   const handleCreateAuthority = useCallback(
-    ({ authority }) => {
-      createAuthority<string[]>({
-        method: Method.POST,
-        path: '/authorities',
-        data: { authority },
-      })
-        .then(({ data }) => {
-          const [lastItem] = data.slice(-1);
-          toast.success("Authority was created");
-          onAddNamespace(lastItem);
-        })
-        .catch(() => toast.error("Authority was not created"));
+    async ({ authority }) => {
+      try {
+        const { data } = await createAuthority<string[]>({
+          method: Method.POST,
+          path: '/authorities',
+          data: { authority },
+        });
+
+        const [ lastItem ] = data.slice(-1);
+
+        toast.success("Authority was created");
+
+        onAddNamespace(lastItem);
+      } catch (e) {
+        toast.error("Authority was not created");
+      }
     },
-    [createAuthority, onAddNamespace],
+    [createAuthority, onAddNamespace, onCollapseChange],
   );
 
   const handleCreateAttribute = (values: CreateAttributeValues) => {
@@ -58,7 +64,10 @@ const CreateAttribute: FC<Props> = (props) => {
   return (
     <Affix offsetBottom={1}>
       <div>
-        <Collapse>
+        <Collapse
+          activeKey={collapseValue}
+          onChange={onCollapseChange}
+        >
           <Panel
             header={<Typography.Title level={2}>New</Typography.Title>}
             key="1"
