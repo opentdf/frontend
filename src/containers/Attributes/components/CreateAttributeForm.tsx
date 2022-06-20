@@ -36,6 +36,7 @@ const CreateAttributeForm: FC<Props> = (props) => {
         <Item
           name="name"
           label="Name"
+          labelCol={{ span: 3 }}
           rules={[{ required: true }]}
         >
           <Input />
@@ -44,6 +45,7 @@ const CreateAttributeForm: FC<Props> = (props) => {
         <Item
           name="rule"
           label="Rule"
+          labelCol={{ span: 3 }}
           rules={[{ required: true }]}
           data-test-id="rule-form-item"
         >
@@ -53,6 +55,7 @@ const CreateAttributeForm: FC<Props> = (props) => {
         <Item
           name="state"
           label="State"
+          labelCol={{ span: 3 }}
           rules={[{ required: true }]}
           initialValue="published"
           hidden
