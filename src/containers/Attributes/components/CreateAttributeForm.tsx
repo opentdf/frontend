@@ -37,7 +37,7 @@ const CreateAttributeForm: FC<Props> = (props) => {
           name="name"
           label="Name"
           labelCol={{ span: 3 }}
-          rules={[{ required: true }]}
+          rules={[{ required: true, message: 'Please input name value!' }]}
         >
           <Input />
         </Item>
@@ -46,7 +46,7 @@ const CreateAttributeForm: FC<Props> = (props) => {
           name="rule"
           label="Rule"
           labelCol={{ span: 3 }}
-          rules={[{ required: true }]}
+          rules={[{ required: true, message: 'Please input rule value!' }]}
           data-test-id="rule-form-item"
         >
           <Select options={stateOptions} id="rule-options"/>
@@ -71,8 +71,8 @@ const CreateAttributeForm: FC<Props> = (props) => {
               const isLast = lastIndex === index;
 
               return (
-                <Item required label="Order" key={field.key}>
-                  <Item {...field} noStyle>
+                <Item required label="Order" key={field.key} >
+                  <Item {...field} rules={[{ required: true, message: 'Please input order value!' }]} noStyle>
                     <Input style={{ width: "calc(100% - 32px)" }} />
                   </Item>
 
