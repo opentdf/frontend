@@ -1,4 +1,4 @@
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useMemo, useState, useEffect } from "react";
 import { List, Table, Divider } from "antd";
 import { toast } from "react-toastify";
 import { Attribute } from "../../types/attributes";
@@ -37,6 +37,19 @@ const AttributeListItem: FC<Props> = (props) => {
       }
     }
   )
+
+  useEffect(() => {
+    const unsubscribeAttributesFiltersStore = AttributesFiltersStore.subscribe(
+      (store) => store.collapseValue,
+      (watched, allState, prevWatched) => {
+        if (Number(watched)) {
+          setActiveTab('');
+        }
+      }
+    );
+
+    return () => unsubscribeAttributesFiltersStore();
+  }, [])
 
 
   const toggleEdit = useCallback(() => {
