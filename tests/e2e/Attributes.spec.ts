@@ -6,7 +6,7 @@ import { selectors } from "./helpers/selectors";
 test.describe('<Attributes/>', () => {
 
   const createAttributeAndVerifyResultMsg = async (page: Page, name: string, value: string) => {
-    await page.locator(selectors.attributesPage.openNewSectionBtn).click();
+    // await page.locator(selectors.attributesPage.openNewSectionBtn).click();
     await page.fill(selectors.attributesPage.newSection.attributeNameField, name);
     await page.fill(selectors.attributesPage.newSection.orderField, value);
     await page.click(selectors.attributesPage.newSection.submitAttributeBtn);
@@ -238,7 +238,9 @@ test.describe('<Attributes/>', () => {
     const ruleUpdatedMsg = page.locator(selectors.alertMessage, {hasText: `Rule was updated!`})
 
     await createAttributeAndVerifyResultMsg(page, attributeName, attributeValue)
-    await existedOrderValue.click({force:true})
+    await page.click(selectors.attributesPage.attributesHeader.itemsQuantityIndicator)
+    await page.locator(selectors.attributesPage.openNewSectionBtn).click();
+    await existedOrderValue.click()
     await editRuleBtn.click()
     await ruleDropdown.click()
     await restrictiveAccessDropdownOption.click()
