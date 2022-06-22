@@ -29,15 +29,6 @@ const AttributeListItem: FC<Props> = (props) => {
     useLazyFetch<EntityAttribute[]>(entitlementsClient);
   const [updateRules] = useLazyFetch(attributesClient);
 
-  AttributesFiltersStore.subscribe(
-    (store) => store.collapseValue,
-    (watched, allState, prevWatched) => {
-      if (Number(watched)) {
-        setActiveTab('');
-      }
-    }
-  )
-
   useEffect(() => {
     const unsubscribeAttributesFiltersStore = AttributesFiltersStore.subscribe(
       (store) => store.collapseValue,
