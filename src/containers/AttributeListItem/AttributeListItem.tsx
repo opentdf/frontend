@@ -134,7 +134,6 @@ const AttributeListItem: FC<Props> = (props) => {
           <>
             <Table
               className="table"
-              id="entitlements-table"
               columns={TABLE_COLUMNS}
               dataSource={entities}
               loading={loading}
