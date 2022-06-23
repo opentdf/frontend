@@ -6,6 +6,7 @@ import { Attribute } from "../../types/attributes";
 import { attributesClient } from "../../service";
 import { Method } from "../../types/enums";
 import { CreateAttributeForm, CreateAuthorityForm } from "./components";
+import styles from './CreateAttribute.module.css';
 
 const { Panel } = Collapse;
 
@@ -73,11 +74,11 @@ const CreateAttribute: FC<Props> = (props) => {
             key="1"
           >
             <Card>
-              <Card.Grid>
+              <Card.Grid className={styles.createAttribute}>
                 <CreateAuthorityForm onFinish={handleCreateAuthority} />
               </Card.Grid>
 
-              <Card.Grid>
+              <Card.Grid className={styles.createAttribute}>
                 <CreateAttributeForm
                   authority={authority}
                   onFinish={handleCreateAttribute}

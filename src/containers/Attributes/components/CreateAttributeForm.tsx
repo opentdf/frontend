@@ -22,6 +22,11 @@ const CreateAttributeForm: FC<Props> = (props) => {
     [],
   );
 
+  const formLayout = {
+    labelCol: { xs: { span: 24 }, sm: { span: 5 }, md: { span: 5 }, lg: { span: 4 } },
+    wrapperCol: { xs: { span: 24 }, sm: { span: 19 }, md: { span: 19 }, lg: { span: 20 } }
+  }
+
   return (
     <>
       <Typography.Title level={3}>
@@ -31,12 +36,12 @@ const CreateAttributeForm: FC<Props> = (props) => {
 
       <Form
         onFinish={onFinish}
+        {...formLayout}
         initialValues={{ order: [undefined], rule: "hierarchy" }}
       >
         <Item
           name="name"
           label="Name"
-          labelCol={{ span: 3 }}
           rules={[{ required: true, message: 'Please input name value!' }]}
         >
           <Input />
@@ -45,7 +50,6 @@ const CreateAttributeForm: FC<Props> = (props) => {
         <Item
           name="rule"
           label="Rule"
-          labelCol={{ span: 3 }}
           rules={[{ required: true, message: 'Please input rule value!' }]}
           data-test-id="rule-form-item"
         >
@@ -55,7 +59,6 @@ const CreateAttributeForm: FC<Props> = (props) => {
         <Item
           name="state"
           label="State"
-          labelCol={{ span: 3 }}
           rules={[{ required: true }]}
           initialValue="published"
           hidden
@@ -71,7 +74,11 @@ const CreateAttributeForm: FC<Props> = (props) => {
               const isLast = lastIndex === index;
 
               return (
-                <Item required label="Order" key={field.key} >
+                <Item
+                  required
+                  label="Order"
+                  key={field.key}
+                >
                   <Item {...field} rules={[{ required: true, message: 'Please input order value!' }]} noStyle>
                     <Input style={{ width: "calc(100% - 32px)" }} />
                   </Item>
