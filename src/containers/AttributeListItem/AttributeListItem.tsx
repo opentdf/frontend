@@ -1,4 +1,4 @@
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useMemo, useState, useEffect } from "react";
 import { List, Table, Divider } from "antd";
 import { toast } from "react-toastify";
 import { Attribute } from "../../types/attributes";
@@ -8,6 +8,7 @@ import { attributesClient, entitlementsClient } from "../../service";
 import { useLazyFetch } from "../../hooks";
 import { TABLE_COLUMNS } from "./constants";
 import { AttributeRule, OrderCard, OrderList } from "../../components";
+import { AttributesFiltersStore } from "../../store";
 
 type Props = {
   activeAuthority: string;
@@ -27,6 +28,20 @@ const AttributeListItem: FC<Props> = (props) => {
   const [getAttrEntities, { loading, data: entities }] =
     useLazyFetch<EntityAttribute[]>(entitlementsClient);
   const [updateRules] = useLazyFetch(attributesClient);
+
+  useEffect(() => {
+    const unsubscribeAttributesFiltersStore = AttributesFiltersStore.subscribe(
+      (store) => store.collapseValue,
+      (watched, allState, prevWatched) => {
+        if (Number(watched)) {
+          setActiveTab('');
+        }
+      }
+    );
+
+    return () => unsubscribeAttributesFiltersStore();
+  }, [])
+
 
   const toggleEdit = useCallback(() => {
     setIsEdit(!isEdit);
@@ -68,7 +83,15 @@ const AttributeListItem: FC<Props> = (props) => {
   );
 
   const handleTabChange = useCallback(
-    (tab: string) => handleOrderClick(attr, tab),
+    (tab: string) => {
+      handleOrderClick(attr, tab);
+
+      AttributesFiltersStore.update(store => {
+        if (store) {
+          store.collapseValue = '0';
+        }
+      })
+    },
     [attr, handleOrderClick],
   );
 
