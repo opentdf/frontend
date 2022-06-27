@@ -30,7 +30,7 @@ export const InputTDF = () => {
         if (!files) return;
         const cipherStream = await fileClient.encrypt(await files[0].arrayBuffer());
         const decipherStream = await fileClient.decrypt(cipherStream);
-        decipherStream.toFile('img.jpeg')
+        decipherStream.toFile('file.txt')
     }
 
     return (
