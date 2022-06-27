@@ -23,7 +23,13 @@ const Authorities = () => {
         await getAuthorities();
         toast.success(`Authority ${authority} deleted`);
       } catch (error: any) {
-        toast.error(error.message)
+        let errorText = error.message;
+
+        if (error.message.includes('code 500')) {
+          errorText = 'Something went wrong. Make sure there are no attributes assigned to this Authority'
+        }
+
+        toast.error(errorText)
       }
     },
     [getAuthorities],
@@ -55,6 +61,7 @@ const Authorities = () => {
         render: (row: TableData) => (
           <Button
             type='link'
+            style={{ paddingLeft: '0' }}
             onClick={() => onDelete(row)}
           >
             Delete

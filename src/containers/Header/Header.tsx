@@ -10,8 +10,6 @@ import "./Header.css";
 const Header = () => {
   const { pathname } = useLocation();
 
-  console.log('path: ', pathname);
-
   const routes = useMemo(
     () => [
       {
@@ -59,21 +57,21 @@ const Header = () => {
   const pageDescription = useMemo(() => {
     const descriptionMap = new Map([
       [
-        "entitlements",
+        "/entitlements",
         <p>
           <strong>Entity</strong> — A person, organization, device, or process
           who will access data based on their attributes.
         </p>,
       ],
       [
-        "attributes",
+        "/attributes",
         <p>
           <strong>Attribute</strong> — Information attached to data and entities
           that controls which entities can access which data.
         </p>,
       ],
       [
-        "authorities",
+        "/authorities",
         <p>
           The <strong>Attribute Authority</strong> — is a database that lists all known attributes
           along with people and devices.
@@ -82,7 +80,6 @@ const Header = () => {
       ],
     ]);
 
-    console.log('page: ', descriptionMap.get(pathname));
     return descriptionMap.get(pathname);
   }, [pathname]);
 
@@ -90,9 +87,9 @@ const Header = () => {
 
   const pageTitle = useMemo(() => {
     const titleMap = new Map([
-      ["entitlements", "Entitlements"],
-      ["attributes", "Attributes"],
-      ["authorities", "Authorities"],
+      ["/entitlements", "Entitlements"],
+      ["/attributes", "Attributes"],
+      ["/authorities", "Authorities"],
     ]);
 
     return titleMap.get(pathname) || "Abacus";
