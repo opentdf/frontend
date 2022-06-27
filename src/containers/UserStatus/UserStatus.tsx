@@ -1,16 +1,29 @@
 import { useKeycloak } from "@react-keycloak/web";
-import {Avatar, Button} from "antd";
-import {SelectRealm} from "./SelectRealm";
+import { Avatar, Button, Image } from "antd";
+import { SelectRealm } from "./SelectRealm";
+import logo from '../../assets/openTDF.png';
 
 const UserStatus = () => {
   const { keycloak } = useKeycloak();
 
   return (
     <>
-      <SelectRealm/>
+      <SelectRealm />
       {keycloak.authenticated && (
         <>
-          <Avatar size={32}>{keycloak.subject}</Avatar>
+          <Avatar
+            style={{ marginLeft: '0.5rem' }}
+            src={
+              <Image
+                src={logo}
+                preview={false}
+                style={{ width: 32 }}
+              />
+            }
+            size={32}
+          >
+            {keycloak.subject}
+          </Avatar>
           <Button
             onClick={() => keycloak.logout()}
             data-test-id="logout-button"
