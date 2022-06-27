@@ -10,7 +10,7 @@ import { useKeycloak } from "@react-keycloak/web";
 import "./Attributes.css";
 
 const Attributes = () => {
-  useAuthorities();
+  const { authorities, loading: isLoadingAuthorities, getAuthorities } = useAuthorities();
   const authority = AttributesFiltersStore.useState(s => s.authority);
   const attrsQueryParams = AttributesFiltersStore.useState(s => s.query);
   const collapseValue = AttributesFiltersStore.useState(s => s.collapseValue);
@@ -43,7 +43,7 @@ const Attributes = () => {
   return (
     <>
       <AttributesHeader total={xTotalCount} />
-      { loading
+      { (loading || isLoadingAuthorities)
         ? (
           <div style={{
             display: 'flex',

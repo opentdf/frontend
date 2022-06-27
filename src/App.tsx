@@ -14,6 +14,7 @@ import { TargetMode } from "./containers/TargetMode"
 
 const Entitlements = lazy(() => import("./containers/Entitlements"));
 const Attributes = lazy(() => import("./containers/Attributes"));
+const Authorities = lazy(() => import("./containers/Authorities"));
 const Client = lazy(() => import("./containers/Client"));
 const Home = lazy(() => import("./containers/Home"));
 const NotFound = lazy(() => import("./containers/NotFound"));
@@ -58,6 +59,9 @@ function App() {
               </Route>
               <Route path={routes.ATTRIBUTES} exact>
                 <Attributes />
+              </Route>
+              <Route path={routes.AUTHORITIES} exact>
+                <Authorities />
               </Route>
               <Route path={routes.HOME} exact>
                 <TargetMode />

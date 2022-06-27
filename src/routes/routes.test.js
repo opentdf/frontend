@@ -11,9 +11,11 @@ describe('Routes file', () => {
     expect(routes.HOME).toEqual('/');
     expect(routes.USERS).toEqual('/entitlements/users');
     expect(routes.USER).toEqual('/entitlements/users/:id');
+    expect(routes.AUTHORITIES).toEqual('/authorities');
     expect(routes.routes).toMatchObject({
       ATTRIBUTE: '/attributes/:id',
       ATTRIBUTES: '/attributes',
+      AUTHORITIES: '/authorities',
       CATCH: '*',
       CLIENT: '/entitlements/clients/:id',
       CLIENTS: '/entitlements/clients',
