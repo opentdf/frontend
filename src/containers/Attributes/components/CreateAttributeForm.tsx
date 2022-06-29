@@ -75,11 +75,11 @@ const CreateAttributeForm: FC<Props> = (props) => {
 
               return (
                 <Item
-                  required
+                  required={!Number(field.key)}
                   label="Order"
                   key={field.key}
                 >
-                  <Item {...field} rules={[{ required: true, message: 'Please input order value!' }]} noStyle>
+                  <Item {...field} rules={[{ required: !Number(field.key), message: 'Please input order value!' }]} noStyle>
                     <Input style={{ width: "calc(100% - 32px)" }} />
                   </Item>
 
