@@ -1,6 +1,12 @@
 const Home = () => {
   return (
     <>
+      <h2>Authorities</h2>
+      <p>
+        The Attribute Authority — is a database that lists all known attributes along with people and devices.
+        It has no user interface and simply feeds ABACUS with the necessary data it needs to manage access.
+      </p>
+
       <h2>Attributes</h2>
       <p>
         TDF protocol supports ABAC (Attribute Based Access Control). This allows

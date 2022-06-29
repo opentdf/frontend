@@ -3,8 +3,7 @@ import { PageHeader } from "antd";
 import { NavLink, useLocation } from "react-router-dom";
 import { Route } from "antd/lib/breadcrumb/Breadcrumb";
 import UserStatus from "../UserStatus";
-
-import { ATTRIBUTES, HOME, ENTITLEMENTS } from "../../routes";
+import { ATTRIBUTES, HOME, ENTITLEMENTS, AUTHORITIES } from "../../routes";
 
 import "./Header.css";
 
@@ -16,6 +15,10 @@ const Header = () => {
       {
         breadcrumbName: "Abacus",
         path: HOME,
+      },
+      {
+        breadcrumbName: "Authorities",
+        path: AUTHORITIES,
       },
       {
         breadcrumbName: "Attributes",
@@ -54,17 +57,25 @@ const Header = () => {
   const pageDescription = useMemo(() => {
     const descriptionMap = new Map([
       [
-        "entitlements",
+        "/entitlements",
         <p>
           <strong>Entity</strong> — A person, organization, device, or process
           who will access data based on their attributes.
         </p>,
       ],
       [
-        "attributes",
+        "/attributes",
         <p>
           <strong>Attribute</strong> — Information attached to data and entities
           that controls which entities can access which data.
+        </p>,
+      ],
+      [
+        "/authorities",
+        <p>
+          The <strong>Attribute Authority</strong> — is a database that lists all known attributes
+          along with people and devices.
+          It has no user interface and simply feeds ABACUS with the necessary data it needs to manage access.
         </p>,
       ],
     ]);
@@ -72,10 +83,13 @@ const Header = () => {
     return descriptionMap.get(pathname);
   }, [pathname]);
 
+
+
   const pageTitle = useMemo(() => {
     const titleMap = new Map([
-      ["entitlements", "Entitlements"],
-      ["attributes", "Attributes"],
+      ["/entitlements", "Entitlements"],
+      ["/attributes", "Attributes"],
+      ["/authorities", "Authorities"],
     ]);
 
     return titleMap.get(pathname) || "Abacus";

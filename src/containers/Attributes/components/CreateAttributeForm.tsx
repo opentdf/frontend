@@ -73,13 +73,19 @@ const CreateAttributeForm: FC<Props> = (props) => {
             return fields.map((field, index) => {
               const isLast = lastIndex === index;
 
+              // order is a string[].
+              // We need at least one value in array.
+              // field.key is kinda ['0', '1', ...].
+              // So !Number('0') returns true, everything else is false
+              const isRequired = !Number(field.key);
+
               return (
                 <Item
-                  required
+                  required={isRequired}
                   label="Order"
                   key={field.key}
                 >
-                  <Item {...field} rules={[{ required: true, message: 'Please input order value!' }]} noStyle>
+                  <Item {...field} rules={[{ required: isRequired, message: 'Please input order value!' }]} noStyle>
                     <Input style={{ width: "calc(100% - 32px)" }} />
                   </Item>
 

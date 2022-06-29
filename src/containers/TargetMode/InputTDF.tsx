@@ -1,71 +1,41 @@
 /* istanbul ignore file */
 // this file only for test mode
-import { Button, Input } from "antd";
+import { Input } from "antd";
 import { useEffect } from "react";
 import { useKeycloak } from "@react-keycloak/web";
-import { toast } from "react-toastify";
-import { AUTHORITY, CLIENT_ID, KAS_ENDPOINT, REALM } from "../../config";
 // @ts-ignore
-import { Client } from "@opentdf/client";
-
-// @ts-ignore
-const authority = AUTHORITY;
-const clientId= CLIENT_ID;
-// KAS endpoint
-const access = KAS_ENDPOINT;
-const realm = REALM;
+import { FileClient } from '@opentdf/client';
 
 export const InputTDF = () => {
-    const plainText = 'Hello, World!';
     const { keycloak, initialized } = useKeycloak();
-    // @ts-ignore
-    let client;
-
-    // messaging
-    async function handleClick() {
-        const encryptParams = new Client.EncryptParamsBuilder()
-            .withStringSource(plainText)
-            .withOffline()
-            .build();
-        // @ts-ignore
-        const ct = await client.encrypt(encryptParams);
-        const ciphertext = await ct.toString();
-        console.log(`ciphered text :${ciphertext}`);
-
-        const decryptParams = new Client.DecryptParamsBuilder()
-            .withStringSource(ciphertext)
-            .build();
-        // @ts-ignore
-        const plaintextStream = await client.decrypt(decryptParams);
-        const plaintext = await plaintextStream.toString();
-        toast.success(`Text deciphered: ${plainText}`);
-        console.log(`deciphered text :${plaintext}`);
-    }
+    let fileClient : FileClient;
 
     useEffect(() => {
         (async () => {
             if (initialized) {
-                const { refreshToken } = keycloak;
-                // @ts-ignore
-                if (!client && refreshToken) {
-                    const token = typeof refreshToken === 'boolean' ? keycloak.token : refreshToken;
-
-                    client = new Client.Client({
-                        clientId,
-                        organizationName: realm,
-                        oidcRefreshToken: token,
-                        kasEndpoint: access,
-                        virtruOIDCEndpoint: authority.replace('/auth/', ''),
-                    });
-                }
+                fileClient = new FileClient({
+                    clientId: keycloak.clientId,
+                    organizationName: keycloak.realm,
+                    exchange: 'refresh',
+                    oidcOrigin: keycloak.authServerUrl,
+                    oidcRefreshToken: keycloak.refreshToken,
+                    kasEndpoint: 'http://localhost:65432/api/kas',
+                });
             }
         })()
     }, [initialized, keycloak]);
 
+
+    async function protect(files: FileList | null) {
+        if (!files) return;
+        const cipherStream = await fileClient.encrypt(await files[0].arrayBuffer());
+        const decipherStream = await fileClient.decrypt(cipherStream);
+        decipherStream.toFile('file.txt')
+    }
+
     return (
-        <Input.Group compact>
-            <Input style={{ width: '50%' }} defaultValue={plainText}/>
-            <Button type="primary" id={'encrypt-button'} onClick={() => handleClick()}>Secure Submit</Button>
-        </Input.Group>
+      <Input.Group compact>
+          <input onChange={(e) => protect(e.target.files)} multiple={false} type="file" /> File encrypt round trip
+      </Input.Group>
     );
 };
