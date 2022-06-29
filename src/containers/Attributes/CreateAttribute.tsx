@@ -48,10 +48,18 @@ const CreateAttribute: FC<Props> = (props) => {
   );
 
   const handleCreateAttribute = (values: CreateAttributeValues) => {
+    const formData = {
+      ...values,
+      // Filter falsy values: e.g. null, undefined, 0, ""
+      // Each value is a string, so "0" is valid
+      order: values.order.filter(Boolean),
+      authority
+    };
+
     createAttributes<Attribute>({
       method: Method.POST,
-      path: `/definitions/attributes`,
-      data: { ...values, authority },
+      path: '/definitions/attributes',
+      data: formData,
     })
       .then(({ data }) => {
         onAddAttr(data);

@@ -11,7 +11,8 @@ test.describe('<Entitlements/>', () => {
     await page.locator(selectors.tokenMessage).click()
     await createAuthority(page, authority);
     // click success message to close it and overcome potential overlapping problem
-    await page.locator(selectors.alertMessage).click()
+    const authorityCreatedMsg = page.locator(selectors.alertMessage, {hasText:'Authority was created'})
+    await authorityCreatedMsg.click()
     await page.goto('/entitlements');
     // click the token message to close it and overcome potential overlapping problem
     await page.locator(selectors.tokenMessage).click()
@@ -57,6 +58,5 @@ test.describe('<Entitlements/>', () => {
     await expect(page.locator(selectors.entitlementsPage.authorityNamespaceField)).toHaveText("")
     await expect(page.locator(selectors.entitlementsPage.attributeNameField)).toHaveText("")
     await expect(page.locator(selectors.entitlementsPage.attributeValueField)).toHaveText("")
-    // const tableVal = `${authority}/attr/${attributeName}/value/${attributeValue}`;
   });
 });
