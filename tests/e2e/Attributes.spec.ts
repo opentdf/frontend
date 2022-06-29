@@ -21,7 +21,8 @@ test.describe('<Attributes/>', () => {
     await page.locator(selectors.tokenMessage).click()
     await createAuthority(page, authority);
     // click success message to close it and overcome potential overlapping problem
-    await page.locator(selectors.alertMessage).click()
+    const authorityCreatedMsg = page.locator(selectors.alertMessage, {hasText:'Authority was created'})
+    await authorityCreatedMsg.click()
   });
 
   test('renders initially', async ({ page }) => {
@@ -239,7 +240,7 @@ test.describe('<Attributes/>', () => {
 
     await createAttributeAndVerifyResultMsg(page, attributeName, attributeValue)
     await page.click(selectors.attributesPage.attributesHeader.itemsQuantityIndicator)
-    await page.locator(selectors.attributesPage.openNewSectionBtn).click();
+    await page.locator(selectors.attributesPage.newSectionBtn).click();
     await existedOrderValue.click()
     await editRuleBtn.click()
     await ruleDropdown.click()
@@ -256,5 +257,39 @@ test.describe('<Attributes/>', () => {
     const authorityDropdown = page.locator(".ant-select-selector >> nth=1")
     await authorityDropdown.click()
     await expect(page.locator('.ant-empty-description')).toHaveText('No Data')
+  });
+
+  test('should show empty state of the Entitlements table in the Attribute Details section when there are no entitlemetns', async ({page, attributeName,attributeValue}) => {
+    await createAttributeAndVerifyResultMsg(page, attributeName, attributeValue)
+    await page.click(selectors.attributesPage.attributesHeader.itemsQuantityIndicator)
+    await page.locator(selectors.attributesPage.newSectionBtn).click();
+    const existedOrderValue = page.locator('.ant-tabs-tab-btn >> nth=0')
+    await existedOrderValue.click()
+    await expect(page.locator('#entitlements-table .ant-empty-description')).toHaveText('No Data')
+  })
+
+  test('should show existed entitlements in the Attribute Details section', async ({ page,authority,attributeName, attributeValue }) => {
+    await createAttributeAndVerifyResultMsg(page, attributeName, attributeValue)
+
+    await page.goto("/entitlements")
+    firstTableRowClick('clients-table', page);
+    await page.waitForNavigation();
+    await page.click(selectors.entitlementsPage.authorityNamespaceField)
+    await page.keyboard.press("ArrowUp")
+    await page.keyboard.press('Enter')
+    await page.fill(selectors.entitlementsPage.attributeNameField, attributeName);
+    await page.fill(selectors.entitlementsPage.attributeValueField, attributeValue);
+    await page.click(selectors.entitlementsPage.submitAttributeButton);
+
+    await page.goto("/attributes")
+    await page.click(selectors.attributesPage.attributesHeader.authorityDropdownButton, {force:true})
+    await page.keyboard.press("ArrowUp")
+    await page.keyboard.press('Enter')
+    const existedOrderValue = page.locator('.ant-tabs-tab-btn >> nth=0')
+    await existedOrderValue.click()
+    const tableEntitlements = await page.$$("#entitlements-table .ant-table-tbody")
+    expect(tableEntitlements.length).toBe(1)
+    const tableValue = `${authority}/attr/${attributeName}/value/${attributeValue}`
+    await expect(page.locator('.ant-table-cell', {hasText: tableValue})).toBeVisible()
   });
 });

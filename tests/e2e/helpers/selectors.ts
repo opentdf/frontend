@@ -23,7 +23,7 @@ export const selectors = {
                 clearBtn: '#clear-filter-button'
             },
         },
-        openNewSectionBtn: '.ant-collapse-header',
+        newSectionBtn: '.ant-collapse-header',
         newSection: {
             authorityField: '#authority',
             submitAuthorityBtn: '#authority-submit',
