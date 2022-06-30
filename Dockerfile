@@ -12,6 +12,7 @@ FROM depender as builder
 WORKDIR /build/
 COPY public/ public/
 COPY src/ src/
+COPY tests/ tests/
 COPY tsconfig.json/ .
 COPY craco.config.js/ .
 RUN npm run build
