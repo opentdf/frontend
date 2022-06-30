@@ -95,7 +95,7 @@ const Header = () => {
     return titleMap.get(pathname) || "Abacus";
   }, [pathname]);
 
-  const extra = useMemo(() => [<UserStatus />], []);
+  const extra = useMemo(() => (<UserStatus />), []);
 
   const breadcrumb = useMemo(
     () => ({
