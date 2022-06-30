@@ -1,4 +1,4 @@
-import { FC, memo, useCallback } from "react";
+import {FC, memo, useCallback, useEffect} from "react";
 import { Affix, Card, Collapse, Typography } from "antd";
 import { toast } from "react-toastify";
 import { useLazyFetch } from "../../hooks/useFetch";
@@ -7,6 +7,7 @@ import { attributesClient } from "../../service";
 import { Method } from "../../types/enums";
 import { CreateAttributeForm, CreateAuthorityForm } from "./components";
 import styles from './CreateAttribute.module.css';
+import {AttributesFiltersStore} from "../../store";
 
 const { Panel } = Collapse;
 
@@ -69,6 +70,24 @@ const CreateAttribute: FC<Props> = (props) => {
         toast.error(`Attribute was no created for ${authority}`);
       });
   };
+
+  const onCollapseClose = useCallback((event): void => {
+    if (event.keyCode === 27 && collapseValue !== '0') {
+      AttributesFiltersStore.update(store => {
+        if (store) {
+          store.collapseValue = '0';
+        }
+      })
+    }
+  }, [collapseValue])
+
+  useEffect(() => {
+    window.addEventListener('keydown', onCollapseClose);
+
+    return () => {
+      window.removeEventListener('keydown', onCollapseClose);
+    }
+  }, [onCollapseClose]);
 
   return (
     <Affix offsetBottom={1}>
