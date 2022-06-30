@@ -1,18 +1,25 @@
-import { useIsAuthenticated, useAccount } from "@azure/msal-react";
-import { useMsal } from "@azure/msal-react";
+import { IPublicClientApplication } from "@azure/msal-browser";
+import {useIsAuthenticated} from "@azure/msal-react";
+import {useMsal} from "@azure/msal-react";
 import {Avatar, Button} from "antd";
 
 const UserStatus = () => {
-  const { instance } = useMsal();
+  const { instance, accounts } = useMsal();
   const isAuthenticated = useIsAuthenticated();
-  const account = useAccount();
+
+  function handleLogout(instance: IPublicClientApplication) {
+    instance.logoutRedirect().catch(e => {
+      console.error(e);
+    });
+  }
+
   return (
     <>
       {isAuthenticated && (
           <>
-            <Avatar size={32}>{account?.username}</Avatar>
+            <Avatar>{accounts[0].name?.split(" ").map((n)=>n[0]).join("")}</Avatar>
             <Button
-                onClick={() => {}}
+                onClick={() => handleLogout(instance)}
                 data-test-id="logout-button"
             >
               Log out
@@ -23,7 +30,6 @@ const UserStatus = () => {
       {!isAuthenticated && (
           <Button
               type="primary"
-              onClick={() => {instance.logoutRedirect().catch(e => console.error)}}
               data-test-id="login-button"
           >
             Log in

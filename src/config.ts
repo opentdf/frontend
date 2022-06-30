@@ -18,6 +18,7 @@ export const AUTHORITY = serverData.authority;
 export const KAS_ENDPOINT = serverData.access;
 export const ENTITLEMENTS_PATH = serverData.entitlements;
 export const ATTRIBUTES_PATH = serverData.attributes;
+export const CLAIMS_PATH = serverData.claims;
 
 export const keycloakConfig = {
     realm: REALM,

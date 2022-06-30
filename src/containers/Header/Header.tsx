@@ -81,8 +81,6 @@ const Header = () => {
     return titleMap.get(pathname) || "Abacus";
   }, [pathname]);
 
-  const extra = useMemo(() => [<UserStatus />], []);
-
   const breadcrumb = useMemo(
     () => ({
       routes,
@@ -94,7 +92,7 @@ const Header = () => {
   return (
     <PageHeader
       title={pageTitle}
-      extra={extra}
+      extra={<UserStatus />}
       breadcrumb={breadcrumb}
     >
       {pageDescription}

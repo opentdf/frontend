@@ -5,6 +5,7 @@ interface Window {
     access: string,
     attributes: string,
     authority: string,
+    claims: string,
     clientId: string,
     entitlements: string,
     realms: string,

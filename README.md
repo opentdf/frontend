@@ -46,6 +46,7 @@ reference https://github.com/drwpow/openapi-typescript
 ```shell
 npx openapi-typescript ../backend/containers/attributes/openapi.json --output src/attributes.ts
 npx openapi-typescript ../backend/containers/entitlements/openapi.json --output src/entitlement.ts
+npx openapi-typescript ../backend/containers/claims/openapi.json --output src/claims.ts
 ```
 
 Keycloak  
