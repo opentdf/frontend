@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import Authorities from "./Authorities";
 import { BrowserRouter as Router } from "react-router-dom";
-import { setWindowMock, mockKeycloakStub } from "../../../tests/unit/helpers.mock";
+import { setWindowMock, mockKeycloakStub } from "../../../tests/unit/helpers";
 
 const { ReactKeycloakProvider } = require('@react-keycloak/web')
 
