@@ -5,7 +5,6 @@ import { ATTRIBUTE_RULE_TYPES } from "../../constants/attributeRules";
 import { LABELS_MAP } from "./constants";
 
 import "./AttributeRule.css";
-import AttributeListItem from "../../containers/AttributeListItem/AttributeListItem";
 
 type Props = {
   onRuleChange: (rule: string) => void;
