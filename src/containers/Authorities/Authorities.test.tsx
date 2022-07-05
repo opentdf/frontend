@@ -1,22 +1,23 @@
 import { render, screen } from "@testing-library/react";
-import Header from "./Header";
+import Authorities from "./Authorities";
 import { BrowserRouter as Router } from "react-router-dom";
 import { setWindowMock, mockKeycloakStub } from "../../../tests/unit";
+
 const { ReactKeycloakProvider } = require('@react-keycloak/web')
 
-describe('Header component', () => {
+describe('Authorities component', () => {
   it("is rendered", () => {
     setWindowMock();
 
     render(
       <ReactKeycloakProvider authClient={mockKeycloakStub()}>
         <Router>
-          <Header />
+          <Authorities />
         </Router>
       </ReactKeycloakProvider>
     );
 
-    const element = screen.getAllByText('Abacus')[0] as HTMLElement;
+    const element = screen.getAllByText('Authority')[0] as HTMLElement;
     expect(element).toBeInTheDocument();
   });
 });

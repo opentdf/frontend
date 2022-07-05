@@ -46,4 +46,6 @@ const UserStatus = () => {
   );
 };
 
+UserStatus.displayName = 'UserStatus';
+
 export default UserStatus;

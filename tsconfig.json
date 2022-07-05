@@ -21,6 +21,7 @@
     "jsx": "react-jsx"
   },
   "include": [
-    "src"
-, "tests/unit/UserStatus.test.tsx"  ]
+    "src",
+    "./tests/unit/*"
+  ]
 }

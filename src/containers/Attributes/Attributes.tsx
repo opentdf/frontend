@@ -11,6 +11,7 @@ import "./Attributes.css";
 
 const Attributes = () => {
   const {loading: isLoadingAuthorities} = useAuthorities();
+  const { loading: isLoadingAuthorities } = useAuthorities();
   const authority = AttributesFiltersStore.useState(s => s.authority);
   const attrsQueryParams = AttributesFiltersStore.useState(s => s.query);
   const collapseValue = AttributesFiltersStore.useState(s => s.collapseValue);
