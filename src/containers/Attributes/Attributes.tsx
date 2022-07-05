@@ -10,7 +10,6 @@ import { useKeycloak } from "@react-keycloak/web";
 import "./Attributes.css";
 
 const Attributes = () => {
-  const {loading: isLoadingAuthorities} = useAuthorities();
   const { loading: isLoadingAuthorities } = useAuthorities();
   const authority = AttributesFiltersStore.useState(s => s.authority);
   const attrsQueryParams = AttributesFiltersStore.useState(s => s.query);
