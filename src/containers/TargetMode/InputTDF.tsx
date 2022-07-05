@@ -29,7 +29,9 @@ export const InputTDF = () => {
     async function protect(files: FileList | null) {
         if (!files?.length || !fileClient) return;
         const arrayBuff = await files[0].arrayBuffer();
+        // @ts-ignore
         const cipherStream = await fileClient.encrypt(arrayBuff);
+        // @ts-ignore
         const decipherStream = await fileClient.decrypt(cipherStream);
         decipherStream.toFile('file-decrypted.txt')
     }
