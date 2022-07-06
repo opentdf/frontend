@@ -2,6 +2,7 @@ import { Button, Modal, Spin, Table } from "antd";
 import { useAuthorities } from "../../hooks";
 import { useCallback, useMemo } from "react";
 import { attributesClient } from "../../service";
+import { AttributesFiltersStore } from "../../store";
 import { toast } from "react-toastify";
 import styles from './Authorities.module.css';
 
@@ -22,6 +23,9 @@ const Authorities = () => {
         })
         await getAuthorities();
         toast.success(`Authority ${authority} deleted`);
+        AttributesFiltersStore.update(s => {
+          s.authority = authorities[0] || ''
+        });
       } catch (error: any) {
         let errorText = error.message;
 
