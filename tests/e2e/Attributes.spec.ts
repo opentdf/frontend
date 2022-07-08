@@ -297,7 +297,7 @@ test.describe('<Attributes/>', () => {
     await expect(page.locator('#entitlements-table .ant-empty-description')).toHaveText('No Data')
   })
 
-  test.only('should show existed entitlements in the Attribute Details section', async ({ page,authority,attributeName, attributeValue }) => {
+  test('should show existed entitlements in the Attribute Details section', async ({ page,authority,attributeName, attributeValue }) => {
     await createAttributeAndVerifyResultMsg(page, attributeName, [attributeValue])
 
     await page.goto("/entitlements")
