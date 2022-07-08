@@ -23,6 +23,13 @@ export const selectors = {
                 clearBtn: '#clear-filter-button'
             },
         },
+        attributeDetailsSection: {
+            editRuleButton: '#edit',
+            closeDetailsSectionButton: "#close-details-button",
+            ruleDropdown: '.attribute-rule__select',
+            saveRuleButton: '#save-rule',
+            cancelRuleSavingButton: '#cancel',
+        },
         newSectionBtn: '.ant-collapse-header',
         newSection: {
             authorityField: '#authority',
@@ -34,7 +41,9 @@ export const selectors = {
               permissive:'',
               restrictive: '',
             },
-            orderField: '#order_0',
+            orderField1: '#order_0',
+            plusOrderButton: '#plus-order-button',
+            minusOrderButton: '#minus-order-button',
             submitAttributeBtn: '#create-attribute-button',
         },
         attributeItem: '.ant-list-item',

@@ -53,7 +53,7 @@ const OrderCard: FC<Props> = (props) => {
     const key = isEdit ? "edit" : "view";
 
     return config[key].map(({ onClick, key, text }) => (
-      <Button onClick={onClick} key={key}>
+      <Button onClick={onClick} key={key} id={key}>
         {text}
       </Button>
     ));
@@ -74,7 +74,7 @@ const OrderCard: FC<Props> = (props) => {
   );
 
   const extra = useMemo(() => {
-    return isActive && <Button onClick={onClose}>Close</Button>;
+    return isActive && <Button onClick={onClose} id="close-details-button">Close</Button>;
   }, [isActive, onClose]);
 
   return (
