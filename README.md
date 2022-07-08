@@ -2,19 +2,18 @@
 
 ## Development
 
-### Setup
+### Backend
 
-Create a `.env` with your values  
-```dotenv
-REACT_APP_SERVER_DATA={'attributes':'','entitlements':'','access':'','authority':'','clientId':'','realm':''}
-```
+Run the Quickstart to bring up service on http://localhost:65432
 
-The `REACT_APP_SERVER_DATA` environment variable becomes `window.__SERVER_DATA__`.
+See [Quickstart](https://github.com/opentdf/opentdf/tree/main/quickstart)
 
 ### Server (development)
 
 Starts server on http://localhost:3000  
-`npm run start`
+```shell
+npm run start
+````
 
 ### Server (production-like)
 
@@ -78,3 +77,8 @@ To run (while development server above is running)
 
 ### Lint
 `CI=true npm run build`
+
+
+## Design
+
+The `REACT_APP_SERVER_DATA` environment variable becomes `window.__SERVER_DATA__`.

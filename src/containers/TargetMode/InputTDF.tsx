@@ -1,41 +1,46 @@
 /* istanbul ignore file */
 // this file only for test mode
 import { Input } from "antd";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useKeycloak } from "@react-keycloak/web";
 // @ts-ignore
 import { FileClient } from '@opentdf/client';
 
 export const InputTDF = () => {
     const { keycloak, initialized } = useKeycloak();
-    let fileClient : FileClient;
+    const [fileClient, setFileClient] = useState();
 
     useEffect(() => {
         (async () => {
             if (initialized) {
-                fileClient = new FileClient({
+                setFileClient(new FileClient({
                     clientId: keycloak.clientId,
                     organizationName: keycloak.realm,
                     exchange: 'refresh',
                     oidcOrigin: keycloak.authServerUrl,
                     oidcRefreshToken: keycloak.refreshToken,
                     kasEndpoint: 'http://localhost:65432/api/kas',
-                });
+                }));
             }
         })()
-    }, [initialized, keycloak]);
+    }, [initialized, keycloak, setFileClient]);
 
 
     async function protect(files: FileList | null) {
-        if (!files) return;
-        const cipherStream = await fileClient.encrypt(await files[0].arrayBuffer());
+        if (!files?.length || !fileClient) return;
+        const arrayBuff = await files[0].arrayBuffer();
+        // @ts-ignore
+        const cipherStream = await fileClient.encrypt(arrayBuff);
+        // @ts-ignore
         const decipherStream = await fileClient.decrypt(cipherStream);
-        decipherStream.toFile('file.txt')
+        decipherStream.toFile('file-decrypted.txt')
     }
+
+    if (!fileClient) return null;
 
     return (
       <Input.Group compact>
-          <input onChange={(e) => protect(e.target.files)} multiple={false} type="file" /> File encrypt round trip
+          <input data-test-id="file-input" onChange={(e) => protect(e.target.files)} multiple={false} type="file" /> File encrypt round trip
       </Input.Group>
     );
 };

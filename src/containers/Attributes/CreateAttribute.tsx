@@ -45,7 +45,7 @@ const CreateAttribute: FC<Props> = (props) => {
         toast.error("Authority was not created");
       }
     },
-    [createAuthority, onAddNamespace, onCollapseChange],
+    [createAuthority, onAddNamespace],
   );
 
   const handleCreateAttribute = (values: CreateAttributeValues) => {
