@@ -1,5 +1,5 @@
 import { Button, Card, Typography } from "antd";
-import { FC, useMemo } from "react";
+import React, { FC, useMemo } from "react";
 
 const { Title, Text } = Typography;
 
@@ -70,7 +70,7 @@ const OrderCard: FC<Props> = (props) => {
         <Text type="secondary"> Rule</Text>
       </div>
     ),
-    [name, state],
+    [name, state, rule],
   );
 
   const extra = useMemo(() => {
