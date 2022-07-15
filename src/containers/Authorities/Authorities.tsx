@@ -9,6 +9,7 @@ import styles from './Authorities.module.css';
 type TableData = { authority: string; };
 
 const Authorities = () => {
+  const activeAuthority = AttributesFiltersStore.useState(s => s.authority);
   const { authorities, loading, getAuthorities } = useAuthorities();
 
   const data: TableData[] = authorities.map((authority) => {
@@ -20,12 +21,14 @@ const Authorities = () => {
       try {
         await attributesClient.delete('/authorities', {
           data: { authority },
-        })
+        });
         await getAuthorities();
         toast.success(`Authority ${authority} deleted`);
-        AttributesFiltersStore.update(s => {
-          s.authority = authorities[0] || ''
-        });
+        if (activeAuthority === authority) {
+          AttributesFiltersStore.update(s => {
+            s.authority = authorities[0] || ''
+          });
+        }
       } catch (error: any) {
         let errorText = error.message;
 
