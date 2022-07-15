@@ -5,14 +5,19 @@ import { selectors } from "./helpers/selectors";
 
 test.describe('<Attributes/>', () => {
 
-  const createAttributeAndVerifyResultMsg = async (page: Page, name: string, value: string) => {
-    // await page.locator(selectors.attributesPage.openNewSectionBtn).click();
+  const createAttributeAndVerifyResultMsg = async (page: Page, name: string, values: string[]) => {
     await page.fill(selectors.attributesPage.newSection.attributeNameField, name);
-    await page.fill(selectors.attributesPage.newSection.orderField, value);
+    for (let i = 0; i < values.length; i++) {
+      const currentOrderField = `#order_${i}`
+      await page.fill(currentOrderField, values[i]);
+      await page.click(selectors.attributesPage.newSection.plusOrderButton)
+    }
     await page.click(selectors.attributesPage.newSection.submitAttributeBtn);
     const attributeCreatedMsg2 = await page.locator(selectors.alertMessage, {hasText: `Attribute created for`})
     await expect(attributeCreatedMsg2).toBeVisible()
   }
+
+  const existedOrderValue = '.ant-tabs-tab-btn >> nth=0'
 
   test.beforeEach(async ({ page, authority }) => {
     await authorize(page);
@@ -36,7 +41,7 @@ test.describe('<Attributes/>', () => {
   });
 
   test('should add attribute, should filter attributes by Name, Order, Rule', async ({ page, attributeName, authority, attributeValue }) => {
-    await createAttributeAndVerifyResultMsg(page, attributeName, attributeValue)
+    await createAttributeAndVerifyResultMsg(page, attributeName, [attributeValue])
 
     const attributesHeader = selectors.attributesPage.attributesHeader;
     const filterModal = attributesHeader.filterModal;
@@ -79,7 +84,6 @@ test.describe('<Attributes/>', () => {
   });
 
   test('should sort attributes by Name, ID, rule, values_array', async ({ playwright, page, authority, attributeName, attributeValue }) => {
-
     const ascendingSortingOption = page.locator('.ant-cascader-menu-item-content', {hasText: 'ASC'})
     const descendingSortingOption = page.locator('.ant-cascader-menu-item-content', {hasText: 'DES'})
     const nameSortingSubOption = page.locator('.ant-cascader-menu-item-content', {hasText: 'name'})
@@ -204,13 +208,14 @@ test.describe('<Attributes/>', () => {
     await valuesSortingSubOption.click()
     await assertItemsOrderAfterSorting(secondAttributeName, thirdAttributeName, firstAttributeName)
 
+    // TODO: teardown fails because Delete request passes too quick, step duration is negative (-0.1s)
     // data teardown
-    await deleteAttributeViaAPI(firstAttributeName, 'anyOf', 'A')
-    await deleteAttributeViaAPI(secondAttributeName, 'allOf', 'C')
-    await deleteAttributeViaAPI(thirdAttributeName, 'hierarchy', 'B')
+    // await deleteAttributeViaAPI(firstAttributeName, 'anyOf', 'A')
+    // await deleteAttributeViaAPI(secondAttributeName, 'allOf', 'C')
+    // await deleteAttributeViaAPI(thirdAttributeName, 'hierarchy', 'B')
   });
 
-  test('should delete attribute', async ({ page, authority, attributeName, attributeValue }) => {
+  test('should delete attribute entitlement', async ({ page, authority, attributeName, attributeValue }) => {
     await page.goto("/entitlements");
     firstTableRowClick('clients-table', page);
     await page.waitForNavigation();
@@ -231,22 +236,46 @@ test.describe('<Attributes/>', () => {
   });
 
   test('should edit attribute rule', async ({ page , attributeName, attributeValue}) => {
-    const existedOrderValue = page.locator('.ant-tabs-tab-btn >> nth=0')
-    const editRuleBtn = page.locator('.ant-btn',{hasText: "Edit Rule"})
-    const ruleDropdown = page.locator('.attribute-rule__select')
     const restrictiveAccessDropdownOption = page.locator('.ant-select-item-option', {hasText:'Restrictive Access'})
-    const saveRuleBtn = page.locator('.ant-btn',{hasText: "Save rule"})
+    const ruleUpdatedMsg = page.locator(selectors.alertMessage, {hasText: `Rule was updated!`})
+    const attributeDetailsSection = selectors.attributesPage.attributeDetailsSection
+
+    await createAttributeAndVerifyResultMsg(page, attributeName, [attributeValue])
+    await page.click(selectors.attributesPage.attributesHeader.itemsQuantityIndicator)
+    await page.click(selectors.attributesPage.newSectionBtn);
+    await page.click(existedOrderValue)
+    await page.click(attributeDetailsSection.editRuleButton)
+    await page.click(attributeDetailsSection.ruleDropdown)
+    await restrictiveAccessDropdownOption.click()
+    await page.click(attributeDetailsSection.saveRuleButton)
+    await expect(ruleUpdatedMsg).toBeVisible()
+  });
+
+  test('should create an attribute with multiple order values, able to edit order of values, able to cancel editing', async ({ page , attributeName, attributeValue}) => {
     const ruleUpdatedMsg = page.locator(selectors.alertMessage, {hasText: `Rule was updated!`})
 
-    await createAttributeAndVerifyResultMsg(page, attributeName, attributeValue)
+    await createAttributeAndVerifyResultMsg(page, attributeName, [`${attributeValue}1`, `${attributeValue}2`, `${attributeValue}3`, `${attributeValue}4`])
     await page.click(selectors.attributesPage.attributesHeader.itemsQuantityIndicator)
     await page.locator(selectors.attributesPage.newSectionBtn).click();
-    await existedOrderValue.click()
-    await editRuleBtn.click()
-    await ruleDropdown.click()
-    await restrictiveAccessDropdownOption.click()
-    await saveRuleBtn.click()
+    await page.click(existedOrderValue)
+    await expect(page.locator(existedOrderValue)).toHaveAttribute('aria-selected', 'true')
+    // be able to close Details section
+    await page.click(selectors.attributesPage.attributeDetailsSection.closeDetailsSectionButton)
+    await expect(page.locator(existedOrderValue)).toHaveAttribute('aria-selected', 'false')
+    // reopen Details section
+    await page.click(existedOrderValue)
+    await page.locator(selectors.attributesPage.attributeDetailsSection.editRuleButton).click()
+    // be able to cancel editing
+    await page.click(selectors.attributesPage.attributeDetailsSection.cancelRuleSavingButton)
+    // reopen Edit section
+    await page.locator(selectors.attributesPage.attributeDetailsSection.editRuleButton).click()
+    const firstOrderItemInEditableList = '.order-list__item >> nth=0'
+    const fourthOrderItemInEditableList = '.order-list__item >> nth=3'
+    await page.dragAndDrop(fourthOrderItemInEditableList, firstOrderItemInEditableList )
+    await page.click(selectors.attributesPage.attributeDetailsSection.saveRuleButton)
     await expect(ruleUpdatedMsg).toBeVisible()
+    const updatedFirstOrderValue = page.locator('.ant-tabs-tab-btn >> nth=0')
+    await expect(updatedFirstOrderValue).toHaveText(`${attributeValue}4`)
   });
 
   test('should be able to log out', async ({ page }) => {
@@ -259,8 +288,8 @@ test.describe('<Attributes/>', () => {
     await expect(page.locator('.ant-empty-description')).toHaveText('No Data')
   });
 
-  test('should show empty state of the Entitlements table in the Attribute Details section when there are no entitlemetns', async ({page, attributeName,attributeValue}) => {
-    await createAttributeAndVerifyResultMsg(page, attributeName, attributeValue)
+  test('should show empty state of the Entitlements table in the Attribute Details section when there are no entitlements', async ({page, attributeName,attributeValue}) => {
+    await createAttributeAndVerifyResultMsg(page, attributeName, [attributeValue])
     await page.click(selectors.attributesPage.attributesHeader.itemsQuantityIndicator)
     await page.locator(selectors.attributesPage.newSectionBtn).click();
     const existedOrderValue = page.locator('.ant-tabs-tab-btn >> nth=0')
@@ -269,7 +298,7 @@ test.describe('<Attributes/>', () => {
   })
 
   test('should show existed entitlements in the Attribute Details section', async ({ page,authority,attributeName, attributeValue }) => {
-    await createAttributeAndVerifyResultMsg(page, attributeName, attributeValue)
+    await createAttributeAndVerifyResultMsg(page, attributeName, [attributeValue])
 
     await page.goto("/entitlements")
     firstTableRowClick('clients-table', page);

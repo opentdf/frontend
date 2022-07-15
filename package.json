@@ -67,7 +67,7 @@
   },
   "devDependencies": {
     "@craco/craco": "^7.0.0-alpha.0",
-    "@playwright/test": "^1.18.0",
+    "@playwright/test": "^1.23.3",
     "@react-keycloak/web": "^3.4.0",
     "@testing-library/jest-dom": "~5.14.1",
     "@testing-library/react": "~11.2.7",

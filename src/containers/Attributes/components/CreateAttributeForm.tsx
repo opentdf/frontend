@@ -95,11 +95,13 @@ const CreateAttributeForm: FC<Props> = (props) => {
                         //! Had to use like this because https://github.com/ant-design/ant-design/issues/24698
                         onClick={() => add()}
                         icon={<PlusCircleOutlined />}
+                        id="plus-order-button"
                       />
                     ) : (
                       <Button
                         onClick={() => remove(field.name)}
                         icon={<MinusCircleOutlined />}
+                        id="minus-order-button"
                       />
                     )}
                   </Item>
