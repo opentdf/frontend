@@ -23,8 +23,8 @@ test.describe('<Attributes/>', () => {
     await authorize(page);
     await page.goto('/attributes');
     // click the token message to close it and overcome potential overlapping problem
-    const testSelector = await page.locator(selectors.tokenMessage);
-    await testSelector.click();
+    const notificationElement = await page.locator(selectors.tokenMessage);
+    await notificationElement.click();
     await createAuthority(page, authority);
     // click success message to close it and overcome potential overlapping problem
     const authorityCreatedMsg = page.locator(selectors.alertMessage, {hasText:'Authority was created'})
