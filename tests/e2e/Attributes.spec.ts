@@ -1,5 +1,5 @@
-import {expect, Page} from '@playwright/test';
-import { authorize, createAuthority, firstTableRowClick } from './helpers/operations';
+import { expect, Page } from '@playwright/test';
+import { createAuthority, firstTableRowClick, authorize } from './helpers/operations';
 import { test } from './helpers/fixtures';
 import { selectors } from "./helpers/selectors";
 
@@ -14,7 +14,7 @@ test.describe('<Attributes/>', () => {
     }
     await page.click(selectors.attributesPage.newSection.submitAttributeBtn);
     const attributeCreatedMsg2 = await page.locator(selectors.alertMessage, {hasText: `Attribute created for`})
-    await expect(attributeCreatedMsg2).toBeVisible()
+    await expect(attributeCreatedMsg2).toBeVisible();
   }
 
   const existedOrderValue = '.ant-tabs-tab-btn >> nth=0'
@@ -23,7 +23,8 @@ test.describe('<Attributes/>', () => {
     await authorize(page);
     await page.goto('/attributes');
     // click the token message to close it and overcome potential overlapping problem
-    await page.locator(selectors.tokenMessage).click()
+    const testSelector = await page.locator(selectors.tokenMessage);
+    await testSelector.click();
     await createAuthority(page, authority);
     // click success message to close it and overcome potential overlapping problem
     const authorityCreatedMsg = page.locator(selectors.alertMessage, {hasText:'Authority was created'})
@@ -150,14 +151,14 @@ test.describe('<Attributes/>', () => {
     await createAttributeViaAPI(thirdAttributeName, 'hierarchy', 'B')
 
     // switch between section to renew data
-    await page.goto('/entitlements');
-    await page.goto('/attributes');
+    await page.reload();
 
     // select proper authority
-    await page.click(selectors.attributesPage.attributesHeader.authorityDropdownButton, {force: true})
+    await page.click('[data-test="select-authorities-button"]', {force: true})
     await page.keyboard.press("ArrowUp")
     await page.keyboard.press("Enter")
 
+    await expect(page.locator('.ant-select-selection-item >> nth=1')).toHaveText(authority)
     await expect(page.locator(selectors.attributesPage.attributesHeader.itemsQuantityIndicator)).toHaveText('Total 3 items')
 
     // sort by Name ASC
@@ -217,16 +218,18 @@ test.describe('<Attributes/>', () => {
 
   test('should delete attribute entitlement', async ({ page, authority, attributeName, attributeValue }) => {
     await page.goto("/entitlements");
-    firstTableRowClick('clients-table', page);
-    await page.waitForNavigation();
+    await Promise.all([
+      page.waitForNavigation(),
+      firstTableRowClick('clients-table', page),
+    ]);
 
     await page.click(selectors.entitlementsPage.entityDetailsPage.tableCell)
     const originalTableRows = await page.$$(selectors.entitlementsPage.entityDetailsPage.tableRow)
     const originalTableSize = originalTableRows.length
 
     // Delete single item
-    await page.click(selectors.entitlementsPage.entityDetailsPage.deleteAttributeBtn);
-    await page.click(selectors.entitlementsPage.entityDetailsPage.deleteAttributeModalBtn);
+    await page.locator(selectors.entitlementsPage.entityDetailsPage.deleteAttributeBtn).click();
+    await page.locator(selectors.entitlementsPage.entityDetailsPage.deleteAttributeModalBtn).click();
 
     await page.click(selectors.entitlementsPage.entityDetailsPage.tableCell)
     const updatedTableRows = await page.$$(selectors.entitlementsPage.entityDetailsPage.tableRow)
@@ -279,8 +282,10 @@ test.describe('<Attributes/>', () => {
   });
 
   test('should be able to log out', async ({ page }) => {
-    await page.click(selectors.logoutButton)
-    await page.waitForNavigation();
+    await Promise.all([
+      page.waitForNavigation(),
+      page.click(selectors.logoutButton),
+    ])
     await page.waitForSelector(selectors.loginButton);
     // check that data isn't shown
     const authorityDropdown = page.locator(".ant-select-selector >> nth=1")
@@ -295,14 +300,16 @@ test.describe('<Attributes/>', () => {
     const existedOrderValue = page.locator('.ant-tabs-tab-btn >> nth=0')
     await existedOrderValue.click()
     await expect(page.locator('#entitlements-table .ant-empty-description')).toHaveText('No Data')
-  })
+  });
 
   test('should show existed entitlements in the Attribute Details section', async ({ page,authority,attributeName, attributeValue }) => {
     await createAttributeAndVerifyResultMsg(page, attributeName, [attributeValue])
 
-    await page.goto("/entitlements")
-    firstTableRowClick('clients-table', page);
-    await page.waitForNavigation();
+    await page.goto("/entitlements");
+    await Promise.all([
+        page.waitForNavigation(),
+        firstTableRowClick('clients-table', page),
+    ])
     await page.click(selectors.entitlementsPage.authorityNamespaceField)
     await page.keyboard.press("ArrowUp")
     await page.keyboard.press('Enter')

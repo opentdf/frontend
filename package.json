@@ -31,6 +31,7 @@
     "test:prod": "craco test --watchAll=false",
     "test:debug": "craco --inspect-brk test --runInBand --no-cache --setupFilesAfterEnv='./src/setupTests.ts'",
     "test:playwright": "playwright test --config=tests/e2e/playwright.config.ts",
+    "test:playwright-debug": "playwright test --debug --config=tests/e2e/playwright.config.ts",
     "eject": "craco eject",
     "prepare": "husky install"
   },

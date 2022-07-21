@@ -83,6 +83,7 @@ const AttributesHeader = ({ total }: AttributesHeaderProps) => {
             })
           }}
           id="select-authorities-button"
+          data-test="select-authorities-button"
         >
           {authorities.map(val => <Option key={String(val)} value={String(val)}>{val}</Option>)}
         </Select>

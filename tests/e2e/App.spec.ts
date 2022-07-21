@@ -1,10 +1,11 @@
 import { test, expect } from '@playwright/test';
-import { authorize } from './helpers/operations';
-import {selectors} from "./helpers/selectors";
+import { selectors } from "./helpers/selectors";
+import { authorize } from "./helpers/operations";
 
 test.describe('<App/>', () => {
   test.beforeEach(async ({ page }) => {
     await authorize(page);
+    await page.goto('/');
   });
 
   test('renders initially', async ({ page }) => {

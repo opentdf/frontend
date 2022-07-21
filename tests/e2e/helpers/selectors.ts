@@ -56,7 +56,7 @@ export const selectors = {
         entityDetailsPage: {
             tableCell: '.ant-table-cell',
             tableRow: '.ant-table-row',
-            deleteAttributeBtn: '.ant-btn-link',
+            deleteAttributeBtn: '.ant-btn-link >> nth=0',
             deleteAttributeModalBtn: '#delete-attr',
         }
     },

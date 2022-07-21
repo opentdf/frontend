@@ -1,31 +1,35 @@
-import {selectors} from "./selectors";
+import { Page } from '@playwright/test'
+import { selectors } from "./selectors";
 
-export const authorize = async (page) => {
+export const authorize = async (page: Page) => {
   await page.goto('/');
-  await page.locator(selectors.loginButton).click()
+
+  await Promise.all([
+    page.waitForNavigation(),
+    page.locator(selectors.loginButton).click()
+  ]);
 
   await page.fill(selectors.loginScreen.usernameField, "user1");
   await page.fill(selectors.loginScreen.passwordField, "testuser123");
   await page.click(selectors.loginScreen.submitButton);
 
-  await page.waitForNavigation();
   await page.waitForSelector(selectors.logoutButton);
   // click the token message to close it and overcome potential overlapping problem
   await page.locator(selectors.tokenMessage).click()
 };
 
-export const createAuthority = async (page, authority) => {
+export const createAuthority = async (page: Page, authority: any) => {
   await page.locator(selectors.attributesPage.newSectionBtn).click();
-  page.fill(selectors.attributesPage.newSection.authorityField, authority);
+  await page.fill(selectors.attributesPage.newSection.authorityField, authority);
   await page.locator(selectors.attributesPage.newSection.submitAuthorityBtn).click();
 };
 
-export const firstTableRowClick = async (table, page) => {
+export const firstTableRowClick = async (table: string, page: Page) => {
   const firstRow = await page.locator(`[data-test-id=${table}] .ant-table-tbody>tr:first-child`);
-  await firstRow.click();
+  return await firstRow.click();
 };
 
-export const getLastPartOfUrl = async (page) => {
+export const getLastPartOfUrl = async (page: Page) => {
   const url = page.url();
   return url.substring(url.lastIndexOf('/') + 1);
 };

@@ -1,5 +1,5 @@
 import { test } from './helpers/fixtures';
-import {APIRequestContext, chromium, expect, Page} from "@playwright/test";
+import { APIRequestContext, chromium, expect, Page } from "@playwright/test";
 import { selectors } from "./helpers/selectors";
 
 let apiContext: APIRequestContext;
@@ -19,8 +19,7 @@ const getAccessTokenAfterLogin = async (page: Page) => {
 };
 
 test.describe('API:', () => {
-    test.beforeEach(async ({ playwright, authority }) => {
-        const browser = await chromium.launch();
+    test.beforeEach(async ({ playwright, authority, browser }) => {
         pageContext = await browser.newContext();
         const page = await pageContext.newPage();
         const authToken = await getAccessTokenAfterLogin(page)

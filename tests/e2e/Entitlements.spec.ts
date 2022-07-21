@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import {authorize, createAuthority, firstTableRowClick, getLastPartOfUrl} from './helpers/operations';
+import { createAuthority, firstTableRowClick, getLastPartOfUrl, authorize } from './helpers/operations';
 import { test } from './helpers/fixtures';
 import {selectors} from "./helpers/selectors";
 
@@ -27,8 +27,10 @@ test.describe('<Entitlements/>', () => {
   });
 
   test('redirect to user/PE', async ({ page }) => {
-    firstTableRowClick('users-table', page);
-    await page.waitForNavigation();
+    await Promise.all([
+        page.waitForNavigation(),
+        firstTableRowClick('users-table', page),
+    ]);
 
     const id = getLastPartOfUrl(page);
     const header = page.locator(selectors.secondaryHeader, { hasText: `User ${id}` });
@@ -36,8 +38,10 @@ test.describe('<Entitlements/>', () => {
   });
 
   test('redirect to client/NPE', async ({ page }) => {
-    firstTableRowClick('clients-table', page);
-    await page.waitForNavigation();
+    await Promise.all([
+        page.waitForNavigation(),
+        firstTableRowClick('clients-table', page),
+    ]);
 
     const id = getLastPartOfUrl(page);
     const header = page.locator(selectors.secondaryHeader, { hasText: `Client ${id}` });
@@ -45,8 +49,11 @@ test.describe('<Entitlements/>', () => {
   });
 
   test('Add Entitlements To Entity', async ({ page , authority, attributeName, attributeValue}) => {
-    firstTableRowClick('clients-table', page);
-    await page.waitForNavigation();
+    await Promise.all([
+        page.waitForNavigation(),
+        firstTableRowClick('clients-table', page),
+    ]);
+
     await page.type(selectors.entitlementsPage.authorityNamespaceField, authority);
     await page.keyboard.press('Enter')
     await page.fill(selectors.entitlementsPage.attributeNameField, attributeName);
