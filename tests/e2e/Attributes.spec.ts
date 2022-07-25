@@ -106,31 +106,27 @@ test.describe('<Attributes/>', () => {
       },
     });
 
-    const createAttributeViaAPI = async (attrName: string, attrRule: string, attrOrder: string) => {
+    const createAttributeViaAPI = async (attrName: string, attrRule: string, attrOrder: string[]) => {
       const createAttributeResponse = await apiContext.post('http://localhost:65432/api/attributes/definitions/attributes', {
         data: {
           "authority": authority,
           "name": attrName,
           "rule": attrRule,
           "state": "published",
-          "order": [
-            attrOrder
-          ]
+          "order": attrOrder
         }
       })
       expect(createAttributeResponse.ok()).toBeTruthy()
     }
 
-    const deleteAttributeViaAPI = async (attrName: string, attrRule: string, attrOrder: string) => {
+    const deleteAttributeViaAPI = async (attrName: string, attrRule: string, attrOrder: string[]) => {
       const deleteAttributeResponse = await apiContext.delete('http://localhost:65432/api/attributes/definitions/attributes', {
         data: {
           "authority": authority,
           "name": attrName,
           "rule": attrRule,
           "state": "published",
-          "order": [
-            attrOrder
-          ]
+          "order": attrOrder
         }
       })
       expect(deleteAttributeResponse.ok()).toBeTruthy()
@@ -145,75 +141,86 @@ test.describe('<Attributes/>', () => {
       expect(lastItemNameAfterSorting == expectedLastItemName).toBeTruthy()
     }
 
-    // data setup
-    await createAttributeViaAPI(firstAttributeName, 'anyOf', 'A')
-    await createAttributeViaAPI(secondAttributeName, 'allOf', 'C')
-    await createAttributeViaAPI(thirdAttributeName, 'hierarchy', 'B')
+    await test.step('Data setup', async () => {
+      await createAttributeViaAPI(firstAttributeName, 'anyOf', ['A', 'G', 'H'])
+      await createAttributeViaAPI(secondAttributeName, 'allOf', ['C', 'G', 'H'])
+      await createAttributeViaAPI(thirdAttributeName, 'hierarchy', ['B', 'G', 'H'])
+    })
 
-    // switch between section to renew data
-    await page.reload();
+    await test.step('Open page with correspondent data', async () => {
+      // reload page to renew data
+      await page.reload();
 
-    // select proper authority
-    await page.click('[data-test="select-authorities-button"]', {force: true})
-    await page.keyboard.press("ArrowUp")
-    await page.keyboard.press("Enter")
+      // select proper authority
+      await page.click('[data-test="select-authorities-button"]', {force: true})
+      await page.keyboard.press("ArrowUp")
+      await page.keyboard.press("Enter")
 
-    await expect(page.locator('.ant-select-selection-item >> nth=1')).toHaveText(authority)
-    await expect(page.locator(selectors.attributesPage.attributesHeader.itemsQuantityIndicator)).toHaveText('Total 3 items')
+      await expect(page.locator('.ant-select-selection-item >> nth=1')).toHaveText(authority)
+      await expect(page.locator(selectors.attributesPage.attributesHeader.itemsQuantityIndicator)).toHaveText('Total 3 items')
+    })
 
-    // sort by Name ASC
-    await page.click(sortByToolbarButton)
-    await ascendingSortingOption.click()
-    await nameSortingSubOption.click()
-    await assertItemsOrderAfterSorting(firstAttributeName, thirdAttributeName, secondAttributeName)
+    await test.step('Sort by Name ASC', async () => {
+      await page.click(sortByToolbarButton)
+      await ascendingSortingOption.click()
+      await nameSortingSubOption.click()
+      await assertItemsOrderAfterSorting(firstAttributeName, thirdAttributeName, secondAttributeName)
+    })
 
-    // sort by Name DESC
-    await page.click(sortByToolbarButton, {force: true})
-    await descendingSortingOption.click()
-    await nameSortingSubOption.click()
-    await assertItemsOrderAfterSorting(secondAttributeName, thirdAttributeName, firstAttributeName)
+    await test.step('Sort by Name DESC', async () => {
+      await page.click(sortByToolbarButton, {force: true})
+      await descendingSortingOption.click()
+      await nameSortingSubOption.click()
+      await assertItemsOrderAfterSorting(secondAttributeName, thirdAttributeName, firstAttributeName)
+    })
 
-    // sort by Rule ASC
-    await page.click(sortByToolbarButton, {force: true})
-    await ascendingSortingOption.click()
-    await ruleSortingSubOption.click()
-    await assertItemsOrderAfterSorting(secondAttributeName, firstAttributeName, thirdAttributeName)
+    await test.step('Sort by Rule ASC', async () => {
+      await page.click(sortByToolbarButton, {force: true})
+      await ascendingSortingOption.click()
+      await ruleSortingSubOption.click()
+      await assertItemsOrderAfterSorting(secondAttributeName, firstAttributeName, thirdAttributeName)
+    })
 
-    // sort by Rule DESC
-    await page.click(sortByToolbarButton, {force: true})
-    await descendingSortingOption.click()
-    await ruleSortingSubOption.click()
-    await assertItemsOrderAfterSorting(thirdAttributeName, firstAttributeName, secondAttributeName)
+    await test.step('Sort by Rule DESC', async () => {
+      await page.click(sortByToolbarButton, {force: true})
+      await descendingSortingOption.click()
+      await ruleSortingSubOption.click()
+      await assertItemsOrderAfterSorting(thirdAttributeName, firstAttributeName, secondAttributeName)
+    })
 
-    // sort by ID ASC
-    await page.click(sortByToolbarButton, {force: true})
-    await ascendingSortingOption.click()
-    await idSortingSubOption.click()
-    await assertItemsOrderAfterSorting(firstAttributeName, secondAttributeName, thirdAttributeName)
+    await test.step('Sort by ID ASC', async () => {
+      await page.click(sortByToolbarButton, {force: true})
+      await ascendingSortingOption.click()
+      await idSortingSubOption.click()
+      await assertItemsOrderAfterSorting(firstAttributeName, secondAttributeName, thirdAttributeName)
+    })
 
-    // sort by ID DESC
-    await page.click(sortByToolbarButton, {force: true})
-    await descendingSortingOption.click()
-    await idSortingSubOption.click()
-    await assertItemsOrderAfterSorting(thirdAttributeName, secondAttributeName, firstAttributeName)
+    await test.step('Sort by ID DESC', async () => {
+      await page.click(sortByToolbarButton, {force: true})
+      await descendingSortingOption.click()
+      await idSortingSubOption.click()
+      await assertItemsOrderAfterSorting(thirdAttributeName, secondAttributeName, firstAttributeName)
+    })
 
-    // sort by Order values ASC
-    await page.click(sortByToolbarButton, {force: true})
-    await ascendingSortingOption.click()
-    await valuesSortingSubOption.click()
-    await assertItemsOrderAfterSorting(firstAttributeName, thirdAttributeName, secondAttributeName)
+    await test.step('Sort by Order values ASC', async () => {
+      await page.click(sortByToolbarButton, {force: true})
+      await ascendingSortingOption.click()
+      await valuesSortingSubOption.click()
+      await assertItemsOrderAfterSorting(firstAttributeName, thirdAttributeName, secondAttributeName)
+    })
 
-    // sort by Order values DESC
-    await page.click(sortByToolbarButton, {force: true})
-    await descendingSortingOption.click()
-    await valuesSortingSubOption.click()
-    await assertItemsOrderAfterSorting(secondAttributeName, thirdAttributeName, firstAttributeName)
+    await test.step('Sort by Order values DESC', async () => {
+      await page.click(sortByToolbarButton, {force: true})
+      await descendingSortingOption.click()
+      await valuesSortingSubOption.click()
+      await assertItemsOrderAfterSorting(secondAttributeName, thirdAttributeName, firstAttributeName)
+    })
 
-    // TODO: teardown fails because Delete request passes too quick, step duration is negative (-0.1s)
-    // data teardown
-    // await deleteAttributeViaAPI(firstAttributeName, 'anyOf', 'A')
-    // await deleteAttributeViaAPI(secondAttributeName, 'allOf', 'C')
-    // await deleteAttributeViaAPI(thirdAttributeName, 'hierarchy', 'B')
+    await test.step('Data teardown', async () => {
+      await deleteAttributeViaAPI(firstAttributeName, 'anyOf', ['A', 'G', 'H'])
+      await deleteAttributeViaAPI(secondAttributeName, 'allOf', ['C', 'G', 'H'])
+      await deleteAttributeViaAPI(thirdAttributeName, 'hierarchy', ['B', 'G', 'H'])
+    })
   });
 
   test('should delete attribute entitlement', async ({ page, authority, attributeName, attributeValue }) => {
