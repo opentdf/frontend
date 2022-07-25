@@ -33,3 +33,9 @@ export const getLastPartOfUrl = async (page: Page) => {
   const url = page.url();
   return url.substring(url.lastIndexOf('/') + 1);
 };
+
+export const getAccessToken = async (page: Page) => {
+  return await page.evaluate(() => {
+    return sessionStorage.getItem("keycloak");
+  });
+};

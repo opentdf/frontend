@@ -1,5 +1,5 @@
 import { expect, Page } from '@playwright/test';
-import { createAuthority, firstTableRowClick, authorize } from './helpers/operations';
+import { createAuthority, firstTableRowClick, authorize, getAccessToken } from './helpers/operations';
 import { test } from './helpers/fixtures';
 import { selectors } from "./helpers/selectors";
 
@@ -19,8 +19,11 @@ test.describe('<Attributes/>', () => {
 
   const existedOrderValue = '.ant-tabs-tab-btn >> nth=0'
 
+  let authToken: string | null;
+
   test.beforeEach(async ({ page, authority }) => {
     await authorize(page);
+    authToken = await getAccessToken(page)
     await page.goto('/attributes');
     // click the token message to close it and overcome potential overlapping problem
     const notificationElement = await page.locator(selectors.tokenMessage);
@@ -30,6 +33,19 @@ test.describe('<Attributes/>', () => {
     const authorityCreatedMsg = page.locator(selectors.alertMessage, {hasText:'Authority was created'})
     await authorityCreatedMsg.click()
   });
+
+  // test.afterEach(async ({ page, request, authority}) => {
+  //   const deleteAuthorityResponse = await request.delete('http://localhost:65432/api/attributes/authorities',{
+  //     headers: {
+  //       'Authorization': `Bearer ${authToken}`,
+  //     },
+  //     data: {
+  //       "authority": authority
+  //     },
+  //   });
+  //   await expect(deleteAuthorityResponse.status()).toBe(204)
+  //   await expect(deleteAuthorityResponse.ok()).toBeTruthy()
+  // })
 
   test('renders initially', async ({ page }) => {
     const header = page.locator('h2', { hasText: "Attribute Rules" });
@@ -96,9 +112,7 @@ test.describe('<Attributes/>', () => {
     const secondAttributeName = 'Z 2nd attribute'
     const thirdAttributeName = '3rd attribute'
 
-    const accessToken = await page.evaluate(() => {
-      return sessionStorage.getItem("keycloak");
-    });
+    const accessToken = await getAccessToken(page)
 
     const apiContext = await playwright.request.newContext({
       extraHTTPHeaders: {
@@ -114,7 +128,9 @@ test.describe('<Attributes/>', () => {
           "rule": attrRule,
           "state": "published",
           "order": [
-            attrOrder
+            attrOrder,
+              'G',
+              'H'
           ]
         }
       })
@@ -129,7 +145,9 @@ test.describe('<Attributes/>', () => {
           "rule": attrRule,
           "state": "published",
           "order": [
-            attrOrder
+            attrOrder,
+              'G',
+              'H'
           ]
         }
       })
@@ -211,9 +229,9 @@ test.describe('<Attributes/>', () => {
 
     // TODO: teardown fails because Delete request passes too quick, step duration is negative (-0.1s)
     // data teardown
-    // await deleteAttributeViaAPI(firstAttributeName, 'anyOf', 'A')
-    // await deleteAttributeViaAPI(secondAttributeName, 'allOf', 'C')
-    // await deleteAttributeViaAPI(thirdAttributeName, 'hierarchy', 'B')
+    await deleteAttributeViaAPI(firstAttributeName, 'anyOf', 'A')
+    await deleteAttributeViaAPI(secondAttributeName, 'allOf', 'C')
+    await deleteAttributeViaAPI(thirdAttributeName, 'hierarchy', 'B')
   });
 
   test('should delete attribute entitlement', async ({ page, authority, attributeName, attributeValue }) => {

@@ -1,6 +1,7 @@
 import { test } from './helpers/fixtures';
 import { APIRequestContext, chromium, expect, Page } from "@playwright/test";
 import { selectors } from "./helpers/selectors";
+import { getAccessToken } from "./helpers/operations";
 
 let apiContext: APIRequestContext;
 let pageContext;
@@ -13,9 +14,7 @@ const getAccessTokenAfterLogin = async (page: Page) => {
     await page.click(selectors.loginScreen.submitButton);
 
     await page.waitForResponse('**/token');
-    return await page.evaluate(() => {
-        return sessionStorage.getItem("keycloak");
-    });
+    return await getAccessToken(page)
 };
 
 test.describe('API:', () => {
@@ -39,6 +38,16 @@ test.describe('API:', () => {
         })
         expect(createAuthorityResponse.status()).toBe(200)
         expect(createAuthorityResponse.ok()).toBeTruthy()
+    })
+
+    test.afterEach(async ({ authority}) => {
+        const deleteAuthorityResponse = await apiContext.delete('http://localhost:65432/api/attributes/authorities', {
+            data: {
+                "authority": authority
+            },
+        });
+        await expect(deleteAuthorityResponse.status()).toBe(204)
+        await expect(deleteAuthorityResponse.ok()).toBeTruthy()
     })
 
     test.afterAll(async ({ }) => {
@@ -106,7 +115,7 @@ test.describe('API:', () => {
         expect(deleteAttributeResponse.ok()).toBeTruthy()
     })
 
-    test('Entitlements: create, read, delete', async ({ authority, attributeName, attributeValue}) => {
+    test.only('Entitlements: create, read, delete', async ({ page, authority, attributeName, attributeValue}) => {
 
         // GET Entitlements to parse existed entityID
         const getEntitlementsResponse = await apiContext.get(`http://localhost:65432/api/entitlements/entitlements`)
@@ -121,11 +130,11 @@ test.describe('API:', () => {
         // CREATE Entitlement
         const entitlementPayload = `${authority}/attr/${attributeName}/value/${attributeValue}`;
 
-        const createAttributeResponse = await apiContext.post(`http://localhost:65432/api/entitlements/entitlements/${existedEntityId}`, {
+        const createEntitlementResponse = await apiContext.post(`http://localhost:65432/api/entitlements/entitlements/${existedEntityId}`, {
             data: [entitlementPayload]
         })
-        expect(createAttributeResponse.status()).toBe(200)
-        expect(createAttributeResponse.ok()).toBeTruthy()
+        expect(createEntitlementResponse.status()).toBe(200)
+        expect(createEntitlementResponse.ok()).toBeTruthy()
 
         // GET and check created entitlement
         const checkCreatedEntitlementResponse = await apiContext.get(`http://localhost:65432/api/entitlements/entitlements?entityId=${existedEntityId}`)
