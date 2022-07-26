@@ -1,8 +1,10 @@
 import styles from "./AttributesHeader.module.css";
+import { useState } from 'react';
 import { Button, Cascader, Popover, Typography, Pagination, Select, Badge } from "antd";
 
 import FilterForm from "../FilterForm";
 import { AttributesFiltersStore } from "../../../../store";
+import { useKeyDown } from "../../../../hooks";
 
 const { Option } = Select;
 
@@ -37,6 +39,9 @@ type AttributesHeaderProps = {
 }
 
 const AttributesHeader = ({ total }: AttributesHeaderProps) => {
+  const [visiblePopover, setVisiblePopover] = useState(false);
+  const handleVisibleChange = (newVisible: boolean) => setVisiblePopover(newVisible);
+
   const onChange = (value: any): void => {
     const sort = value.join('');
     AttributesFiltersStore.update(s => {
@@ -65,6 +70,12 @@ const AttributesHeader = ({ total }: AttributesHeaderProps) => {
   const { name, order, rule } = AttributesFiltersStore.useState(s => s.query);
 
   const selectedFilters = Number(Boolean(name)) + Number(Boolean(order)) + Number(Boolean(rule));
+
+  useKeyDown(({ key }) => {
+    if (key === 'Escape' && visiblePopover) {
+      setVisiblePopover(false);
+    }
+  }, [visiblePopover]);
 
   return (
     <div className={styles.attributeHeader}>
@@ -106,6 +117,8 @@ const AttributesHeader = ({ total }: AttributesHeaderProps) => {
           content={<FilterForm />}
           placement="bottomRight"
           trigger="click"
+          visible={visiblePopover}
+          onVisibleChange={handleVisibleChange}
         >
           <Button
             id="filters-button"
