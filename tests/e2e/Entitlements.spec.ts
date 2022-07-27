@@ -54,16 +54,23 @@ test.describe('<Entitlements/>', () => {
         firstTableRowClick('clients-table', page),
     ]);
 
-    await page.type(selectors.entitlementsPage.authorityNamespaceField, authority);
-    await page.keyboard.press('Enter')
-    await page.fill(selectors.entitlementsPage.attributeNameField, attributeName);
-    await page.fill(selectors.entitlementsPage.attributeValueField, attributeValue);
-    await page.click(selectors.entitlementsPage.submitAttributeButton);
-    const successfulEntitlementMsg = await page.locator(selectors.alertMessage, {hasText: "Entitlement updated!"})
-    await expect(successfulEntitlementMsg).toBeVisible()
-    // assert that input fields are cleared after successful submission
-    await expect(page.locator(selectors.entitlementsPage.authorityNamespaceField)).toHaveText("")
-    await expect(page.locator(selectors.entitlementsPage.attributeNameField)).toHaveText("")
-    await expect(page.locator(selectors.entitlementsPage.attributeValueField)).toHaveText("")
+    await test.step('Entitle attribute', async() => {
+      await page.type(selectors.entitlementsPage.authorityNamespaceField, authority);
+      await page.keyboard.press('Enter')
+      await page.fill(selectors.entitlementsPage.attributeNameField, attributeName);
+      await page.fill(selectors.entitlementsPage.attributeValueField, attributeValue);
+      await page.click(selectors.entitlementsPage.submitAttributeButton);
+    })
+
+    await test.step('Assert result message', async() => {
+      const successfulEntitlementMsg = await page.locator(selectors.alertMessage, {hasText: "Entitlement updated!"})
+      await expect(successfulEntitlementMsg).toBeVisible()
+    })
+
+    await test.step('Input fields are properly cleared after successful submission', async() => {
+      await expect(page.locator(selectors.entitlementsPage.authorityNamespaceField)).toHaveText("")
+      await expect(page.locator(selectors.entitlementsPage.attributeNameField)).toHaveText("")
+      await expect(page.locator(selectors.entitlementsPage.attributeValueField)).toHaveText("")
+    })
   });
 });

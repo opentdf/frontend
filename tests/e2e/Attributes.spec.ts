@@ -47,41 +47,45 @@ test.describe('<Attributes/>', () => {
     const attributesHeader = selectors.attributesPage.attributesHeader;
     const filterModal = attributesHeader.filterModal;
 
-    // filter by existed Name
-    await page.click(attributesHeader.filtersToolbarButton)
-    await page.fill(filterModal.nameInputField, attributeName)
-    await page.click(filterModal.submitBtn)
-    await page.click(attributesHeader.itemsQuantityIndicator)
-    const filteredAttributesListByName = await page.$$(selectors.attributesPage.attributeItem)
-    expect(filteredAttributesListByName.length).toBe(1)
+    await test.step('Filter by existed Name', async () => {
+      await page.click(attributesHeader.filtersToolbarButton)
+      await page.fill(filterModal.nameInputField, attributeName)
+      await page.click(filterModal.submitBtn)
+      await page.click(attributesHeader.itemsQuantityIndicator)
+      const filteredAttributesListByName = await page.$$(selectors.attributesPage.attributeItem)
+      expect(filteredAttributesListByName.length).toBe(1)
+    })
 
-    // filter by non-existed Name
-    await page.click(attributesHeader.filtersToolbarButton)
-    await page.click(filterModal.clearBtn)
-    await page.fill(filterModal.nameInputField, 'invalidAttributeName')
-    await page.click(filterModal.submitBtn)
-    await expect(page.locator(attributesHeader.itemsQuantityIndicator)).toHaveText('Total 0 items')
+    await test.step('Filter by non-existed Name', async () => {
+      await page.click(attributesHeader.filtersToolbarButton)
+      await page.click(filterModal.clearBtn)
+      await page.fill(filterModal.nameInputField, 'invalidAttributeName')
+      await page.click(filterModal.submitBtn)
+      await expect(page.locator(attributesHeader.itemsQuantityIndicator)).toHaveText('Total 0 items')
+    })
 
-    // filter by Order
-    await page.click(filterModal.clearBtn)
-    await page.fill(filterModal.orderInputField, attributeValue)
-    await page.click(filterModal.submitBtn)
-    await page.click(attributesHeader.itemsQuantityIndicator)
-    const filteredAttributesListByOrder = await page.$$(selectors.attributesPage.attributeItem)
-    expect(filteredAttributesListByOrder.length).toBe(1)
+    await test.step('Filter by Order', async () => {
+      await page.click(filterModal.clearBtn)
+      await page.fill(filterModal.orderInputField, attributeValue)
+      await page.click(filterModal.submitBtn)
+      await page.click(attributesHeader.itemsQuantityIndicator)
+      const filteredAttributesListByOrder = await page.$$(selectors.attributesPage.attributeItem)
+      expect(filteredAttributesListByOrder.length).toBe(1)
+    })
 
-    // filter by Rule
-    await page.click(attributesHeader.filtersToolbarButton)
-    await page.click(filterModal.clearBtn)
-    await page.fill(filterModal.ruleInputField, 'allOf')
-    await page.click(filterModal.submitBtn)
-    await expect(page.locator(attributesHeader.itemsQuantityIndicator)).toHaveText('Total 0 items')
-    await page.fill(filterModal.ruleInputField, 'hierarchy')
-    await page.click(filterModal.submitBtn)
-    await expect(page.locator(attributesHeader.itemsQuantityIndicator)).toHaveText('Total 1 items')
-    await page.click(attributesHeader.itemsQuantityIndicator)
-    const filteredAttributesListByRule = await page.$$(selectors.attributesPage.attributeItem)
-    expect(filteredAttributesListByRule.length).toBe(1)
+    await test.step('Filter by Rule', async () => {
+      await page.click(attributesHeader.filtersToolbarButton)
+      await page.click(filterModal.clearBtn)
+      await page.fill(filterModal.ruleInputField, 'allOf')
+      await page.click(filterModal.submitBtn)
+      await expect(page.locator(attributesHeader.itemsQuantityIndicator)).toHaveText('Total 0 items')
+      await page.fill(filterModal.ruleInputField, 'hierarchy')
+      await page.click(filterModal.submitBtn)
+      await expect(page.locator(attributesHeader.itemsQuantityIndicator)).toHaveText('Total 1 items')
+      await page.click(attributesHeader.itemsQuantityIndicator)
+      const filteredAttributesListByRule = await page.$$(selectors.attributesPage.attributeItem)
+      expect(filteredAttributesListByRule.length).toBe(1)
+    })
   });
 
   test('should sort attributes by Name, ID, rule, values_array', async ({ playwright, page, authority, attributeName, attributeValue }) => {
@@ -250,42 +254,62 @@ test.describe('<Attributes/>', () => {
     const ruleUpdatedMsg = page.locator(selectors.alertMessage, {hasText: `Rule was updated!`})
     const attributeDetailsSection = selectors.attributesPage.attributeDetailsSection
 
-    await createAttributeAndVerifyResultMsg(page, attributeName, [attributeValue])
+    await test.step('Create an attribute and assert creation', async() => {
+      await createAttributeAndVerifyResultMsg(page, attributeName, [attributeValue])
+    })
+
     await page.click(selectors.attributesPage.attributesHeader.itemsQuantityIndicator)
     await page.click(selectors.attributesPage.newSectionBtn);
-    await page.click(existedOrderValue)
-    await page.click(attributeDetailsSection.editRuleButton)
-    await page.click(attributeDetailsSection.ruleDropdown)
-    await restrictiveAccessDropdownOption.click()
-    await page.click(attributeDetailsSection.saveRuleButton)
-    await expect(ruleUpdatedMsg).toBeVisible()
+
+    await test.step('Update rule and check result', async() => {
+      await page.click(existedOrderValue)
+      await page.click(attributeDetailsSection.editRuleButton)
+      await page.click(attributeDetailsSection.ruleDropdown)
+      await restrictiveAccessDropdownOption.click()
+      await page.click(attributeDetailsSection.saveRuleButton)
+      await expect(ruleUpdatedMsg).toBeVisible()
+    })
+
   });
 
   test('should create an attribute with multiple order values, able to edit order of values, able to cancel editing', async ({ page , attributeName, attributeValue}) => {
     const ruleUpdatedMsg = page.locator(selectors.alertMessage, {hasText: `Rule was updated!`})
 
-    await createAttributeAndVerifyResultMsg(page, attributeName, [`${attributeValue}1`, `${attributeValue}2`, `${attributeValue}3`, `${attributeValue}4`])
-    await page.click(selectors.attributesPage.attributesHeader.itemsQuantityIndicator)
-    await page.locator(selectors.attributesPage.newSectionBtn).click();
-    await page.click(existedOrderValue)
-    await expect(page.locator(existedOrderValue)).toHaveAttribute('aria-selected', 'true')
-    // be able to close Details section
-    await page.click(selectors.attributesPage.attributeDetailsSection.closeDetailsSectionButton)
-    await expect(page.locator(existedOrderValue)).toHaveAttribute('aria-selected', 'false')
-    // reopen Details section
-    await page.click(existedOrderValue)
-    await page.locator(selectors.attributesPage.attributeDetailsSection.editRuleButton).click()
-    // be able to cancel editing
-    await page.click(selectors.attributesPage.attributeDetailsSection.cancelRuleSavingButton)
-    // reopen Edit section
-    await page.locator(selectors.attributesPage.attributeDetailsSection.editRuleButton).click()
-    const firstOrderItemInEditableList = '.order-list__item >> nth=0'
-    const fourthOrderItemInEditableList = '.order-list__item >> nth=3'
-    await page.dragAndDrop(fourthOrderItemInEditableList, firstOrderItemInEditableList )
-    await page.click(selectors.attributesPage.attributeDetailsSection.saveRuleButton)
-    await expect(ruleUpdatedMsg).toBeVisible()
-    const updatedFirstOrderValue = page.locator('.ant-tabs-tab-btn >> nth=0')
-    await expect(updatedFirstOrderValue).toHaveText(`${attributeValue}4`)
+    await test.step('Create an attribute with multiple Order values and check result message', async() => {
+      await createAttributeAndVerifyResultMsg(page, attributeName, [`${attributeValue}1`, `${attributeValue}2`, `${attributeValue}3`, `${attributeValue}4`])
+    })
+
+    await test.step('Open the Details section', async() => {
+      await page.click(selectors.attributesPage.attributesHeader.itemsQuantityIndicator)
+      await page.locator(selectors.attributesPage.newSectionBtn).click();
+      await page.click(existedOrderValue)
+      await expect(page.locator(existedOrderValue)).toHaveAttribute('aria-selected', 'true')
+    })
+
+    await test.step('Should be able to close the Details section', async() => {
+      await page.click(selectors.attributesPage.attributeDetailsSection.closeDetailsSectionButton)
+      await expect(page.locator(existedOrderValue)).toHaveAttribute('aria-selected', 'false')
+    })
+
+    await test.step('Reopen the Details section and enter editing mode', async() => {
+      await page.click(existedOrderValue)
+      await page.locator(selectors.attributesPage.attributeDetailsSection.editRuleButton).click()
+    })
+
+    await test.step('Should be able to cancel attribute editing', async() => {
+      await page.click(selectors.attributesPage.attributeDetailsSection.cancelRuleSavingButton)
+    })
+
+    await test.step('Reenter editing mode and edit order of values items using drag-and-drop feature', async() => {
+      await page.locator(selectors.attributesPage.attributeDetailsSection.editRuleButton).click()
+      const firstOrderItemInEditableList = '.order-list__item >> nth=0'
+      const fourthOrderItemInEditableList = '.order-list__item >> nth=3'
+      await page.dragAndDrop(fourthOrderItemInEditableList, firstOrderItemInEditableList )
+      await page.click(selectors.attributesPage.attributeDetailsSection.saveRuleButton)
+      await expect(ruleUpdatedMsg).toBeVisible()
+      const updatedFirstOrderValue = page.locator('.ant-tabs-tab-btn >> nth=0')
+      await expect(updatedFirstOrderValue).toHaveText(`${attributeValue}4`)
+    })
   });
 
   test('should be able to log out', async ({ page }) => {
@@ -310,29 +334,41 @@ test.describe('<Attributes/>', () => {
   });
 
   test('should show existed entitlements in the Attribute Details section', async ({ page,authority,attributeName, attributeValue }) => {
-    await createAttributeAndVerifyResultMsg(page, attributeName, [attributeValue])
+    await test.step('Create an attribute', async() => {
+      await createAttributeAndVerifyResultMsg(page, attributeName, [attributeValue])
+    })
 
-    await page.goto("/entitlements");
-    await Promise.all([
+    await test.step('Switch to the Entitlements page', async() => {
+      await page.goto("/entitlements");
+      await Promise.all([
         page.waitForNavigation(),
         firstTableRowClick('clients-table', page),
-    ])
-    await page.click(selectors.entitlementsPage.authorityNamespaceField)
-    await page.keyboard.press("ArrowUp")
-    await page.keyboard.press('Enter')
-    await page.fill(selectors.entitlementsPage.attributeNameField, attributeName);
-    await page.fill(selectors.entitlementsPage.attributeValueField, attributeValue);
-    await page.click(selectors.entitlementsPage.submitAttributeButton);
+      ])
+    })
 
-    await page.goto("/attributes")
-    await page.click(selectors.attributesPage.attributesHeader.authorityDropdownButton, {force:true})
-    await page.keyboard.press("ArrowUp")
-    await page.keyboard.press('Enter')
-    const existedOrderValue = page.locator('.ant-tabs-tab-btn >> nth=0')
-    await existedOrderValue.click()
-    const tableEntitlements = await page.$$("#entitlements-table .ant-table-tbody")
-    expect(tableEntitlements.length).toBe(1)
-    const tableValue = `${authority}/attr/${attributeName}/value/${attributeValue}`
-    await expect(page.locator('.ant-table-cell', {hasText: tableValue})).toBeVisible()
+    await test.step('Entitle the attribute', async() => {
+      await page.click(selectors.entitlementsPage.authorityNamespaceField)
+      await page.keyboard.press("ArrowUp")
+      await page.keyboard.press('Enter')
+      await page.fill(selectors.entitlementsPage.attributeNameField, attributeName);
+      await page.fill(selectors.entitlementsPage.attributeValueField, attributeValue);
+      await page.click(selectors.entitlementsPage.submitAttributeButton);
+    })
+
+    await test.step('Switch to the Attributes page and select proper authority', async() => {
+      await page.goto("/attributes")
+      await page.click(selectors.attributesPage.attributesHeader.authorityDropdownButton, {force:true})
+      await page.keyboard.press("ArrowUp")
+      await page.keyboard.press('Enter')
+    })
+
+    await test.step('Open the Details section and verify presence of the entitled item in the table', async() => {
+      const existedOrderValue = page.locator('.ant-tabs-tab-btn >> nth=0')
+      await existedOrderValue.click()
+      const tableEntitlements = await page.$$("#entitlements-table .ant-table-tbody")
+      expect(tableEntitlements.length).toBe(1)
+      const tableValue = `${authority}/attr/${attributeName}/value/${attributeValue}`
+      await expect(page.locator('.ant-table-cell', {hasText: tableValue})).toBeVisible()
+    })
   });
 });
