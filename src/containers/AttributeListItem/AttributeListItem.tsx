@@ -1,5 +1,5 @@
 import { FC, useCallback, useMemo, useState, useEffect } from "react";
-import { List, Table, Divider } from "antd";
+import { List, Table, Divider, Modal} from "antd";
 import { toast } from "react-toastify";
 import { Attribute } from "../../types/attributes";
 import { EntityAttribute } from "../../types/entitlements";
@@ -130,6 +130,70 @@ const AttributeListItem: FC<Props> = (props) => {
     onChange
   ]);
 
+  const handleDeleteClick = useCallback(async () => {
+    const data = {
+      authority: activeAuthority,
+      name: activeAttribute?.name,
+      order: activeOrderList,
+      rule: activeAttribute?.rule,
+      state: activeAttribute?.state,
+    };
+
+    /* try {
+      await updateRules({
+        method: Method.DELETE,
+        path: `/definitions/attributes`,
+        data,
+      });
+      toast.success("Attribute was deleted!");
+    } catch (error) {
+      toast.error("Could not delete attribute!");
+    } */
+
+    try {
+      await attributesClient.delete('/definitions/attributes', {
+        data,
+      });
+      //await getAuthorities();
+      toast.success(`Authority ${activeAttribute?.name} deleted`);
+      /* if (activeAuthority === authority) {
+        AttributesFiltersStore.update(s => {
+          s.authority = authorities[0] || ''
+        }); 
+      } */
+    } catch (error: any) {
+      let errorText = error.message;
+  
+      if (error.message.includes('code 500')) {
+        errorText = 'Something went wrong.'
+      }
+  
+      toast.error(errorText)
+    }
+    handleClose();
+    onChange();
+  }, [
+    activeAttribute,
+    activeAuthority,
+    activeOrderList,
+    activeRule,
+    updateRules,
+    handleClose,
+    onChange
+  ]);
+
+  const onDeleteAttribute = useCallback((): void => {
+    Modal.confirm({
+      title: 'Delete Attribute',
+      content: 'Are you sure you want to remove this attribute?',
+      onOk: () => handleDeleteClick(),
+      okText: 'Delete',
+      okButtonProps: {
+        id: 'delete-authority'
+      }
+    })},
+  [handleDeleteClick]);
+
   const handleRuleChange = useCallback((rule) => {
     setActiveRule(rule);
   }, []);
@@ -146,6 +210,7 @@ const AttributeListItem: FC<Props> = (props) => {
         isEdit={!!activeOrderItem && isEdit}
         name={name}
         onClose={handleClose}
+        onDeleteAttribute={onDeleteAttribute}
         onSaveClick={handleSaveClick}
         onTabChange={handleTabChange}
         state={state}
