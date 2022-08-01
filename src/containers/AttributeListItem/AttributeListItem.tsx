@@ -139,28 +139,14 @@ const AttributeListItem: FC<Props> = (props) => {
       state: activeAttribute?.state,
     };
 
-    /* try {
-      await updateRules({
-        method: Method.DELETE,
-        path: `/definitions/attributes`,
-        data,
-      });
-      toast.success("Attribute was deleted!");
-    } catch (error) {
-      toast.error("Could not delete attribute!");
-    } */
 
     try {
       await attributesClient.delete('/definitions/attributes', {
         data,
       });
-      //await getAuthorities();
+
       toast.success(`Authority ${activeAttribute?.name} deleted`);
-      /* if (activeAuthority === authority) {
-        AttributesFiltersStore.update(s => {
-          s.authority = authorities[0] || ''
-        }); 
-      } */
+
     } catch (error: any) {
       let errorText = error.message;
   
