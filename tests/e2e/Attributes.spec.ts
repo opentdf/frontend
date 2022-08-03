@@ -1,21 +1,9 @@
 import { expect, Page } from '@playwright/test';
-import { createAuthority, firstTableRowClick, authorize } from './helpers/operations';
+import { createAuthority, createAttributeAndVerifyResultMsg, firstTableRowClick, authorize } from './helpers/operations';
 import { test } from './helpers/fixtures';
 import { selectors } from "./helpers/selectors";
 
 test.describe('<Attributes/>', () => {
-
-  const createAttributeAndVerifyResultMsg = async (page: Page, name: string, values: string[]) => {
-    await page.fill(selectors.attributesPage.newSection.attributeNameField, name);
-    for (let i = 0; i < values.length; i++) {
-      const currentOrderField = `#order_${i}`
-      await page.fill(currentOrderField, values[i]);
-      await page.click(selectors.attributesPage.newSection.plusOrderButton)
-    }
-    await page.click(selectors.attributesPage.newSection.submitAttributeBtn);
-    const attributeCreatedMsg2 = await page.locator(selectors.alertMessage, {hasText: `Attribute created for`})
-    await expect(attributeCreatedMsg2).toBeVisible();
-  }
 
   const existedOrderValue = '.ant-tabs-tab-btn >> nth=0'
 

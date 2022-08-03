@@ -60,6 +60,15 @@ export const selectors = {
             deleteAttributeModalBtn: '#delete-attr',
         }
     },
+    authoritiesPage: {
+        header: '.ant-page-header-heading-title',
+        authoritiesTableRow: '.ant-table-row',
+        deleteAuthorityButton: '#delete-authority-button',
+        confirmDeletionModal: {
+            cancelDeletionBtn: '#cancel-deletion',
+            confirmDeletionBtn: '#delete-authority',
+        }
+    },
     alertMessage: '.Toastify__toast-body',
     tokenMessage: '.Toastify__toast'
 }

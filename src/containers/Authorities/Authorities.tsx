@@ -50,6 +50,9 @@ const Authorities = () => {
       okText: 'Delete',
       okButtonProps: {
         id: 'delete-authority'
+      },
+      cancelButtonProps: {
+        id: 'cancel-deletion'
       }
     })},
   [onDeleteKey]);
@@ -70,6 +73,7 @@ const Authorities = () => {
             type='link'
             style={{ paddingLeft: '0' }}
             onClick={() => onDelete(row)}
+            id='delete-authority-button'
           >
             Delete
           </Button>
