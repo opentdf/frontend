@@ -41,7 +41,7 @@ const OrderCard: FC<Props> = (props) => {
 
   const actions = useMemo(() => {
     const config = {
-      view: [{ onClick: toggleEdit, key: "edit", text: "Edit Rule" },{ onClick: onDeleteAttribute, key: "edit", text: "Delete Attribute" }],
+      view: [{ onClick: toggleEdit, key: "edit", text: "Edit Rule" },{ onClick: onDeleteAttribute, key: "delete-attribute", text: "Delete Attribute" }],
       edit: [
         { onClick: onSaveClick, key: "save-rule", text: "Save rule" },
         { onClick: toggleEdit, key: "cancel", text: "Cancel" },

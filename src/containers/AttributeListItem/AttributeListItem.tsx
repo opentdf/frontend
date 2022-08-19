@@ -145,7 +145,7 @@ const AttributeListItem: FC<Props> = (props) => {
         data,
       });
 
-      toast.success(`Authority ${activeAttribute?.name} deleted`);
+      toast.success(`Attribute ${activeAttribute?.name} deleted`);
 
     } catch (error: any) {
       let errorText = error.message;
@@ -175,7 +175,10 @@ const AttributeListItem: FC<Props> = (props) => {
       onOk: () => handleDeleteClick(),
       okText: 'Delete',
       okButtonProps: {
-        id: 'delete-authority'
+        id: 'confirm-attribute-deletion'
+      },
+      cancelButtonProps: {
+        id: 'cancel-attribute-deletion'
       }
     })},
   [handleDeleteClick]);

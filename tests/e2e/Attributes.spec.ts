@@ -227,8 +227,8 @@ test.describe('<Attributes/>', () => {
     const originalTableSize = originalTableRows.length
 
     // Delete single item
-    await page.locator(selectors.entitlementsPage.entityDetailsPage.deleteAttributeBtn).click();
-    await page.locator(selectors.entitlementsPage.entityDetailsPage.deleteAttributeModalBtn).click();
+    await page.locator(selectors.entitlementsPage.entityDetailsPage.deleteEntitlementBtn).click();
+    await page.locator(selectors.entitlementsPage.entityDetailsPage.deleteEntitlementModalBtn).click();
 
     await page.click(selectors.entitlementsPage.entityDetailsPage.tableCell)
     const updatedTableRows = await page.$$(selectors.entitlementsPage.entityDetailsPage.tableRow)
@@ -357,6 +357,34 @@ test.describe('<Attributes/>', () => {
       expect(tableEntitlements.length).toBe(1)
       const tableValue = `${authority}/attr/${attributeName}/value/${attributeValue}`
       await expect(page.locator('.ant-table-cell', {hasText: tableValue})).toBeVisible()
+    })
+  });
+
+  test('should be able to delete an attribute', async ({ page,authority,attributeName, attributeValue }) => {
+    await test.step('Create an attribute', async() => {
+      await createAttributeAndVerifyResultMsg(page, attributeName, [attributeValue])
+    })
+
+    await test.step('Open the Details section', async() => {
+      await page.click(selectors.attributesPage.attributesHeader.itemsQuantityIndicator)
+      await page.locator(selectors.attributesPage.newSectionBtn).click();
+      const orderValue = '.ant-tabs-tab-btn >> nth=-1'
+      await page.click(orderValue)
+    })
+
+    await test.step('Be able to cancel attribute removal', async() => {
+      await page.locator(selectors.attributesPage.attributeDetailsSection.deleteAttributeButton).click()
+      await page.locator(selectors.attributesPage.attributeDetailsSection.confirmAttributeDeletionModal.cancelDeletionBtn).click()
+    })
+
+    await test.step('Delete attribute', async() => {
+      await page.locator(selectors.attributesPage.attributeDetailsSection.deleteAttributeButton).click()
+      await page.locator(selectors.attributesPage.attributeDetailsSection.confirmAttributeDeletionModal.confirmDeletionBtn).click()
+    })
+
+    await test.step('Assert success message', async() => {
+      const successfulDeletionMsg = await page.locator(selectors.alertMessage, {hasText: `Attribute ${attributeName} deleted`})
+      await expect(successfulDeletionMsg).toBeVisible()
     })
   });
 });
