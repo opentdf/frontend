@@ -17,7 +17,7 @@ export const InputTDF = () => {
                     clientId: keycloak.clientId,
                     organizationName: keycloak.realm,
                     exchange: 'refresh',
-                    oidcOrigin: keycloak.authServerUrl,
+                    oidcOrigin: new URL(keycloak.authServerUrl || '').origin,
                     oidcRefreshToken: keycloak.refreshToken,
                     kasEndpoint: 'http://localhost:65432/api/kas',
                 }));
@@ -30,7 +30,7 @@ export const InputTDF = () => {
         if (!files?.length || !fileClient) return;
         const arrayBuff = await files[0].arrayBuffer();
         // @ts-ignore
-        const cipherStream = await fileClient.encrypt(arrayBuff);
+        const { stream: cipherStream} = await fileClient.encrypt(arrayBuff);
         // @ts-ignore
         const decipherStream = await fileClient.decrypt(cipherStream);
         decipherStream.toFile('file-decrypted.txt')
