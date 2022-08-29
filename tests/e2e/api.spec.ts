@@ -1,7 +1,7 @@
 import { test } from './helpers/fixtures';
 import { APIRequestContext, chromium, expect, Page } from "@playwright/test";
 import { selectors } from "./helpers/selectors";
-import { getAccessToken } from "./helpers/operations";
+import {deleteAttributeViaAPI, deleteAuthorityViaAPI, getAccessToken} from "./helpers/operations";
 
 let apiContext: APIRequestContext;
 let pageContext;
@@ -42,13 +42,7 @@ test.describe('API:', () => {
     })
 
     test.afterEach(async ({ authority}) => {
-        const deleteAuthorityResponse = await apiContext.delete('http://localhost:65432/api/attributes/authorities', {
-            data: {
-                "authority": authority
-            },
-        });
-        await expect(deleteAuthorityResponse.status()).toBe(204)
-        await expect(deleteAuthorityResponse.ok()).toBeTruthy()
+        await deleteAuthorityViaAPI(apiContext, authority)
     })
 
     test.afterAll(async ({ }) => {
@@ -73,11 +67,8 @@ test.describe('API:', () => {
             "rule": "anyOf",
             "state": "published",
             "order": [
-                "TradeSecret",
                 "Proprietary",
-                "BusinessSensitive",
-                "Open",
-                "Close"
+                "BusinessSensitive"
             ]
         }
 
@@ -112,15 +103,11 @@ test.describe('API:', () => {
         })
 
         await test.step('DELETE attribute and assert result', async () => {
-            const deleteAttributeResponse = await apiContext.delete('http://localhost:65432/api/attributes/definitions/attributes', {
-                data: updatedAttributeData
-            })
-            expect(deleteAttributeResponse.status()).toBe(202)
-            expect(deleteAttributeResponse.ok()).toBeTruthy()
+            await deleteAttributeViaAPI(apiContext, authority, attributeName, ["Proprietary", "BusinessSensitive"], "anyOf")
         })
     })
 
-    test.only('Entitlements: create, read, delete', async ({ page, authority, attributeName, attributeValue}) => {
+    test('Entitlements: create, read, delete', async ({ authority, attributeName, attributeValue}) => {
 
         let existedEntityId: string;
         const entitlementPayload = `${authority}/attr/${attributeName}/value/${attributeValue}`;
