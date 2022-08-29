@@ -54,8 +54,8 @@ test.describe('<Entitlements/>', () => {
 
   test('redirect to user/PE', async ({ page }) => {
     await Promise.all([
-      page.waitForNavigation(),
-      firstTableRowClick('users-table', page),
+        page.waitForNavigation(),
+        firstTableRowClick('users-table', page),
     ]);
 
     const id = getLastPartOfUrl(page);
@@ -65,8 +65,8 @@ test.describe('<Entitlements/>', () => {
 
   test('redirect to client/NPE', async ({ page }) => {
     await Promise.all([
-      page.waitForNavigation(),
-      firstTableRowClick('clients-table', page),
+        page.waitForNavigation(),
+        firstTableRowClick('clients-table', page),
     ]);
 
     const id = getLastPartOfUrl(page);
@@ -76,8 +76,8 @@ test.describe('<Entitlements/>', () => {
 
   test('Add Entitlements To Entity', async ({ page , authority, attributeName, attributeValue}) => {
     await Promise.all([
-      page.waitForNavigation(),
-      firstTableRowClick('clients-table', page),
+        page.waitForNavigation(),
+        firstTableRowClick('clients-table', page),
     ]);
 
     await test.step('Entitle attribute', async() => {
