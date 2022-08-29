@@ -1,11 +1,23 @@
-import { expect } from '@playwright/test';
-import { createAuthority, firstTableRowClick, getLastPartOfUrl, authorize } from './helpers/operations';
+import {APIRequestContext, expect} from '@playwright/test';
+import {
+  createAuthority,
+  firstTableRowClick,
+  getLastPartOfUrl,
+  authorize,
+  deleteAuthorityViaAPI,
+  getAccessToken
+} from './helpers/operations';
 import { test } from './helpers/fixtures';
 import {selectors} from "./helpers/selectors";
 
+let authToken: string | null;
+let apiContext: APIRequestContext;
+
 test.describe('<Entitlements/>', () => {
-  test.beforeEach(async ({ page , authority}) => {
+  test.beforeEach(async ({ page , playwright, authority}) => {
     await authorize(page);
+    authToken = await getAccessToken(page)
+
     await page.goto('/attributes');
     // click the token message to close it and overcome potential overlapping problem
     await page.locator(selectors.tokenMessage).click()
@@ -16,6 +28,20 @@ test.describe('<Entitlements/>', () => {
     await page.goto('/entitlements');
     // click the token message to close it and overcome potential overlapping problem
     await page.locator(selectors.tokenMessage).click()
+
+    apiContext = await playwright.request.newContext({
+      extraHTTPHeaders: {
+        'Authorization': `Bearer ${authToken}`,
+      },
+    });
+  });
+
+  test.afterEach(async ({ authority}) => {
+    await deleteAuthorityViaAPI(apiContext, authority)
+  })
+
+  test.afterAll(async ({ }) => {
+    await apiContext.dispose();
   });
 
   test('has tables', async ({ page }) => {
@@ -28,8 +54,8 @@ test.describe('<Entitlements/>', () => {
 
   test('redirect to user/PE', async ({ page }) => {
     await Promise.all([
-        page.waitForNavigation(),
-        firstTableRowClick('users-table', page),
+      page.waitForNavigation(),
+      firstTableRowClick('users-table', page),
     ]);
 
     const id = getLastPartOfUrl(page);
@@ -39,8 +65,8 @@ test.describe('<Entitlements/>', () => {
 
   test('redirect to client/NPE', async ({ page }) => {
     await Promise.all([
-        page.waitForNavigation(),
-        firstTableRowClick('clients-table', page),
+      page.waitForNavigation(),
+      firstTableRowClick('clients-table', page),
     ]);
 
     const id = getLastPartOfUrl(page);
@@ -50,8 +76,8 @@ test.describe('<Entitlements/>', () => {
 
   test('Add Entitlements To Entity', async ({ page , authority, attributeName, attributeValue}) => {
     await Promise.all([
-        page.waitForNavigation(),
-        firstTableRowClick('clients-table', page),
+      page.waitForNavigation(),
+      firstTableRowClick('clients-table', page),
     ]);
 
     await test.step('Entitle attribute', async() => {

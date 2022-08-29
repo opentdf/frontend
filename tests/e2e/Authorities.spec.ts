@@ -1,11 +1,23 @@
-import { expect } from '@playwright/test';
-import { createAuthority, authorize, createAttributeAndVerifyResultMsg } from './helpers/operations';
+import {APIRequestContext, expect} from '@playwright/test';
+import {
+    createAuthority,
+    authorize,
+    createAttributeAndVerifyResultMsg,
+    getAccessToken,
+    deleteAuthorityViaAPI,
+    deleteAttributeViaAPI
+} from './helpers/operations';
 import { test } from './helpers/fixtures';
 import { selectors } from "./helpers/selectors";
 
+let authToken: string | null;
+let apiContext: APIRequestContext;
+
 test.describe('<Authorities/>', () => {
-    test.beforeEach(async ({ page , authority}) => {
+    test.beforeEach(async ({ page , playwright, authority}) => {
         await authorize(page);
+        authToken = await getAccessToken(page)
+
         await page.goto('/attributes');
         // click the token message to close it and overcome potential overlapping problem
         await page.locator(selectors.tokenMessage).click()
@@ -13,12 +25,26 @@ test.describe('<Authorities/>', () => {
         // click success message to close it and overcome potential overlapping problem
         const authorityCreatedMsg = page.locator(selectors.alertMessage, {hasText:'Authority was created'})
         await authorityCreatedMsg.click()
+
+        apiContext = await playwright.request.newContext({
+            extraHTTPHeaders: {
+                'Authorization': `Bearer ${authToken}`,
+            },
+        });
     });
 
-    test('renders initially', async ({ page }) => {
+    test.afterAll(async ({ }) => {
+        await apiContext.dispose();
+    });
+
+    test('renders initially', async ({ page, authority}) => {
         await page.goto('/authorities');
         const header = page.locator(selectors.authoritiesPage.header, { hasText: "Authorities" });
         await expect(header).toBeVisible();
+
+        await test.step('Cleanup', async() => {
+            await deleteAuthorityViaAPI(apiContext, authority)
+        })
     });
 
     test('delete authority if there are no assigned attributes', async ({ page, authority}) => {
@@ -65,6 +91,11 @@ test.describe('<Authorities/>', () => {
             const removalFailedMsg = await page.locator(selectors.alertMessage, {hasText: `Something went wrong`})
             await expect(removalFailedMsg).toBeVisible()
             await removalFailedMsg.click()
+        })
+
+        await test.step('Cleanup', async() => {
+            await deleteAttributeViaAPI(apiContext, authority, attributeName, [attributeValue])
+            await deleteAuthorityViaAPI(apiContext, authority)
         })
     });
 });

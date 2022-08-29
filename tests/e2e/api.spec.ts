@@ -1,6 +1,7 @@
 import { test } from './helpers/fixtures';
 import { APIRequestContext, chromium, expect, Page } from "@playwright/test";
 import { selectors } from "./helpers/selectors";
+import {deleteAttributeViaAPI, deleteAuthorityViaAPI, getAccessToken} from "./helpers/operations";
 
 let apiContext: APIRequestContext;
 let pageContext;
@@ -13,9 +14,7 @@ const getAccessTokenAfterLogin = async (page: Page) => {
     await page.click(selectors.loginScreen.submitButton);
 
     await page.waitForResponse('**/token');
-    return await page.evaluate(() => {
-        return sessionStorage.getItem("keycloak");
-    });
+    return await getAccessToken(page)
 };
 
 test.describe('API:', () => {
@@ -42,6 +41,10 @@ test.describe('API:', () => {
         })
     })
 
+    test.afterEach(async ({ authority}) => {
+        await deleteAuthorityViaAPI(apiContext, authority)
+    })
+
     test.afterAll(async ({ }) => {
         await apiContext.dispose();
     });
@@ -64,11 +67,8 @@ test.describe('API:', () => {
             "rule": "anyOf",
             "state": "published",
             "order": [
-                "TradeSecret",
                 "Proprietary",
-                "BusinessSensitive",
-                "Open",
-                "Close"
+                "BusinessSensitive"
             ]
         }
 
@@ -103,11 +103,7 @@ test.describe('API:', () => {
         })
 
         await test.step('DELETE attribute and assert result', async () => {
-            const deleteAttributeResponse = await apiContext.delete('http://localhost:65432/api/attributes/definitions/attributes', {
-                data: updatedAttributeData
-            })
-            expect(deleteAttributeResponse.status()).toBe(202)
-            expect(deleteAttributeResponse.ok()).toBeTruthy()
+            await deleteAttributeViaAPI(apiContext, authority, attributeName, ["Proprietary", "BusinessSensitive"], "anyOf")
         })
     })
 

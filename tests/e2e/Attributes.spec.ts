@@ -1,14 +1,24 @@
-import { expect, Page } from '@playwright/test';
-import { createAuthority, createAttributeAndVerifyResultMsg, firstTableRowClick, authorize } from './helpers/operations';
+import { APIRequestContext, expect } from '@playwright/test';
+import {
+  createAuthority,
+  createAttributeAndVerifyResultMsg,
+  firstTableRowClick,
+  authorize,
+  getAccessToken,
+  deleteAttributeViaAPI,
+  deleteAuthorityViaAPI
+} from './helpers/operations';
 import { test } from './helpers/fixtures';
 import { selectors } from "./helpers/selectors";
 
 test.describe('<Attributes/>', () => {
-
   const existedOrderValue = '.ant-tabs-tab-btn >> nth=0'
+  let authToken: string | null;
+  let apiContext: APIRequestContext;
 
-  test.beforeEach(async ({ page, authority }) => {
+  test.beforeEach(async ({ page, playwright, authority }) => {
     await authorize(page);
+    authToken = await getAccessToken(page)
     await page.goto('/attributes');
     // click the token message to close it and overcome potential overlapping problem
     const notificationElement = await page.locator(selectors.tokenMessage);
@@ -17,6 +27,20 @@ test.describe('<Attributes/>', () => {
     // click success message to close it and overcome potential overlapping problem
     const authorityCreatedMsg = page.locator(selectors.alertMessage, {hasText:'Authority was created'})
     await authorityCreatedMsg.click()
+
+    apiContext = await playwright.request.newContext({
+      extraHTTPHeaders: {
+        'Authorization': `Bearer ${authToken}`,
+      },
+    });
+  });
+
+  test.afterEach(async ({ authority}) => {
+    await deleteAuthorityViaAPI(apiContext, authority)
+  })
+
+  test.afterAll(async ({ }) => {
+    await apiContext.dispose();
   });
 
   test('renders initially', async ({ page }) => {
@@ -74,9 +98,13 @@ test.describe('<Attributes/>', () => {
       const filteredAttributesListByRule = await page.$$(selectors.attributesPage.attributeItem)
       expect(filteredAttributesListByRule.length).toBe(1)
     })
+
+    await test.step('Cleanup', async () => {
+      await deleteAttributeViaAPI(apiContext, authority, attributeName,[attributeValue])
+    })
   });
 
-  test('should sort attributes by Name, ID, rule, values_array', async ({ playwright, page, authority, attributeName, attributeValue }) => {
+  test('should sort attributes by Name, ID, rule, values_array', async ({ page, authority}) => {
     const ascendingSortingOption = page.locator('.ant-cascader-menu-item-content', {hasText: 'ASC'})
     const descendingSortingOption = page.locator('.ant-cascader-menu-item-content', {hasText: 'DES'})
     const nameSortingSubOption = page.locator('.ant-cascader-menu-item-content', {hasText: 'name'})
@@ -87,16 +115,6 @@ test.describe('<Attributes/>', () => {
     const firstAttributeName = '1st attribute'
     const secondAttributeName = 'Z 2nd attribute'
     const thirdAttributeName = '3rd attribute'
-
-    const accessToken = await page.evaluate(() => {
-      return sessionStorage.getItem("keycloak");
-    });
-
-    const apiContext = await playwright.request.newContext({
-      extraHTTPHeaders: {
-        'Authorization': `Bearer ${accessToken}`,
-      },
-    });
 
     const createAttributeViaAPI = async (attrName: string, attrRule: string, attrOrder: string[]) => {
       const createAttributeResponse = await apiContext.post('http://localhost:65432/api/attributes/definitions/attributes', {
@@ -109,19 +127,6 @@ test.describe('<Attributes/>', () => {
         }
       })
       expect(createAttributeResponse.ok()).toBeTruthy()
-    }
-
-    const deleteAttributeViaAPI = async (attrName: string, attrRule: string, attrOrder: string[]) => {
-      const deleteAttributeResponse = await apiContext.delete('http://localhost:65432/api/attributes/definitions/attributes', {
-        data: {
-          "authority": authority,
-          "name": attrName,
-          "rule": attrRule,
-          "state": "published",
-          "order": attrOrder
-        }
-      })
-      expect(deleteAttributeResponse.ok()).toBeTruthy()
     }
 
     const assertItemsOrderAfterSorting = async (expectedFirstItemName: string, expectedSecondItemName: string, expectedLastItemName: string) => {
@@ -208,10 +213,10 @@ test.describe('<Attributes/>', () => {
       await assertItemsOrderAfterSorting(secondAttributeName, thirdAttributeName, firstAttributeName)
     })
 
-    await test.step('Data teardown', async () => {
-      await deleteAttributeViaAPI(firstAttributeName, 'anyOf', ['A', 'G', 'H'])
-      await deleteAttributeViaAPI(secondAttributeName, 'allOf', ['C', 'G', 'H'])
-      await deleteAttributeViaAPI(thirdAttributeName, 'hierarchy', ['B', 'G', 'H'])
+    await test.step('Cleanup', async () => {
+      await deleteAttributeViaAPI(apiContext, authority, firstAttributeName,['A', 'G', 'H'], "anyOf")
+      await deleteAttributeViaAPI(apiContext, authority, secondAttributeName,['C', 'G', 'H'], "allOf")
+      await deleteAttributeViaAPI(apiContext, authority, thirdAttributeName,['B', 'G', 'H'], "hierarchy")
     })
   });
 
@@ -237,7 +242,7 @@ test.describe('<Attributes/>', () => {
     expect(updatedTableSize === (originalTableSize - 1)).toBeTruthy()
   });
 
-  test('should edit attribute rule', async ({ page , attributeName, attributeValue}) => {
+  test('should edit attribute rule', async ({ page , authority, attributeName, attributeValue}) => {
     const restrictiveAccessDropdownOption = page.locator('.ant-select-item-option', {hasText:'Restrictive Access'})
     const ruleUpdatedMsg = page.locator(selectors.alertMessage, {hasText: `Rule was updated!`})
     const attributeDetailsSection = selectors.attributesPage.attributeDetailsSection
@@ -258,9 +263,12 @@ test.describe('<Attributes/>', () => {
       await expect(ruleUpdatedMsg).toBeVisible()
     })
 
+    await test.step('Cleanup', async () => {
+      await deleteAttributeViaAPI(apiContext, authority, attributeName,[attributeValue], "allOf")
+    })
   });
 
-  test('should create an attribute with multiple order values, able to edit order of values, able to cancel editing', async ({ page , attributeName, attributeValue}) => {
+  test('should create an attribute with multiple order values, able to edit order of values, able to cancel editing', async ({ page , authority, attributeName, attributeValue}) => {
     const ruleUpdatedMsg = page.locator(selectors.alertMessage, {hasText: `Rule was updated!`})
 
     await test.step('Create an attribute with multiple Order values and check result message', async() => {
@@ -298,27 +306,23 @@ test.describe('<Attributes/>', () => {
       const updatedFirstOrderValue = page.locator('.ant-tabs-tab-btn >> nth=0')
       await expect(updatedFirstOrderValue).toHaveText(`${attributeValue}4`)
     })
+
+    await test.step('Cleanup', async () => {
+      await deleteAttributeViaAPI(apiContext, authority, attributeName,[`${attributeValue}4`, `${attributeValue}2`, `${attributeValue}3`, `${attributeValue}1`])
+    })
   });
 
-  test('should be able to log out', async ({ page }) => {
-    await Promise.all([
-      page.waitForNavigation(),
-      page.click(selectors.logoutButton),
-    ])
-    await page.waitForSelector(selectors.loginButton);
-    // check that data isn't shown
-    const authorityDropdown = page.locator(".ant-select-selector >> nth=1")
-    await authorityDropdown.click()
-    await expect(page.locator('.ant-empty-description')).toHaveText('No Data')
-  });
-
-  test('should show empty state of the Entitlements table in the Attribute Details section when there are no entitlements', async ({page, attributeName,attributeValue}) => {
+  test('should show empty state of the Entitlements table in the Attribute Details section when there are no entitlements', async ({page, authority, attributeName,attributeValue}) => {
     await createAttributeAndVerifyResultMsg(page, attributeName, [attributeValue])
     await page.click(selectors.attributesPage.attributesHeader.itemsQuantityIndicator)
     await page.locator(selectors.attributesPage.newSectionBtn).click();
     const existedOrderValue = page.locator('.ant-tabs-tab-btn >> nth=0')
     await existedOrderValue.click()
     await expect(page.locator('#entitlements-table .ant-empty-description')).toHaveText('No Data')
+
+    await test.step('Cleanup', async () => {
+      await deleteAttributeViaAPI(apiContext, authority, attributeName,[attributeValue])
+    })
   });
 
   test('should show existed entitlements in the Attribute Details section', async ({ page,authority,attributeName, attributeValue }) => {
@@ -357,6 +361,10 @@ test.describe('<Attributes/>', () => {
       expect(tableEntitlements.length).toBe(1)
       const tableValue = `${authority}/attr/${attributeName}/value/${attributeValue}`
       await expect(page.locator('.ant-table-cell', {hasText: tableValue})).toBeVisible()
+    })
+
+    await test.step('Cleanup', async () => {
+      await deleteAttributeViaAPI(apiContext, authority, attributeName,[attributeValue])
     })
   });
 

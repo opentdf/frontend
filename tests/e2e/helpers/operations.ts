@@ -1,4 +1,4 @@
-import {expect, Page} from '@playwright/test'
+import {APIRequestContext, expect, Page} from '@playwright/test'
 import { selectors } from "./selectors";
 
 export const authorize = async (page: Page) => {
@@ -44,4 +44,33 @@ export const firstTableRowClick = async (table: string, page: Page) => {
 export const getLastPartOfUrl = async (page: Page) => {
   const url = page.url();
   return url.substring(url.lastIndexOf('/') + 1);
+};
+
+export const getAccessToken = async (page: Page) => {
+  return await page.evaluate(() => {
+    return sessionStorage.getItem("keycloak");
+  });
+};
+
+export const deleteAttributeViaAPI = async (apiContext: APIRequestContext, authority: string, attrName: string, attrOrder: string[], attrRule = "hierarchy", attrState = "published") => {
+  const deleteAttributeResponse = await apiContext.delete('http://localhost:65432/api/attributes/definitions/attributes', {
+    data: {
+      "authority": authority,
+      "name": attrName,
+      "rule": attrRule,
+      "state": attrState,
+      "order": attrOrder
+    }
+  })
+  expect(deleteAttributeResponse.ok()).toBeTruthy()
+};
+
+export const deleteAuthorityViaAPI = async (apiContext: APIRequestContext, authority: string) => {
+  const deleteAuthorityResponse = await apiContext.delete('http://localhost:65432/api/attributes/authorities',{
+    data: {
+      "authority": authority
+    },
+  });
+  await expect(deleteAuthorityResponse.status()).toBe(202)
+  await expect(deleteAuthorityResponse.ok()).toBeTruthy()
 };
