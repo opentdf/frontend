@@ -312,6 +312,32 @@ test.describe('<Attributes/>', () => {
     })
   });
 
+  test('Should delete consequent Order field using the Minus icon', async ({ page , authority, attributeName, attributeValue}) => {
+    let orderFieldsQuantityAfterAdding: number
+    await page.fill(selectors.attributesPage.newSection.attributeNameField, attributeName);
+    await page.fill(selectors.attributesPage.newSection.orderField1, attributeValue);
+
+    await test.step('Consequent Order field is properly added', async () => {
+      await page.click(selectors.attributesPage.newSection.plusOrderButton)
+      const orderFieldsAfterAdding = await page.$$('label[title="Order"]')
+      orderFieldsQuantityAfterAdding = orderFieldsAfterAdding.length
+    })
+
+    await test.step('Order field is properly removed', async () => {
+      await page.click(selectors.attributesPage.newSection.minusOrderButton)
+      const orderFieldsAfterRemoval = await page.$$('label[title="Order"]')
+      const orderFieldsQuantityAfterRemoval = orderFieldsAfterRemoval.length
+      expect(orderFieldsQuantityAfterRemoval === (orderFieldsQuantityAfterAdding - 1)).toBeTruthy()
+    })
+
+    await test.step('Order field value is properly dropped after removal and re-adding', async () => {
+      await page.click(selectors.attributesPage.newSection.plusOrderButton)
+      await expect(page.locator(selectors.attributesPage.newSection.orderField1)).toBeEmpty()
+      const secondOrderField = await page.locator('#order_1')
+      await expect(secondOrderField).toBeEmpty()
+    })
+  });
+
   test('should show empty state of the Entitlements table in the Attribute Details section when there are no entitlements', async ({page, authority, attributeName,attributeValue}) => {
     await createAttributeAndVerifyResultMsg(page, attributeName, [attributeValue])
     await page.click(selectors.attributesPage.attributesHeader.itemsQuantityIndicator)
