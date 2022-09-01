@@ -312,7 +312,7 @@ test.describe('<Attributes/>', () => {
     })
   });
 
-  test('Should delete consequent Order field using the Minus icon', async ({ page , authority, attributeName, attributeValue}) => {
+  test('Should delete consequent Order field using the Minus icon', async ({ page , attributeName, attributeValue}) => {
     let orderFieldsQuantityAfterAdding: number
     await page.fill(selectors.attributesPage.newSection.attributeNameField, attributeName);
     await page.fill(selectors.attributesPage.newSection.orderField1, attributeValue);
