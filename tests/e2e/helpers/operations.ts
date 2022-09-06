@@ -24,7 +24,7 @@ export const createAuthority = async (page: Page, authority: any) => {
   await page.locator(selectors.attributesPage.newSection.submitAuthorityBtn).click();
 };
 
-export const createAttributeAndVerifyResultMsg = async (page: Page, name: string, values: string[]) => {
+export const createAttribute = async (page: Page, name: string, values: string[]) => {
   await page.fill(selectors.attributesPage.newSection.attributeNameField, name);
   for (let i = 0; i < values.length; i++) {
     const currentOrderField = `#order_${i}`
@@ -32,8 +32,12 @@ export const createAttributeAndVerifyResultMsg = async (page: Page, name: string
     await page.click(selectors.attributesPage.newSection.plusOrderButton)
   }
   await page.click(selectors.attributesPage.newSection.submitAttributeBtn);
-  const attributeCreatedMsg2 = await page.locator(selectors.alertMessage, {hasText: `Attribute created for`})
-  await expect(attributeCreatedMsg2).toBeVisible();
+}
+
+export const assertAttributeCreatedMsg = async (page: Page) => {
+  const attributeCreatedSuccessfullyMsg = await page.locator(selectors.alertMessage, {hasText: `Attribute created for`})
+  await expect(attributeCreatedSuccessfullyMsg).toBeVisible();
+  await attributeCreatedSuccessfullyMsg.click()
 }
 
 export const firstTableRowClick = async (table: string, page: Page) => {

@@ -1,7 +1,8 @@
-import { APIRequestContext, expect } from '@playwright/test';
+import {APIRequestContext, expect, Locator} from '@playwright/test';
 import {
   createAuthority,
-  createAttributeAndVerifyResultMsg,
+  createAttribute,
+  assertAttributeCreatedMsg,
   firstTableRowClick,
   authorize,
   getAccessToken,
@@ -15,6 +16,7 @@ test.describe('<Attributes/>', () => {
   const existedOrderValue = '.ant-tabs-tab-btn >> nth=0'
   let authToken: string | null;
   let apiContext: APIRequestContext;
+  let authorityCreatedMsg: Locator;
 
   test.beforeEach(async ({ page, playwright, authority }) => {
     await authorize(page);
@@ -25,7 +27,7 @@ test.describe('<Attributes/>', () => {
     await notificationElement.click();
     await createAuthority(page, authority);
     // click success message to close it and overcome potential overlapping problem
-    const authorityCreatedMsg = page.locator(selectors.alertMessage, {hasText:'Authority was created'})
+    authorityCreatedMsg = page.locator(selectors.alertMessage, {hasText:'Authority was created'})
     await authorityCreatedMsg.click()
 
     apiContext = await playwright.request.newContext({
@@ -54,7 +56,8 @@ test.describe('<Attributes/>', () => {
   });
 
   test('should add attribute, should filter attributes by Name, Order, Rule', async ({ page, attributeName, authority, attributeValue }) => {
-    await createAttributeAndVerifyResultMsg(page, attributeName, [attributeValue])
+    await createAttribute(page, attributeName, [attributeValue])
+    await assertAttributeCreatedMsg(page)
 
     const attributesHeader = selectors.attributesPage.attributesHeader;
     const filterModal = attributesHeader.filterModal;
@@ -101,6 +104,50 @@ test.describe('<Attributes/>', () => {
 
     await test.step('Cleanup', async () => {
       await deleteAttributeViaAPI(apiContext, authority, attributeName,[attributeValue])
+    })
+  });
+
+  test('should not be able to create the attribute with already existed name for the same authority', async ({ page,authority,attributeName, attributeValue }) => {
+    await test.step('Create an attribute', async() => {
+      await createAttribute(page, attributeName, [attributeValue])
+      await assertAttributeCreatedMsg(page)
+    })
+
+    await test.step('Try to create another attribute with the same name', async() => {
+      await createAttribute(page, attributeName, ["Custom"])
+    })
+
+    await test.step('Assert failure message', async() => {
+      const attributeCreationFailedMessage = await page.locator(selectors.alertMessage, {hasText: `Request failed`})
+      await expect(attributeCreationFailedMessage).toBeVisible()
+    })
+
+    await test.step('Cleanup', async () => {
+      await deleteAttributeViaAPI(apiContext, authority, attributeName,[attributeValue])
+    })
+  });
+
+  test('should be able to create an attribute with already used name for another authority', async ({ page,authority,attributeName, attributeValue }) => {
+    await test.step('Create an attribute', async() => {
+      await createAttribute(page, attributeName, [attributeValue])
+      await assertAttributeCreatedMsg(page)
+    })
+
+    await test.step('Create another authority', async() => {
+      await page.fill(selectors.attributesPage.newSection.authorityField, `${authority}2`);
+      await page.locator(selectors.attributesPage.newSection.submitAuthorityBtn).click();
+      await authorityCreatedMsg.click()
+    })
+
+    await test.step('Create an attribute with the same name for another authority', async() => {
+      await createAttribute(page, attributeName, [attributeValue])
+      await assertAttributeCreatedMsg(page)
+    })
+
+    await test.step('Cleanup', async () => {
+      await deleteAttributeViaAPI(apiContext, `${authority}2`, attributeName,[attributeValue])
+      await deleteAttributeViaAPI(apiContext, authority, attributeName,[attributeValue])
+      await deleteAuthorityViaAPI(apiContext, `${authority}2`)
     })
   });
 
@@ -248,7 +295,8 @@ test.describe('<Attributes/>', () => {
     const attributeDetailsSection = selectors.attributesPage.attributeDetailsSection
 
     await test.step('Create an attribute and assert creation', async() => {
-      await createAttributeAndVerifyResultMsg(page, attributeName, [attributeValue])
+      await createAttribute(page, attributeName, [attributeValue])
+      await assertAttributeCreatedMsg(page)
     })
 
     await page.click(selectors.attributesPage.attributesHeader.itemsQuantityIndicator)
@@ -272,7 +320,8 @@ test.describe('<Attributes/>', () => {
     const ruleUpdatedMsg = page.locator(selectors.alertMessage, {hasText: `Rule was updated!`})
 
     await test.step('Create an attribute with multiple Order values and check result message', async() => {
-      await createAttributeAndVerifyResultMsg(page, attributeName, [`${attributeValue}1`, `${attributeValue}2`, `${attributeValue}3`, `${attributeValue}4`])
+      await createAttribute(page, attributeName, [`${attributeValue}1`, `${attributeValue}2`, `${attributeValue}3`, `${attributeValue}4`])
+      await assertAttributeCreatedMsg(page)
     })
 
     await test.step('Open the Details section', async() => {
@@ -339,7 +388,8 @@ test.describe('<Attributes/>', () => {
   });
 
   test('should show empty state of the Entitlements table in the Attribute Details section when there are no entitlements', async ({page, authority, attributeName,attributeValue}) => {
-    await createAttributeAndVerifyResultMsg(page, attributeName, [attributeValue])
+    await createAttribute(page, attributeName, [attributeValue])
+    await assertAttributeCreatedMsg(page)
     await page.click(selectors.attributesPage.attributesHeader.itemsQuantityIndicator)
     await page.locator(selectors.attributesPage.newSectionBtn).click();
     const existedOrderValue = page.locator('.ant-tabs-tab-btn >> nth=0')
@@ -353,7 +403,8 @@ test.describe('<Attributes/>', () => {
 
   test('should show existed entitlements in the Attribute Details section', async ({ page,authority,attributeName, attributeValue }) => {
     await test.step('Create an attribute', async() => {
-      await createAttributeAndVerifyResultMsg(page, attributeName, [attributeValue])
+      await createAttribute(page, attributeName, [attributeValue])
+      await assertAttributeCreatedMsg(page)
     })
 
     await test.step('Switch to the Entitlements page', async() => {
@@ -396,7 +447,8 @@ test.describe('<Attributes/>', () => {
 
   test('should be able to delete an attribute', async ({ page,authority,attributeName, attributeValue }) => {
     await test.step('Create an attribute', async() => {
-      await createAttributeAndVerifyResultMsg(page, attributeName, [attributeValue])
+      await createAttribute(page, attributeName, [attributeValue])
+      await assertAttributeCreatedMsg(page)
     })
 
     await test.step('Open the Details section', async() => {

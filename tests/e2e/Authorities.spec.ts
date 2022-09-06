@@ -2,7 +2,8 @@ import {APIRequestContext, expect} from '@playwright/test';
 import {
     createAuthority,
     authorize,
-    createAttributeAndVerifyResultMsg,
+    createAttribute,
+    assertAttributeCreatedMsg,
     getAccessToken,
     deleteAuthorityViaAPI,
     deleteAttributeViaAPI
@@ -78,7 +79,8 @@ test.describe('<Authorities/>', () => {
     });
 
     test('Authority removal is failed when contains assigned attributes', async ({ page, authority, attributeName, attributeValue}) => {
-        await createAttributeAndVerifyResultMsg(page, attributeName, [attributeValue])
+        await createAttribute(page, attributeName, [attributeValue])
+        await assertAttributeCreatedMsg(page)
         await page.goto('/authorities');
         // click the token message to close it and overcome potential overlapping problem
         await page.locator(selectors.tokenMessage).click()
