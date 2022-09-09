@@ -19,6 +19,7 @@ If "Client not found" or "Invalid parameter: redirect_uri":
 - For Quickstart 1.0
   - update .env `'clientId':'dcr-test'`
   - In keycloak, update client `dcr-test`, field `Valid Redirect URIs` add `http://localhost:3000/*`
+  - Note the Authorities, Attributes tabs will not work since `serverCorsOrigins: "*"` is not supported in the helm chart 1.0
 - For Quickstart 1.1, set `'clientId':'abacus-localhost'`
 
 ### Server (production-like)
