@@ -15,6 +15,12 @@ Starts server on http://localhost:3000
 npm run start
 ````
 
+If "Client not found" or "Invalid parameter: redirect_uri":
+- For Quickstart 1.0
+  - update .env `'clientId':'dcr-test'`
+  - In keycloak, update client `dcr-test`, field `Valid Redirect URIs` add `http://localhost:3000/*`
+- For Quickstart 1.1, set `'clientId':'abacus-localhost'`
+
 ### Server (production-like)
 
 ```shell
