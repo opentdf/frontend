@@ -1,4 +1,4 @@
-import {expect, Page} from '@playwright/test'
+import {APIRequestContext, expect, Page} from '@playwright/test'
 import { selectors } from "./selectors";
 
 export const authorize = async (page: Page) => {
@@ -24,7 +24,7 @@ export const createAuthority = async (page: Page, authority: any) => {
   await page.locator(selectors.attributesPage.newSection.submitAuthorityBtn).click();
 };
 
-export const createAttributeAndVerifyResultMsg = async (page: Page, name: string, values: string[]) => {
+export const createAttribute = async (page: Page, name: string, values: string[]) => {
   await page.fill(selectors.attributesPage.newSection.attributeNameField, name);
   for (let i = 0; i < values.length; i++) {
     const currentOrderField = `#order_${i}`
@@ -32,8 +32,12 @@ export const createAttributeAndVerifyResultMsg = async (page: Page, name: string
     await page.click(selectors.attributesPage.newSection.plusOrderButton)
   }
   await page.click(selectors.attributesPage.newSection.submitAttributeBtn);
-  const attributeCreatedMsg2 = await page.locator(selectors.alertMessage, {hasText: `Attribute created for`})
-  await expect(attributeCreatedMsg2).toBeVisible();
+}
+
+export const assertAttributeCreatedMsg = async (page: Page) => {
+  const attributeCreatedSuccessfullyMsg = await page.locator(selectors.alertMessage, {hasText: `Attribute created for`})
+  await expect(attributeCreatedSuccessfullyMsg).toBeVisible();
+  await attributeCreatedSuccessfullyMsg.click()
 }
 
 export const firstTableRowClick = async (table: string, page: Page) => {
@@ -44,4 +48,33 @@ export const firstTableRowClick = async (table: string, page: Page) => {
 export const getLastPartOfUrl = async (page: Page) => {
   const url = page.url();
   return url.substring(url.lastIndexOf('/') + 1);
+};
+
+export const getAccessToken = async (page: Page) => {
+  return await page.evaluate(() => {
+    return sessionStorage.getItem("keycloak");
+  });
+};
+
+export const deleteAttributeViaAPI = async (apiContext: APIRequestContext, authority: string, attrName: string, attrOrder: string[], attrRule = "hierarchy", attrState = "published") => {
+  const deleteAttributeResponse = await apiContext.delete('http://localhost:65432/api/attributes/definitions/attributes', {
+    data: {
+      "authority": authority,
+      "name": attrName,
+      "rule": attrRule,
+      "state": attrState,
+      "order": attrOrder
+    }
+  })
+  expect(deleteAttributeResponse.ok()).toBeTruthy()
+};
+
+export const deleteAuthorityViaAPI = async (apiContext: APIRequestContext, authority: string) => {
+  const deleteAuthorityResponse = await apiContext.delete('http://localhost:65432/api/attributes/authorities',{
+    data: {
+      "authority": authority
+    },
+  });
+  await expect(deleteAuthorityResponse.status()).toBe(202)
+  await expect(deleteAuthorityResponse.ok()).toBeTruthy()
 };

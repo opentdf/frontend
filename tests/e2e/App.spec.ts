@@ -17,4 +17,17 @@ test.describe('<App/>', () => {
     const logoutButton = page.locator(selectors.logoutButton);
     expect(logoutButton).toBeTruthy();
   });
+
+  test('should be able to log out', async ({ page }) => {
+    await page.goto('/attributes');
+    await Promise.all([
+      page.waitForNavigation(),
+      page.click(selectors.logoutButton),
+    ])
+    await page.waitForSelector(selectors.loginButton);
+    // check that data isn't shown
+    const authorityDropdown = page.locator(".ant-select-selector >> nth=1")
+    await authorityDropdown.click()
+    await expect(page.locator('.ant-empty-description')).toHaveText('No Data')
+  });
 });

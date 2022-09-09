@@ -25,6 +25,11 @@ export const selectors = {
         },
         attributeDetailsSection: {
             editRuleButton: '#edit',
+            deleteAttributeButton: '#delete-attribute',
+            confirmAttributeDeletionModal: {
+                cancelDeletionBtn: '#cancel-attribute-deletion',
+                confirmDeletionBtn: '#confirm-attribute-deletion',
+            },
             closeDetailsSectionButton: "#close-details-button",
             ruleDropdown: '.attribute-rule__select',
             saveRuleButton: '#save-rule',
@@ -56,8 +61,8 @@ export const selectors = {
         entityDetailsPage: {
             tableCell: '.ant-table-cell',
             tableRow: '.ant-table-row',
-            deleteAttributeBtn: '.ant-btn-link >> nth=0',
-            deleteAttributeModalBtn: '#delete-attr',
+            deleteEntitlementBtn: '.ant-btn-link >> nth=0',
+            deleteEntitlementModalBtn: '#delete-attr',
         }
     },
     authoritiesPage: {

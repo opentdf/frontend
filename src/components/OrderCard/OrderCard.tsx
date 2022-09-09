@@ -14,6 +14,7 @@ type Props = {
   isEdit: boolean;
   name: string;
   onClose: () => void;
+  onDeleteAttribute: () => void;
   onSaveClick: () => void;
   onTabChange: (item: string) => void;
   state?: string;
@@ -29,6 +30,7 @@ const OrderCard: FC<Props> = (props) => {
     isEdit,
     name,
     onClose,
+    onDeleteAttribute,
     onSaveClick,
     onTabChange,
     state,
@@ -39,7 +41,7 @@ const OrderCard: FC<Props> = (props) => {
 
   const actions = useMemo(() => {
     const config = {
-      view: [{ onClick: toggleEdit, key: "edit", text: "Edit Rule" }],
+      view: [{ onClick: toggleEdit, key: "edit", text: "Edit Rule" },{ onClick: onDeleteAttribute, key: "delete-attribute", text: "Delete Attribute" }],
       edit: [
         { onClick: onSaveClick, key: "save-rule", text: "Save rule" },
         { onClick: toggleEdit, key: "cancel", text: "Cancel" },

@@ -32,7 +32,7 @@ const Authorities = () => {
       } catch (error: any) {
         let errorText = error.message;
 
-        if (error.message.includes('code 500')) {
+        if (error.message.includes('code 405')) {
           errorText = 'Something went wrong. Make sure there are no attributes assigned to this Authority'
         }
 
