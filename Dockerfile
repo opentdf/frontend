@@ -18,7 +18,7 @@ COPY craco.config.js/ .
 RUN npm run build
 
 # server - nginx alpine
-FROM nginx:stable-alpine as server
+FROM nginxinc/nginx-unprivileged:stable-alpine as server
 COPY --from=builder /build/build /usr/share/nginx/html
 COPY nginx-default.conf /etc/nginx/templates/default.conf.template
 ENV KEYCLOAK_HOST "http://localhost/keycloak/auth"
@@ -29,4 +29,4 @@ ENV ENTITLEMENTS_HOST "http://localhost/entitlements"
 ENV KAS_HOST "http://localhost:8000"
 ENV SERVER_BASE_PATH ""
 
-EXPOSE 80
+EXPOSE 8080
