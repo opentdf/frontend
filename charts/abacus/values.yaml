@@ -3,12 +3,16 @@
 # Declare variables to be passed into your templates.
 
 attributes:
+  # Overrides global.opentdf.common.oidcExternalBaseUrl + global.opentdf.common.oidcExternalBaseUrl
   serverUrl: "http://localhost:65432/api/attributes/"
 entitlements:
+  # Overrides global.opentdf.common.oidcExternalBaseUrl + global.opentdf.common.oidcExternalBaseUrl
   serverUrl: "http://localhost:65432/api/entitlements/"
 kas:
+  # Overrides global.opentdf.common.oidcExternalBaseUrl + global.opentdf.common.oidcExternalBaseUrl
   serverUrl: "http://localhost:65432/api/kas"
 oidc:
+  # Overrides global.opentdf.common.oidcExternalBaseUrl + /auth/
   serverUrl: "http://localhost:65432/auth/"
   clientId: "dcr-test"
   # Comma separated list of realms to allow access to in keycloak
@@ -55,7 +59,7 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  port: 80
+  port: 8080
 
 ingress:
   enabled: true
