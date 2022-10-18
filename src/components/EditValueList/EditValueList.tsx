@@ -10,9 +10,9 @@ const EditValueList: FC<Props> = (props) => {
     const listRef = useRef<HTMLUListElement>(null);
     const { list, onEdit } = props;
 
-    const onChangeHandle = () => {
+    const onBlurHandle = () => {
         const newValues = list.map((item, index) => {
-            const input = listRef.current?.children.item(index)?.children.item(0) as HTMLInputElement
+            const input = listRef.current?.children.item(index)?.children.item(0) as HTMLInputElement;
             return input?.value;
         });
         onEdit(newValues);
@@ -26,7 +26,7 @@ const EditValueList: FC<Props> = (props) => {
                     key={item}
                     style={{ borderBottom: '0px' }}
                 >
-                    <Input defaultValue={item} onChange={onChangeHandle} />
+                    <Input defaultValue={item} onBlur={onBlurHandle} />
                 </li>
             ))}
         </ul>
