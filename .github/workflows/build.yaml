@@ -134,6 +134,12 @@ jobs:
           github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           # TODO:
           # https://octokit.github.io/rest.js/v18#actions-create-workflow-dispatch
+#          script: |
+#            await github.rest.repos.createDispatchEvent({
+#              owner: 'opentdf',
+#              repo: 'tests',
+#              event_type: 'xtest',
+#            })
           script: |
             await github.rest.repos.createDispatchEvent({
               owner: 'opentdf',
