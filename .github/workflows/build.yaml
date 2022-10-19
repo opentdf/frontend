@@ -134,7 +134,7 @@ jobs:
           result-encoding: string
           github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           script: |
-            github.rest.repos.createDispatchEvent({
+            octokit.rest.actions.createWorkflowDispatch({
               owner: 'opentdf',
               repo: 'tests',
               workflow_id: 'xtest.yml',
