@@ -134,13 +134,15 @@ jobs:
           result-encoding: string
           github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           script: |
-            octokit.rest.actions.createWorkflowDispatch({
-              owner: 'opentdf',
-              repo: 'tests',
-              workflow_id: 'xtest.yml',
-              ref: 'main',
-              event_type: 'xtest',
-            })
+#            github.rest.repos.createDispatchEvent({
+#              owner: 'opentdf',
+#              repo: 'tests',
+#              workflow_id: 'xtest.yml',
+#              ref: 'main',
+#              event_type: 'xtest',
+#            })
+          run: | 
+            curl \ -X POST \ -H "Accept: application/vnd.github+json" \ -H "Authorization: Bearer ${{ secrets.PERSONAL_ACCESS_TOKEN }}" \ https://api.github.com/repos/opentdf/tests/dispatches \ -d '{"event_type":"xtest","client_payload":{"unit":false,"integration":true}}'
 
           # TODO:
           # https://octokit.github.io/rest.js/v18#actions-create-workflow-dispatch
