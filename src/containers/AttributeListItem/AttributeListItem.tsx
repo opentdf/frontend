@@ -116,6 +116,12 @@ const AttributeListItem: FC<Props> = (props) => {
   }, []);
 
   const handleSaveClick = useCallback(async () => {
+    const isSomeItemEmpty = activeOrderList.some((item) => !item.trim());
+    if (isSomeItemEmpty) {
+      toast.error("Order value should not be blank");
+      return;
+    }
+
     const data = {
       authority: activeAuthority,
       name: activeAttribute?.name,
