@@ -34,7 +34,7 @@ const AttributeListItem: FC<Props> = (props) => {
 
   const [getAttrEntities, { loading, data: entities }] =
     useLazyFetch<EntityAttribute[]>(entitlementsClient);
-  const [updateRules] = useLazyFetch(attributesClient);
+  const [updateAttribute] = useLazyFetch(attributesClient);
 
   useEffect(() => {
     const unsubscribeAttributesFiltersStore = AttributesFiltersStore.subscribe(
@@ -130,12 +130,12 @@ const AttributeListItem: FC<Props> = (props) => {
     };
 
     try {
-      await updateRules({
+      await updateAttribute({
         method: Method.PUT,
         path: `/definitions/attributes`,
         data,
       });
-      toast.success("Rule was updated!");
+      toast.success(isEditValues ? "Order value was updated!" : "Rule was updated!");
     } catch (error) {
       toast.error("Could not update rules!");
     }
@@ -146,7 +146,7 @@ const AttributeListItem: FC<Props> = (props) => {
     activeAuthority,
     activeOrderList,
     activeRule,
-    updateRules,
+    updateAttribute,
     handleClose,
     onChange
   ]);
