@@ -1,5 +1,5 @@
 import React, { FC, useRef } from 'react';
-import { Input } from 'antd';
+import { Form, Input } from 'antd';
 
 type Props = {
     list: string[];
@@ -7,30 +7,35 @@ type Props = {
 }
 
 const EditValueList: FC<Props> = (props) => {
-    const listRef = useRef<HTMLUListElement>(null);
+    const formRef = useRef<any>(null);
+    const [form] = Form.useForm();
     const { list, onEdit } = props;
 
     const onBlurHandle = () => {
-        const newValues = list.map((item, index) => {
-            const input = listRef.current?.children.item(index)?.children.item(0) as HTMLInputElement;
-            return input?.value;
-        });
-        onEdit(newValues);
+        const newValues = formRef.current?.getFieldsValue();
+        onEdit(Object.values(newValues));
     };
 
     return (
-        <ul className="order-list" ref={listRef}>
-            {list.map((item) => (
-                <li
-                    className="order-list__item"
+        <Form
+            form={form}
+            ref={formRef}
+            autoComplete="off"
+            initialValues={{ ...list }}
+            onBlur={onBlurHandle}
+        >
+            {list.map((item, index) => (
+                <Form.Item
                     key={item}
-                    style={{ borderBottom: '0px' }}
+                    name={index}
+                    rules={[{ required: true, message: 'Order value should not be blank' }]}
                 >
-                    <Input defaultValue={item} onBlur={onBlurHandle} />
-                </li>
+                    <Input />
+                </Form.Item>
             ))}
-        </ul>
+        </Form>
     );
 }
-
-export default EditValueList;
+// Blocking unnecessary re render because we losing validation messages after it
+const disableRerender = () => true;
+export default React.memo(EditValueList, disableRerender);
