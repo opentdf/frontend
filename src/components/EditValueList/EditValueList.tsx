@@ -1,4 +1,4 @@
-import React, { FC, useRef } from 'react';
+import React, { FC } from 'react';
 import { Form, Input } from 'antd';
 
 type Props = {
@@ -7,19 +7,16 @@ type Props = {
 }
 
 const EditValueList: FC<Props> = (props) => {
-    const formRef = useRef<any>(null);
     const [form] = Form.useForm();
     const { list, onEdit } = props;
 
     const onBlurHandle = () => {
-        const newValues = formRef.current?.getFieldsValue();
-        onEdit(Object.values(newValues));
+        onEdit(Object.values(form.getFieldsValue()));
     };
 
     return (
         <Form
             form={form}
-            ref={formRef}
             autoComplete="off"
             initialValues={{ ...list }}
             onBlur={onBlurHandle}
