@@ -25,6 +25,8 @@ export const selectors = {
         },
         attributeDetailsSection: {
             editRuleButton: '#edit',
+            editValueButton: '#edit-value',
+            editValueInputField: '#edit-value-input-field',
             deleteAttributeButton: '#delete-attribute',
             confirmAttributeDeletionModal: {
                 cancelDeletionBtn: '#cancel-attribute-deletion',
@@ -32,8 +34,8 @@ export const selectors = {
             },
             closeDetailsSectionButton: "#close-details-button",
             ruleDropdown: '.attribute-rule__select',
-            saveRuleButton: '#save-rule',
-            cancelRuleSavingButton: '#cancel',
+            saveChangesButton: '#save-rule',
+            cancelEditingButton: '#cancel',
         },
         newSectionBtn: '.ant-collapse-header',
         newSection: {

@@ -17,6 +17,7 @@ test.describe('<Attributes/>', () => {
   let authToken: string | null;
   let apiContext: APIRequestContext;
   let authorityCreatedMsg: Locator;
+  const attributeDetailsSection = selectors.attributesPage.attributeDetailsSection
 
   test.beforeEach(async ({ page, playwright, authority }) => {
     await authorize(page);
@@ -292,7 +293,6 @@ test.describe('<Attributes/>', () => {
   test('should edit attribute rule', async ({ page , authority, attributeName, attributeValue}) => {
     const restrictiveAccessDropdownOption = page.locator('.ant-select-item-option', {hasText:'Restrictive Access'})
     const ruleUpdatedMsg = page.locator(selectors.alertMessage, {hasText: `Rule was updated!`})
-    const attributeDetailsSection = selectors.attributesPage.attributeDetailsSection
 
     await test.step('Create an attribute and assert creation', async() => {
       await createAttribute(page, attributeName, [attributeValue])
@@ -307,12 +307,45 @@ test.describe('<Attributes/>', () => {
       await page.click(attributeDetailsSection.editRuleButton)
       await page.click(attributeDetailsSection.ruleDropdown)
       await restrictiveAccessDropdownOption.click()
-      await page.click(attributeDetailsSection.saveRuleButton)
+      await page.click(attributeDetailsSection.saveChangesButton)
       await expect(ruleUpdatedMsg).toBeVisible()
     })
 
     await test.step('Cleanup', async () => {
       await deleteAttributeViaAPI(apiContext, authority, attributeName,[attributeValue], "allOf")
+    })
+  });
+
+  test('should edit order value, able to cancel editing', async ({ page , authority, attributeName, attributeValue}) => {
+    const orderValueUpdatedMsg = page.locator(selectors.alertMessage, {hasText: `Order value was updated!`})
+
+    await test.step('Create an attribute and assert creation', async() => {
+      await createAttribute(page, attributeName, [attributeValue])
+      await assertAttributeCreatedMsg(page)
+    })
+
+    await page.click(selectors.attributesPage.attributesHeader.itemsQuantityIndicator)
+    await page.click(selectors.attributesPage.newSectionBtn);
+
+    await test.step('Able to cancel editing a value', async() => {
+      await page.click(existedOrderValue)
+      await page.click(attributeDetailsSection.editValueButton)
+      await page.click(attributeDetailsSection.cancelEditingButton)
+    })
+
+    await test.step('Update value and assert result', async() => {
+      await page.click(existedOrderValue)
+      await page.click(attributeDetailsSection.editValueButton)
+      const updatedOrderValue = 'Updated Value'
+      await page.fill(attributeDetailsSection.editValueInputField, updatedOrderValue)
+      await page.click(attributeDetailsSection.saveChangesButton)
+      await expect(orderValueUpdatedMsg).toBeVisible()
+      const updatedOrderValueInTheList = page.locator('.ant-tabs-tab-btn >> nth=0')
+      await expect(updatedOrderValueInTheList).toHaveText(updatedOrderValue)
+    })
+
+    await test.step('Cleanup', async () => {
+      await deleteAttributeViaAPI(apiContext, authority, attributeName,['Updated Value'])
     })
   });
 
@@ -342,7 +375,7 @@ test.describe('<Attributes/>', () => {
     })
 
     await test.step('Should be able to cancel attribute editing', async() => {
-      await page.click(selectors.attributesPage.attributeDetailsSection.cancelRuleSavingButton)
+      await page.click(selectors.attributesPage.attributeDetailsSection.cancelEditingButton)
     })
 
     await test.step('Reenter editing mode and edit order of values items using drag-and-drop feature', async() => {
@@ -350,7 +383,7 @@ test.describe('<Attributes/>', () => {
       const firstOrderItemInEditableList = '.order-list__item >> nth=0'
       const fourthOrderItemInEditableList = '.order-list__item >> nth=3'
       await page.dragAndDrop(fourthOrderItemInEditableList, firstOrderItemInEditableList )
-      await page.click(selectors.attributesPage.attributeDetailsSection.saveRuleButton)
+      await page.click(selectors.attributesPage.attributeDetailsSection.saveChangesButton)
       await expect(ruleUpdatedMsg).toBeVisible()
       const updatedFirstOrderValue = page.locator('.ant-tabs-tab-btn >> nth=0')
       await expect(updatedFirstOrderValue).toHaveText(`${attributeValue}4`)

@@ -27,7 +27,7 @@ const EditValueList: FC<Props> = (props) => {
                     name={index}
                     rules={[{ required: true, message: 'Order value should not be blank' }]}
                 >
-                    <Input />
+                    <Input id={'edit-value-input-field'}/>
                 </Form.Item>
             ))}
         </Form>
