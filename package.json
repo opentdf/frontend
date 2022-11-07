@@ -27,7 +27,7 @@
   "scripts": {
     "start": "craco start",
     "start:test": "cross-env REACT_APP_TEST_MODE=1 craco start",
-    "build": "REACT_APP_SERVER_DATA=__SERVER_DATA__ craco build",
+    "build": "craco build",
     "build:test": "REACT_APP_SERVER_DATA=__SERVER_DATA__ cross-env REACT_APP_TEST_MODE=1 craco build",
     "test": "craco test --coverage",
     "test:prod": "craco test --watchAll=false",

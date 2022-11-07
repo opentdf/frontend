@@ -80,66 +80,75 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
   chart:
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-    runs-on: ubuntu-latest
-    needs:
-      - image
-    permissions:
-      packages: write
-      contents: read
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v2
-      - uses: yokawasa/action-setup-kube-tools@v0.8.0
-        with:
-          setup-tools: helm
-          helm: "3.8.0"
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-          logout: false
-      - name: push
-        run: |
-          sha_ver=sha-$(git rev-parse --short HEAD)
-          tag_ver=${{ github.event.release.tag_version }}
-          explicit_version=$(printf '%s\n' "${app_ver}-${sha_ver}" | sed -e 's/[\/.]/\\./g')
-          chart_ver="${tag_ver:-${explicit_version}}"
-          image_tag="${tag_ver:-${sha_ver}}"
-          cd charts
-          for d in */ ; do
-              if [ -f "$d/Chart.yaml" ]; then
-                echo "Setting Chart.yaml version to ${chart_ver}..."
-                sed -i "s/^version\: .*/version\: ${chart_ver}/" $d/Chart.yaml
-                sed -i "s/^appVersion\: .*/appVersion\: ${app_ver}/" $d/Chart.yaml
-                sed -i "s/^  tag\: main/  tag\: ${image_tag}/" $d/values.yaml
-                echo "Packaging Helm chart $d..."
-                helm package $d --app-version="${app_ver}"
-                echo "Packaged Helm chart $d with chart version [${chart_ver}] and appVersion to [${app_ver}]"
-                echo *.tgz
-                helm push *.tgz oci://ghcr.io/${{ github.repository_owner }}/charts
-                rm *.tgz
-              fi
-          done
-        env:
-          app_ver: ${{ needs.app.outputs.VERSION || '0.0.0' }}
-
-  dispatch:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/github-script@v6
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-          # TODO:
-          # https://octokit.github.io/rest.js/v18#actions-create-workflow-dispatch
-          script: |
-            await github.rest.repos.createDispatchEvent({
-              owner: 'opentdf',
-              repo: 'tests',
-              event_type: 'xtest',
-            })
+          node-version: '18'
+      - run: npm i @opentdf/client
+#   FIXME replace when working
+#  chart:
+#    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+#    runs-on: ubuntu-latest
+#    needs:
+#      - image
+#    permissions:
+#      packages: write
+#      contents: read
+#    timeout-minutes: 10
+#    steps:
+#      - uses: actions/checkout@v2
+#      - uses: yokawasa/action-setup-kube-tools@v0.8.0
+#        with:
+#          setup-tools: helm
+#          helm: "3.8.0"
+#      - name: Login to GitHub Container Registry
+#        uses: docker/login-action@v1
+#        with:
+#          registry: ghcr.io
+#          username: ${{ github.repository_owner }}
+#          password: ${{ secrets.GITHUB_TOKEN }}
+#          logout: false
+#      - name: push
+#        run: |
+#          sha_ver=sha-$(git rev-parse --short HEAD)
+#          tag_ver=${{ github.event.release.tag_version }}
+#          explicit_version=$(printf '%s\n' "${app_ver}-${sha_ver}" | sed -e 's/[\/.]/\\./g')
+#          chart_ver="${tag_ver:-${explicit_version}}"
+#          image_tag="${tag_ver:-${sha_ver}}"
+#          cd charts
+#          for d in */ ; do
+#              if [ -f "$d/Chart.yaml" ]; then
+#                echo "Setting Chart.yaml version to ${chart_ver}..."
+#                sed -i "s/^version\: .*/version\: ${chart_ver}/" $d/Chart.yaml
+#                sed -i "s/^appVersion\: .*/appVersion\: ${app_ver}/" $d/Chart.yaml
+#                sed -i "s/^  tag\: main/  tag\: ${image_tag}/" $d/values.yaml
+#                echo "Packaging Helm chart $d..."
+#                helm package $d --app-version="${app_ver}"
+#                echo "Packaged Helm chart $d with chart version [${chart_ver}] and appVersion to [${app_ver}]"
+#                echo *.tgz
+#                helm push *.tgz oci://ghcr.io/${{ github.repository_owner }}/charts
+#                rm *.tgz
+#              fi
+#          done
+#        env:
+#          app_ver: ${{ needs.app.outputs.VERSION || '0.0.0' }}
+#  FIXME replace when working
+#  dispatch:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/github-script@v6
+#        with:
+#          github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+#          # TODO:
+#          # https://octokit.github.io/rest.js/v18#actions-create-workflow-dispatch
+#          script: |
+#            await github.rest.repos.createDispatchEvent({
+#              owner: 'opentdf',
+#              repo: 'tests',
+#              event_type: 'xtest',
+#            })
 
   ci:
     needs: image
