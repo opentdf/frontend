@@ -30,7 +30,6 @@ FROM scratch as server
 WORKDIR /
 COPY --from=builder /build/build/ /www/
 COPY --from=gobuilder /server /server
-COPY nginx-default.conf /default.conf.template
 ENV KEYCLOAK_HOST "http://localhost/keycloak/auth"
 ENV KEYCLOAK_CLIENT_ID "abacus"
 ENV KEYCLOAK_REALMS "tdf"

@@ -60,13 +60,13 @@ func main() {
 	if string(input) == output {
 		log.Fatalln("replacing failed")
 	}
-	err = ioutil.WriteFile(filepath.Join(directory, "index.html"), []byte(output), 0644)
-	if err != nil {
-		log.Fatalln(err)
-	}
 	log.Println("replaced")
+	// serve replaced index.html instead of writing it (permission issue)
 	fs := http.FileServer(http.Dir(directory))
-	http.Handle("/", fs)
+	http.Handle("/", &IndexHandler{
+		output: []byte(output),
+		fs:     fs,
+	})
 	log.Printf("listening %s\n", port)
 	err = http.ListenAndServe(port, nil)
 	if errors.Is(err, http.ErrServerClosed) {
@@ -74,4 +74,18 @@ func main() {
 	} else if err != nil {
 		log.Fatalln(err)
 	}
+}
+
+// IndexHandler servers index.html or falls back to file server
+type IndexHandler struct {
+	output []byte
+	fs     http.Handler
+}
+
+func (h IndexHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path == "/" || r.URL.Path == "/index.html" {
+		w.Write(h.output)
+		return
+	}
+	h.fs.ServeHTTP(w, r)
 }
