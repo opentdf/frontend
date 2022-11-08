@@ -1,12 +1,12 @@
 import styles from "./AttributesHeader.module.css";
-import { useState } from 'react';
-import { Button, Cascader, Popover, Typography, Pagination, Select, Badge } from "antd";
+import { JSXElementConstructor, ReactElement, ReactFragment, ReactPortal, useState} from 'react';
+import {Button, Cascader, Popover, Typography, Pagination, Select, Badge} from "antd";
 
 import FilterForm from "../FilterForm";
-import { AttributesFiltersStore } from "../../../../store";
-import { useKeyDown } from "../../../../hooks";
+import {AttributesFiltersStore} from "../../../../store";
+import {useKeyDown} from "../../../../hooks";
 
-const { Option } = Select;
+const {Option} = Select;
 
 enum ORDER {
   ASC = "ASC",
@@ -22,12 +22,12 @@ const SORT_OPTIONS = ['name', 'id', 'rule', 'values_array'];
 
 const CASCADER_OPTIONS = [
   {
-    children: SORT_OPTIONS.map((value) => ({ value, label: value })),
+    children: SORT_OPTIONS.map((value) => ({value, label: value})),
     label: ORDER.ASC,
     value: ORDER_MAP.get(ORDER.ASC) || "",
   },
   {
-    children: SORT_OPTIONS.map((value) => ({ value, label: value })),
+    children: SORT_OPTIONS.map((value) => ({value, label: value})),
     label: ORDER.DES,
     value: ORDER_MAP.get(ORDER.DES) || "",
   },
@@ -38,7 +38,7 @@ type AttributesHeaderProps = {
   total: number;
 }
 
-const AttributesHeader = ({ total }: AttributesHeaderProps) => {
+const AttributesHeader = ({total}: AttributesHeaderProps) => {
   const [visiblePopover, setVisiblePopover] = useState(false);
   const handleVisibleChange = (newVisible: boolean) => setVisiblePopover(newVisible);
 
@@ -49,54 +49,54 @@ const AttributesHeader = ({ total }: AttributesHeaderProps) => {
     });
   };
 
-  const currentPageNumber = AttributesFiltersStore.useState(s => s.pageNumber);
+  const currentPageNumber = AttributesFiltersStore.useState((s: { pageNumber: any; }) => s.pageNumber);
 
   const handlePaginationChange = (pageNumber: number): void => {
     if (pageNumber > currentPageNumber) {
-      AttributesFiltersStore.update(s => {
+      AttributesFiltersStore.update((s: { query: { offset: number; }; pageNumber: number; }) => {
         s.query.offset += 1;
         s.pageNumber += 1;
       });
     } else {
-      AttributesFiltersStore.update(s => {
+      AttributesFiltersStore.update((s: { query: { offset: number; }; pageNumber: number; }) => {
         s.query.offset -= 1;
         s.pageNumber -= 1;
       });
     }
   };
 
-  const authorities = AttributesFiltersStore.useState(s => s.possibleAuthorities);
-  const authority = AttributesFiltersStore.useState(s => s.authority);
-  const { name, order, rule } = AttributesFiltersStore.useState(s => s.query);
+  const authorities = AttributesFiltersStore.useState((s: { possibleAuthorities: any; }) => s.possibleAuthorities);
+  const authority = AttributesFiltersStore.useState((s: { authority: any; }) => s.authority);
+  const {name, order, rule} = AttributesFiltersStore.useState((s: { query: any; }) => s.query);
 
   const selectedFilters = Number(Boolean(name)) + Number(Boolean(order)) + Number(Boolean(rule));
 
-  useKeyDown(({ key }) => {
+  useKeyDown(({key}) => {
     if (key === 'Escape' && visiblePopover) {
       setVisiblePopover(false);
     }
   }, [visiblePopover]);
 
   return (
-    <div className={styles.attributeHeader}>
-      <Typography.Title level={2}>
-        Attribute Rules
-      </Typography.Title>
+      <div className={styles.attributeHeader}>
+        <Typography.Title level={2}>
+          Attribute Rules
+        </Typography.Title>
 
-      <div className={styles.cascaderContainer}>
-        <Select
-          value={authority}
-          className={styles.selectAuthority}
-          placeholder="Loading Authorities"
-          onChange={(value) => {
-            AttributesFiltersStore.update(s => {
-              s.authority = value
-            })
-          }}
-          id="select-authorities-button"
-          data-test="select-authorities-button"
-        >
-          {authorities.map(val => <Option key={String(val)} value={String(val)}>{val}</Option>)}
+        <div className={styles.cascaderContainer}>
+          <Select
+              value={authority}
+              className={styles.selectAuthority}
+              placeholder="Loading Authorities"
+              onChange={(value) => {
+                AttributesFiltersStore.update((s: { authority: any; }) => {
+                  s.authority = value
+                })
+              }}
+              id="select-authorities-button"
+              data-test="select-authorities-button"
+          >
+            {authorities.map((val: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | null | undefined) => <Option key={String(val)} value={String(val)}>{val}</Option>)}
         </Select>
         <Pagination
           onChange={handlePaginationChange}

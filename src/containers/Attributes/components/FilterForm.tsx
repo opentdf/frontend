@@ -7,7 +7,7 @@ const { Item } = Form;
 const FilterForm = () => {
 
   const onClear = useCallback(() => {
-    AttributesFiltersStore.update(store => {
+    AttributesFiltersStore.update((store: { query: { limit: any; offset: any; name?: string; order?: string; rule?: string; sort?: string; }; }) => {
       store.query = {
         name: '',
         order: '',
@@ -25,7 +25,7 @@ const FilterForm = () => {
       labelCol={{ span: 24 }}
       wrapperCol={{ span: 24 }}
       onFinish={(values) => {
-        AttributesFiltersStore.update(store => {
+        AttributesFiltersStore.update((store: { query: any; }) => {
           store.query = { ...values };
         })
       }}

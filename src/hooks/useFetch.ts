@@ -50,6 +50,7 @@ export const useLazyFetch = <T>(client: AxiosInstance): [<Q>(config: Config) => 
 
     try {
       const res = await methods[config.method]();
+      // @ts-ignore
       setHeaders(res.headers);
       setData(res.data);
       return res;
