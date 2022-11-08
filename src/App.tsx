@@ -4,13 +4,11 @@ import { Layout } from "antd";
 import { toast, ToastContainer } from "react-toastify";
 import { useKeycloak } from "@react-keycloak/web";
 import { BASE_PATH } from "./config";
-
 import { Header } from "./containers";
 import { routes } from "./routes";
 
 import "./App.css";
 
-import { TargetMode } from "./containers/TargetMode"
 
 const Entitlements = lazy(() => import("./containers/Entitlements"));
 const Attributes = lazy(() => import("./containers/Attributes"));
@@ -64,7 +62,6 @@ function App() {
                 <Authorities />
               </Route>
               <Route path={routes.HOME} exact>
-                <TargetMode />
                 <Home />
               </Route>
               <Route path={routes.CATCH}>

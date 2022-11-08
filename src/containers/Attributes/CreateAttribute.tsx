@@ -27,26 +27,24 @@ const CreateAttribute: FC<Props> = (props) => {
   const [createAuthority] = useLazyFetch(attributesClient);
   const [createAttributes] = useLazyFetch(attributesClient);
 
-  const handleCreateAuthority = useCallback(
-    async ({ authority }) => {
-      try {
-        const { data } = await createAuthority<string[]>({
-          method: Method.POST,
-          path: '/authorities',
-          data: { authority },
-        });
+  // @ts-ignore
+  const handleCreateAuthority = useCallback(async ({ authority }) => {
+    try {
+      const { data } = await createAuthority<string[]>({
+        method: Method.POST,
+        path: '/authorities',
+        data: { authority },
+      });
 
-        const [ lastItem ] = data.slice(-1);
+      const [ lastItem ] = data.slice(-1);
 
-        toast.success("Authority was created");
+      toast.success("Authority was created");
 
-        onAddNamespace(lastItem);
-      } catch (e) {
-        toast.error("Authority was not created");
-      }
-    },
-    [createAuthority, onAddNamespace],
-  );
+      onAddNamespace(lastItem);
+    } catch (e) {
+      toast.error("Authority was not created");
+    }
+  }, [createAuthority, onAddNamespace],);
 
   const handleCreateAttribute = (values: CreateAttributeValues) => {
     const formData = {
@@ -71,9 +69,9 @@ const CreateAttribute: FC<Props> = (props) => {
       });
   };
 
-  const onCollapseClose = useCallback((event): void => {
+  const onCollapseClose = useCallback((event: { keyCode: number; }): void => {
     if (event.keyCode === 27 && collapseValue !== '0') {
-      AttributesFiltersStore.update(store => {
+      AttributesFiltersStore.update((store: { collapseValue: string; }) => {
         if (store) {
           store.collapseValue = '0';
         }

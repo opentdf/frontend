@@ -21,7 +21,7 @@ const Select = (props: SelectProps & { name: string }) => {
   }, [options]);
 
   const onSearch = useCallback(
-    (searchVal) => {
+    (searchVal: string | RegExp) => {
       const filteredOptions = options?.filter(({ value }) => {
         return String(value).match(new RegExp(searchVal, "gi"));
       });
@@ -30,13 +30,6 @@ const Select = (props: SelectProps & { name: string }) => {
     },
     [options],
   );
-
-  const filterOptionCb = useCallback((input, option) => {
-    if (option && option.children) {
-      return String(option.children).toLowerCase().indexOf(input.toLowerCase()) >= 0;
-    }
-    return false;
-  }, []);
 
   return (
     <Form.Item name={name}>
@@ -48,7 +41,6 @@ const Select = (props: SelectProps & { name: string }) => {
         placeholder={placeholder}
         onSearch={onSearch}
         onChange={onChange}
-        filterOption={filterOptionCb}
       >
         {componentOptions?.map(opt => <Option key={opt.key + '-opt'} value={opt.value}>{opt.value}</Option>)}
       </AntdSelect>

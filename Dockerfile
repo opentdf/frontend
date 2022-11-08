@@ -13,9 +13,7 @@ FROM depender as builder
 WORKDIR /build/
 COPY public/ public/
 COPY src/ src/
-COPY tests/ tests/
-COPY tsconfig.json/ .
-COPY craco.config.js/ .
+COPY tsconfig.json tsconfig.node.json index.html ./
 RUN npm run build
 
 # gobuilder - http server build
@@ -28,7 +26,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -v -a  -o /server
 # server - nginx alpine
 FROM scratch as server
 WORKDIR /
-COPY --from=builder /build/build/ /www/
+COPY --from=builder /build/dist/ /www/
 COPY --from=gobuilder /server /server
 ENV KEYCLOAK_HOST "http://localhost/keycloak/auth"
 ENV KEYCLOAK_CLIENT_ID "abacus"

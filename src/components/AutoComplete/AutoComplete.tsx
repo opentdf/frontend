@@ -23,7 +23,7 @@ const AutoComplete = (props: AutoCompleteProps & { name: string }) => {
   }, [options]);
 
   const onSearch = useCallback(
-    (searchVal) => {
+    (searchVal: string | RegExp) => {
       const filteredOptions = options?.filter((option) => {
         const value = String(option.value);
 

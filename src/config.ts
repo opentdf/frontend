@@ -1,15 +1,10 @@
-const serverData = window.SERVER_DATA;
+console.log(import.meta.env);
+console.log(import.meta.env.VITE_APP_TITLE);
+console.log(import.meta.env.VITE_SERVER_DATA);
+const serverData = import.meta.env.VITE_SERVER_DATA;
+console.log(typeof serverData);
 let realm = localStorage.getItem("realm");
-export const ENV_REALMS = serverData.realms.split(',').filter(item => item !== '');
-
-if(!ENV_REALMS.length){
-    throw Error("Realm didn't found.");
-}
-
-if(!realm) {
-    realm = ENV_REALMS[0];
-    localStorage.setItem("realm", realm);
-}
+console.log(serverData.realms);
 
 export const BASE_PATH = serverData.basePath;
 export const CLIENT_ID = serverData.clientId;
@@ -20,7 +15,9 @@ export const ENTITLEMENTS_PATH = serverData.entitlements;
 export const ATTRIBUTES_PATH = serverData.attributes;
 
 export const keycloakConfig = {
-    realm: REALM,
     url: AUTHORITY,
-    clientId: CLIENT_ID,
+    clientId: CLIENT_ID, realm: ""
+
 };
+
+

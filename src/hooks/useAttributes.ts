@@ -8,7 +8,7 @@ export const useDefinitionAttributes = (authority: string) => {
   const [attrs, setAttrs] = useState<Attribute[]>([]);
   const [getAttrs, { data, loading }] = useLazyFetch<Attribute[]>(attributesClient);
 
-  const buildConfig = useCallback((authority) => ({
+  const buildConfig = useCallback((authority: any) => ({
     method: Method.GET,
     path: authority ? `/definitions/attributes?authority=${authority}` : '/definitions/attributes'
   }), []);
