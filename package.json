@@ -1,12 +1,13 @@
 {
   "name": "abacus",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "license": "BSD-3-Clause-Clear",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
+    "test:prod": "tsc && vite build",
     "test:playwright": "playwright test --config=tests/e2e/playwright.config.ts",
     "test:playwright-debug": "playwright test --debug --config=tests/e2e/playwright.config.ts",
     "test:playwright-ci": "start-server-and-test start http://localhost:3000 test:playwright"
