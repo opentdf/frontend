@@ -1,5 +1,5 @@
-import { Store } from "pullstate";
 import { Authorities } from "./types/attributes";
+import {Store} from "pullstate";
 
 export interface AttributesFilters {
   possibleAuthorities: Authorities;

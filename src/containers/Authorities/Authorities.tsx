@@ -9,38 +9,36 @@ import styles from './Authorities.module.css';
 type TableData = { authority: string; };
 
 const Authorities = () => {
-  const activeAuthority = AttributesFiltersStore.useState(s => s.authority);
+  const activeAuthority = AttributesFiltersStore.useState((s: { authority: any; }) => s.authority);
   const { authorities, loading, getAuthorities } = useAuthorities();
 
   const data: TableData[] = authorities.map((authority) => {
     return { authority };
   });
 
-  const onDeleteKey = useCallback(
-    async ({ authority }) => {
-      try {
-        await attributesClient.delete('/authorities', {
-          data: { authority },
+  // @ts-ignore
+  const onDeleteKey = useCallback(async ({ authority }) => {
+    try {
+      await attributesClient.delete('/authorities', {
+        data: { authority },
+      });
+      await getAuthorities();
+      toast.success(`Authority ${authority} deleted`);
+      if (activeAuthority === authority) {
+        AttributesFiltersStore.update((s: { authority: string; }) => {
+          s.authority = authorities[0] || ''
         });
-        await getAuthorities();
-        toast.success(`Authority ${authority} deleted`);
-        if (activeAuthority === authority) {
-          AttributesFiltersStore.update(s => {
-            s.authority = authorities[0] || ''
-          });
-        }
-      } catch (error: any) {
-        let errorText = error.message;
-
-        if (error.message.includes('code 405')) {
-          errorText = 'Something went wrong. Make sure there are no attributes assigned to this Authority'
-        }
-
-        toast.error(errorText)
       }
-    },
-    [getAuthorities],
-  );
+    } catch (error: any) {
+      let errorText = error.message;
+
+      if (error.message.includes('code 405')) {
+        errorText = 'Something went wrong. Make sure there are no attributes assigned to this Authority'
+      }
+
+      toast.error(errorText)
+    }
+  }, [getAuthorities],);
 
   const onDelete = useCallback((row: TableData): void => {
     Modal.confirm({

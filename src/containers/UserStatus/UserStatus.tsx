@@ -1,6 +1,5 @@
 import { useKeycloak } from "@react-keycloak/web";
 import { Avatar, Button, Image } from "antd";
-import { SelectRealm } from "./SelectRealm";
 import logo from '../../assets/openTDF.png';
 
 const UserStatus = () => {
@@ -8,7 +7,6 @@ const UserStatus = () => {
 
   return (
     <>
-      <SelectRealm />
       {keycloak.authenticated && (
         <>
           <Avatar

@@ -9,6 +9,7 @@ const attributesClient = () => {
   instance.interceptors.request.use((config) => {
     const token = window.sessionStorage.getItem('keycloak');
 
+    // @ts-ignore
     config.headers = {
       ...config.headers,
       authorization: `Bearer ${token}`,

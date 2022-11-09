@@ -41,14 +41,14 @@ const Entitlements = () => {
   }, [keycloak, initialized]);
 
   const onClientRecordClick = useCallback(
-    (id) => {
+    (id: any) => {
       history.push(`${routes.CLIENTS}/${id}`);
     },
     [history],
   );
 
   const onUserRecordClick = useCallback(
-    (id) => {
+    (id: any) => {
       history.push(`${routes.USERS}/${id}`);
     },
     [history],

@@ -15,7 +15,7 @@ export const useAuthorities = () => {
     if (data) {
       setAuthorities(data);
 
-      AttributesFiltersStore.update(store => {
+      AttributesFiltersStore.update((store: { possibleAuthorities: Authorities; authority: any; }) => {
         if (data && store) {
           store.possibleAuthorities = data;
           store.authority = store.authority || data[0] || '';

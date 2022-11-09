@@ -1,17 +1,17 @@
-import { FC, memo, useCallback, useMemo, useState } from "react";
-import { Form, Select } from "antd";
+import React, { FC, memo, SetStateAction, useCallback, useMemo, useState} from "react";
+import {Form, Select} from "antd";
 
-import { ATTRIBUTE_RULE_TYPES } from "../../constants/attributeRules";
-import { LABELS_MAP } from "./constants";
+import {ATTRIBUTE_RULE_TYPES} from "../../constants/attributeRules";
+import {LABELS_MAP} from "./constants";
 
 import "./AttributeRule.css";
 
 type Props = {
-  onRuleChange: (rule: string) => void;
+  onRuleChange: (rule: any) => void;
 };
 
 const AttributeRule: FC<Props> = (props) => {
-  const { onRuleChange } = props;
+  const {onRuleChange} = props;
 
   const [selectedStrategy, setSelectedStrategy] = useState(() => {
     const initialValue = ATTRIBUTE_RULE_TYPES[0][0];
@@ -20,12 +20,12 @@ const AttributeRule: FC<Props> = (props) => {
   });
 
   const options = useMemo(
-    () => ATTRIBUTE_RULE_TYPES.map(([value, label]) => ({ value, label })),
-    [],
+      () => ATTRIBUTE_RULE_TYPES.map(([value, label]) => ({value, label})),
+      [],
   );
 
   const handleSelect = useCallback(
-    (option) => {
+      (option: SetStateAction<string>) => {
       setSelectedStrategy(option);
       onRuleChange(option);
     },
