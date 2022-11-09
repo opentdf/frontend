@@ -1,19 +1,27 @@
-# Default values for key-access.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+global:
+  opentdf:
+    common:
+      oidcExternalBaseUrl: http://localhost
+      ingress:
+        scheme: "http"
+        hostname: "localhost:65432"
+        attributesPrefix: "/api/attributes/"
+        entitlementsPrefix: "/api/entitlements/"
+        kasPrefix: "/api/kas"
+
 
 attributes:
   # Overrides global.opentdf.common.oidcExternalBaseUrl + global.opentdf.common.oidcExternalBaseUrl
-  serverUrl: "http://localhost:65432/api/attributes/"
+  serverUrl:
 entitlements:
   # Overrides global.opentdf.common.oidcExternalBaseUrl + global.opentdf.common.oidcExternalBaseUrl
-  serverUrl: "http://localhost:65432/api/entitlements/"
+  serverUrl:
 kas:
   # Overrides global.opentdf.common.oidcExternalBaseUrl + global.opentdf.common.oidcExternalBaseUrl
-  serverUrl: "http://localhost:65432/api/kas"
+  serverUrl:
 oidc:
   # Overrides global.opentdf.common.oidcExternalBaseUrl + /auth/
-  serverUrl: "http://localhost:65432/auth/"
+  serverUrl:
   clientId: "dcr-test"
   # Comma separated list of realms to allow access to in keycloak
   # Assigned to the KEYCLOAK_REALMS environment varibable
