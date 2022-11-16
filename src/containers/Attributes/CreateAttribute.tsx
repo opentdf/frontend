@@ -67,7 +67,7 @@ const CreateAttribute: FC<Props> = (props) => {
         toast.success(`Attribute created for ${authority}`);
       })
       .catch(() => {
-        toast.error(`Attribute was no created for ${authority}`);
+        toast.error(`Attribute was not created for ${authority}`);
       });
   };
 
