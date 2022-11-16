@@ -56,6 +56,21 @@ test.describe('<Attributes/>', () => {
     expect(newAuthority).toBeTruthy();
   });
 
+  test('should not be able to create authority with empty name or name of non-url format', async ({ page, authority }) => {
+    await test.step('creation is failed when using blank name', async () => {
+      await page.click(selectors.attributesPage.newSection.submitAuthorityBtn)
+      const authorityWarningMessage = page.locator('.ant-form-item-explain-error', {hasText: '\'authority\' is required'})
+      await expect(authorityWarningMessage).toBeVisible()
+    })
+
+    await test.step('creation is failed when using name of invalid non-url format', async () => {
+      await page.fill(selectors.attributesPage.newSection.authorityField, 'invalidAuthorityNameFormat');
+      await page.locator(selectors.attributesPage.newSection.submitAuthorityBtn).click();
+      const authorityCreationFailedMessage = await page.locator(selectors.alertMessage, {hasText: `Authority was not created`})
+      await expect(authorityCreationFailedMessage).toBeVisible()
+    })
+  });
+
   test('should add attribute, should filter attributes by Name, Order, Rule', async ({ page, attributeName, authority, attributeValue }) => {
     await createAttribute(page, attributeName, [attributeValue])
     await assertAttributeCreatedMsg(page)
@@ -125,6 +140,23 @@ test.describe('<Attributes/>', () => {
 
     await test.step('Cleanup', async () => {
       await deleteAttributeViaAPI(apiContext, authority, attributeName,[attributeValue])
+    })
+  });
+
+  test('attribute creation is blocked when not filling required Name and Order values', async ({ page}) => {
+    await test.step('creation is failed when using blank Name', async () => {
+      await page.fill(selectors.attributesPage.newSection.orderField1, 'fillOrder');
+      await page.click(selectors.attributesPage.newSection.submitAttributeBtn)
+      const emptyNameWarningMessage = page.locator('.ant-form-item-explain-error', {hasText: 'Please input name value!'})
+      await expect(emptyNameWarningMessage).toBeVisible()
+    })
+
+    await test.step('creation is failed when using blank Order value', async () => {
+      await page.fill(selectors.attributesPage.newSection.attributeNameField, 'fillName');
+      await page.fill(selectors.attributesPage.newSection.orderField1, '');
+      await page.click(selectors.attributesPage.newSection.submitAttributeBtn)
+      const emptyOrderWarningMessage = page.locator('.ant-form-item-explain-error', {hasText: 'Please input order value!'})
+      await expect(emptyOrderWarningMessage).toBeVisible()
     })
   });
 
