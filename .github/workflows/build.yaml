@@ -108,21 +108,12 @@ jobs:
           explicit_version=$(printf '%s\n' "${app_ver}-${sha_ver}" | sed -e 's/[\/.]/\\./g')
           chart_ver="${tag_ver:-${explicit_version}}"
           image_tag="${tag_ver:-${sha_ver}}"
-          cd charts
-          for d in */ ; do
-              if [ -f "$d/Chart.yaml" ]; then
-                echo "Setting Chart.yaml version to ${chart_ver}..."
-                sed -i "s/^version\: .*/version\: ${chart_ver}/" $d/Chart.yaml
-                sed -i "s/^appVersion\: .*/appVersion\: ${app_ver}/" $d/Chart.yaml
-                sed -i "s/^  tag\: main/  tag\: ${image_tag}/" $d/values.yaml
-                echo "Packaging Helm chart $d..."
-                helm package $d --app-version="${app_ver}"
-                echo "Packaged Helm chart $d with chart version [${chart_ver}] and appVersion to [${app_ver}]"
-                echo *.tgz
-                helm push *.tgz oci://ghcr.io/${{ github.repository_owner }}/charts
-                rm *.tgz
-              fi
-          done
+          cd charts/abacus
+          helm package $d --app-version="${app_ver}" --version="${chart_ver}"
+          echo "Packaged Helm chart $d with chart version [${chart_ver}] and appVersion to [${app_ver}]"
+          echo *.tgz
+          helm push *.tgz oci://ghcr.io/${{ github.repository_owner }}/charts
+          rm *.tgz
         env:
           app_ver: ${{ needs.app.outputs.VERSION || '0.0.0' }}
 #  FIXME replace when working
