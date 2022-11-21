@@ -109,9 +109,9 @@ jobs:
           explicit_version=$(printf '%s\n' "${app_ver}-${sha_ver}" | sed -e 's/[\/.]/\\./g')
           chart_ver="${tag_ver:-${explicit_version}}"
           image_tag="${tag_ver:-${sha_ver}}"
-          cd charts/abacus
-          helm package $d --app-version="${app_ver}" --version="${chart_ver}"
-          echo "Packaged Helm chart $d with chart version [${chart_ver}] and appVersion to [${app_ver}]"
+          cd charts
+          helm package abacus --app-version="${app_ver}" --version="${chart_ver}"
+          echo "Packaged Helm chart abacus with chart version [${chart_ver}] and appVersion to [${app_ver}]"
           echo *.tgz
           helm push *.tgz oci://ghcr.io/${{ github.repository_owner }}/charts
           rm *.tgz
