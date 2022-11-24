@@ -36,16 +36,16 @@ test.describe('<App/>', () => {
 test.describe('<Login/>', () => {
   test('is failed when using blank values', async ({ page }) => {
     await login(page, "", "")
-    await expect(page.locator("#input-error")).toBeVisible();
+    await expect(page.locator(selectors.loginScreen.errorMessage)).toBeVisible();
   });
 
   test('is failed when using wrong username', async ({ page }) => {
     await login(page, "non-existed-username", "testuser123")
-    await expect(page.locator("#input-error")).toBeVisible();
+    await expect(page.locator(selectors.loginScreen.errorMessage)).toBeVisible();
   });
 
   test('is failed when using wrong password', async ({ page }) => {
     await login(page, "user1", "wrong-password")
-    await expect(page.locator("#input-error")).toBeVisible();
+    await expect(page.locator(selectors.loginScreen.errorMessage)).toBeVisible();
   });
 });
