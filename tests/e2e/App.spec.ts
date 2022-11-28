@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { selectors } from "./helpers/selectors";
-import { authorize } from "./helpers/operations";
+import {authorize, login} from "./helpers/operations";
 
 test.describe('<App/>', () => {
   test.beforeEach(async ({ page }) => {
@@ -18,7 +18,8 @@ test.describe('<App/>', () => {
     expect(logoutButton).toBeTruthy();
   });
 
-  test('should be able to log out', async ({ page }) => {
+  // TODO: uncomment after fixing PLAT-2044
+  test.skip('should be able to log out', async ({ page }) => {
     await page.goto('/attributes');
     await Promise.all([
       page.waitForNavigation(),
@@ -29,5 +30,22 @@ test.describe('<App/>', () => {
     const authorityDropdown = page.locator(".ant-select-selector >> nth=1")
     await authorityDropdown.click()
     await expect(page.locator('.ant-empty-description')).toHaveText('No Data')
+  });
+});
+
+test.describe('<Login/>', () => {
+  test('is failed when using blank values', async ({ page }) => {
+    await login(page, "", "")
+    await expect(page.locator(selectors.loginScreen.errorMessage)).toBeVisible();
+  });
+
+  test('is failed when using wrong username', async ({ page }) => {
+    await login(page, "non-existed-username", "testuser123")
+    await expect(page.locator(selectors.loginScreen.errorMessage)).toBeVisible();
+  });
+
+  test('is failed when using wrong password', async ({ page }) => {
+    await login(page, "user1", "wrong-password")
+    await expect(page.locator(selectors.loginScreen.errorMessage)).toBeVisible();
   });
 });
