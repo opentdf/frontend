@@ -1,7 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { selectors } from "./helpers/selectors";
 import {authorize, firstTableRowClick, login} from "./helpers/operations";
-import {strict} from "assert";
 
 test.describe('<App/>', () => {
   test.beforeEach(async ({ page }) => {
