@@ -48,10 +48,6 @@ test.describe('<App/>', () => {
 
   test('should be able to log out on the Entitlements page', async ({ page }) => {
     await page.goto('/entitlements');
-
-    // check that entitlement items are present when logged in
-    // await expect(page.locator(selectors.entitlementsPage.entityDetailsPage.deleteEntitlementBtn)).toBeVisible()
-
     await Promise.all([
       page.waitForNavigation(),
       page.click(selectors.logoutButton),
