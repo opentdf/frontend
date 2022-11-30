@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { selectors } from "./helpers/selectors";
-import {authorize, login} from "./helpers/operations";
+import {authorize, firstTableRowClick, login} from "./helpers/operations";
 
 test.describe('<App/>', () => {
   test.beforeEach(async ({ page }) => {
@@ -18,8 +18,7 @@ test.describe('<App/>', () => {
     expect(logoutButton).toBeTruthy();
   });
 
-  // TODO: uncomment after fixing PLAT-2044
-  test.skip('should be able to log out', async ({ page }) => {
+  test('should be able to log out on the Attributes page', async ({ page }) => {
     await page.goto('/attributes');
     await Promise.all([
       page.waitForNavigation(),
@@ -30,6 +29,55 @@ test.describe('<App/>', () => {
     const authorityDropdown = page.locator(".ant-select-selector >> nth=1")
     await authorityDropdown.click()
     await expect(page.locator('.ant-empty-description')).toHaveText('No Data')
+  });
+
+  test('should be able to log out on the Authorities page', async ({ page }) => {
+    await page.goto('/authorities');
+    // check that authority items are present when logged in
+    await expect(page.locator(selectors.authoritiesPage.deleteAuthorityButton)).toBeVisible()
+
+    await Promise.all([
+      page.waitForNavigation(),
+      page.click(selectors.logoutButton),
+    ])
+    await page.waitForSelector(selectors.loginButton);
+    // check that authorities data isn't shown after log out
+    const noDataInfo = page.locator(".ant-empty-description", {hasText: 'No Data'})
+    await expect(noDataInfo).toBeVisible()
+  });
+
+  test('should be able to log out on the Entitlements page', async ({ page }) => {
+    await page.goto('/entitlements');
+    await Promise.all([
+      page.waitForNavigation(),
+      page.click(selectors.logoutButton),
+    ])
+    await page.waitForSelector(selectors.loginButton);
+
+    // check that entities data isn't shown after log out - progress indicator is shown constantly
+    const loadingDelay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+    await loadingDelay(3000)
+    const progressIndicator = page.locator(".ant-spin-dot >> nth=0")
+    await expect(progressIndicator).toBeVisible()
+  });
+
+  test('should be able to log out on the Entity Details page', async ({ page }) => {
+    await page.goto('/entitlements');
+    await Promise.all([
+      page.waitForNavigation(),
+      firstTableRowClick('users-table', page),
+    ]);
+    // check that entitlement items are present when logged in
+    await expect(page.locator(selectors.entitlementsPage.entityDetailsPage.deleteEntitlementBtn)).toBeVisible()
+
+    await Promise.all([
+      page.waitForNavigation(),
+      page.click(selectors.logoutButton),
+    ])
+    await page.waitForSelector(selectors.loginButton);
+    // check that entitlement data isn't shown after log out
+    const noDataInfo = page.locator(".ant-empty-description", {hasText: 'No Data'})
+    await expect(noDataInfo).toBeVisible()
   });
 });
 
