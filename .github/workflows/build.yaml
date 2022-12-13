@@ -24,9 +24,9 @@ jobs:
       - run: npm ci
       - run: npm run test
       - id: version
-        run: echo 'VERSION=$(jq -r .version package.json)' >> $GITHUB_OUTPUT
+        run: echo "VERSION=$(jq -r .version package.json)" >> $GITHUB_OUTPUT
       - id: chart-version
-        run: echo 'CHART-VERSION=$(jq -r .version package.json)-$(git rev-parse --short HEAD)' >> $GITHUB_OUTPUT
+        run: echo "CHART-VERSION=$(jq -r .version package.json)-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
     # - name: Install Playwright
     # run: npx playwright install --with-deps
     # - name: Run Playwright tests
