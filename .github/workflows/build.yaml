@@ -84,6 +84,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - image
+      - app
     permissions:
       packages: write
       contents: read
