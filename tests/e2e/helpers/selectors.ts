@@ -24,6 +24,7 @@ export const selectors = {
                 clearBtn: '#clear-filter-button'
             },
         },
+        attributeListItems: ".ant-card",
         attributeDetailsSection: {
             editRuleButton: '#edit',
             editValueButton: '#edit-value',
