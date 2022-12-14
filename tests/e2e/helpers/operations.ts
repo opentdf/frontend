@@ -14,8 +14,8 @@ export const login = async (page: Page, username: string, password: string, sect
   await page.click(selectors.loginScreen.submitButton);
 }
 
-export const authorize = async (page: Page, section = "/") => {
-  await login(page, "user1", "testuser123", section)
+export const authorize = async (page: Page, sectionUrl = "/") => {
+  await login(page, "user1", "testuser123", sectionUrl)
   await page.waitForSelector(selectors.logoutButton);
   // click the token message to close it and overcome potential overlapping problem
   await page.locator(selectors.tokenMessage).click()
