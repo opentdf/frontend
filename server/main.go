@@ -91,6 +91,8 @@ type IndexHandler struct {
 }
 
 func (h IndexHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+    rw.Header().Set("Content-Security-Policy", "frame-ancestors")
+    rw.Header().Set("X-Content-Type-Options", "nosniff")
 	if r.URL.Path == "/" || r.URL.Path == "/index.html" {
 		w.Write(h.output)
 		return
