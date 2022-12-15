@@ -1,8 +1,8 @@
 import {APIRequestContext, expect, Page} from '@playwright/test'
 import { selectors } from "./selectors";
 
-export const login = async (page: Page, username: string, password: string) => {
-  await page.goto('/');
+export const login = async (page: Page, username: string, password: string, sectionUrl= "/") => {
+  await page.goto(sectionUrl);
 
   await Promise.all([
     page.waitForNavigation(),
@@ -14,8 +14,8 @@ export const login = async (page: Page, username: string, password: string) => {
   await page.click(selectors.loginScreen.submitButton);
 }
 
-export const authorize = async (page: Page) => {
-  await login(page, "user1", "testuser123")
+export const authorize = async (page: Page, sectionUrl = "/") => {
+  await login(page, "user1", "testuser123", sectionUrl)
   await page.waitForSelector(selectors.logoutButton);
   // click the token message to close it and overcome potential overlapping problem
   await page.locator(selectors.tokenMessage).click()
