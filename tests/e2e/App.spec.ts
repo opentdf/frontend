@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { selectors } from "./helpers/selectors";
-import {authorize, firstTableRowClick, login} from "./helpers/operations";
+import {authorize, firstTableRowClick, getLastPartOfUrl, login} from "./helpers/operations";
 
 test.describe('<App/>', () => {
   test.beforeEach(async ({ page }) => {
@@ -82,6 +82,62 @@ test.describe('<App/>', () => {
 });
 
 test.describe('<Login/>', () => {
+  test('succeeded on the Authorities page, actual data is loaded', async ({ page }) => {
+    await authorize(page, "/authorities")
+
+    await test.step('check that Authorities data is loaded', async () => {
+      const authorityItems = await page.$$(selectors.authoritiesPage.authoritiesTableRow)
+      const itemsQuantity = authorityItems.length
+      await expect(itemsQuantity>0).toBeTruthy()
+    })
+  });
+
+  test('succeeded on the Attributes page, actual data is loaded', async ({ page }) => {
+    await authorize(page, "/attributes")
+
+    await test.step('check that Attributes data is loaded', async () => {
+      const attributeItems = await page.$$(selectors.attributesPage.attributeListItems)
+      const itemsQuantity = attributeItems.length
+      await expect(itemsQuantity>1).toBeTruthy()
+    })
+  });
+
+  test('succeeded on the Entitlements page, actual data is loaded', async ({ page }) => {
+    await authorize(page, "/entitlements")
+
+    await test.step('check that Clients data is loaded', async () => {
+      const clientsTableItems = await page.$$(`[data-test-id='clients-table'] .ant-table-row`);
+      const clientsItemsQuantity = clientsTableItems.length
+      await expect(clientsItemsQuantity>0).toBeTruthy()
+    })
+
+    await test.step('check that Users data is loaded', async () => {
+      const usersTableItems = await page.$$(`[data-test-id='users-table'] .ant-table-row`);
+      const usersItemsQuantity = usersTableItems.length
+      await expect(usersItemsQuantity>0).toBeTruthy()
+    })
+  });
+
+  // TODO: Uncomment after fixing the PLAT-2209 bug which leads to assertion failure
+  test.skip('succeeded on the Entity Details page, actual data is loaded', async ({ page }) => {
+    await authorize(page, "/entitlements")
+
+    await Promise.all([
+      page.waitForNavigation(),
+      firstTableRowClick('users-table', page),
+    ]);
+
+    const entityId = await getLastPartOfUrl(page)
+
+    await Promise.all([
+      page.waitForNavigation(),
+      page.click(selectors.logoutButton),
+    ])
+
+    await authorize(page, `/entitlements/users/${entityId}`)
+    await expect(page.locator(selectors.entitlementsPage.entityDetailsPage.deleteEntitlementBtn)).toBeVisible()
+  });
+
   test('is failed when using blank values', async ({ page }) => {
     await login(page, "", "")
     await expect(page.locator(selectors.loginScreen.errorMessage)).toBeVisible();
