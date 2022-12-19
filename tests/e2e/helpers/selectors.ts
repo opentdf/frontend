@@ -5,7 +5,8 @@ export const selectors = {
     loginScreen: {
         usernameField: '#username',
         passwordField: '#password',
-        submitButton: '#kc-login'
+        submitButton: '#kc-login',
+        errorMessage: '#input-error'
     },
     secondaryHeader: 'h2',
     realmSelector: '#rc_select_0',
@@ -23,6 +24,7 @@ export const selectors = {
                 clearBtn: '#clear-filter-button'
             },
         },
+        attributeListItems: ".ant-card",
         attributeDetailsSection: {
             editRuleButton: '#edit',
             editValueButton: '#edit-value',
