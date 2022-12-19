@@ -17,6 +17,7 @@ ReactDOM.render(
       initOptions={{
         checkLoginIframe: false,
         responseType: "code id_token token",
+        pkceMethod: "S256"
       }}
       onEvent={(event: unknown, error: unknown) => {
         console.log("onKeycloakEvent", event, error);

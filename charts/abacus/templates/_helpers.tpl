@@ -60,3 +60,49 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Create URL to attributes service
+*/}}
+{{- define "abacus.attributesServerUrl" -}}
+{{- if .Values.attributes.serverUrl }}
+{{- .Values.attributes.serverUrl }}
+{{- else }}
+{{- printf "%s://%s%s" .Values.global.opentdf.common.ingress.scheme .Values.global.opentdf.common.ingress.hostname .Values.global.opentdf.common.ingress.attributesPrefix }}
+{{- end }}
+{{- end }}
+
+{{/*
+Create URL to entitlements service
+*/}}
+{{- define "abacus.entitlementsServerUrl" -}}
+{{- if .Values.entitlements.serverUrl  }}
+{{- .Values.entitlements.serverUrl  }}
+{{- else }}
+{{- printf "%s://%s%s" .Values.global.opentdf.common.ingress.scheme .Values.global.opentdf.common.ingress.hostname .Values.global.opentdf.common.ingress.entitlementsPrefix }}
+{{- end }}
+{{- end }}
+
+{{/*
+Create URL to key access service
+*/}}
+{{- define "abacus.kasServerUrl" -}}
+{{- if .Values.kas.serverUrl  }}
+{{- .Values.kas.serverUrl  }}
+{{- else }}
+{{- printf "%s://%s%s" .Values.global.opentdf.common.ingress.scheme .Values.global.opentdf.common.ingress.hostname .Values.global.opentdf.common.ingress.kasPrefix }}
+{{- end }}
+{{- end }}
+
+{{/*
+Create URL to Keycloak Endpoint
+*/}}
+{{- define "abacus.keycloakServerUrl" -}}
+{{- if .Values.oidc.serverUrl }}
+{{- .Values.oidc.serverUrl }}
+{{- else }}
+{{- printf "%s/auth/" .Values.global.opentdf.common.oidcExternalBaseUrl }}
+{{- end }}
+{{- end }}
+
+

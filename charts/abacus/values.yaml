@@ -1,15 +1,27 @@
-# Default values for key-access.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
+global:
+  opentdf:
+    common:
+      oidcExternalBaseUrl: http://localhost
+      ingress:
+        scheme: "http"
+        hostname: "localhost:65432"
+        attributesPrefix: "/api/attributes/"
+        entitlementsPrefix: "/api/entitlements/"
+        kasPrefix: "/api/kas"
+
 
 attributes:
-  serverUrl: "http://localhost:65432/api/attributes/"
+  # Overrides global.opentdf.common.oidcExternalBaseUrl + global.opentdf.common.oidcExternalBaseUrl
+  serverUrl:
 entitlements:
-  serverUrl: "http://localhost:65432/api/entitlements/"
+  # Overrides global.opentdf.common.oidcExternalBaseUrl + global.opentdf.common.oidcExternalBaseUrl
+  serverUrl:
 kas:
-  serverUrl: "http://localhost:65432/api/kas"
+  # Overrides global.opentdf.common.oidcExternalBaseUrl + global.opentdf.common.oidcExternalBaseUrl
+  serverUrl:
 oidc:
-  serverUrl: "http://localhost:65432/auth/"
+  # Overrides global.opentdf.common.oidcExternalBaseUrl + /auth/
+  serverUrl:
   clientId: "dcr-test"
   # Comma separated list of realms to allow access to in keycloak
   # Assigned to the KEYCLOAK_REALMS environment varibable
@@ -25,7 +37,7 @@ image:
   repository: ghcr.io/opentdf/abacus
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: main
+  # tag: main
 
 imagePullSecrets: []
 nameOverride: ""
@@ -55,7 +67,7 @@ securityContext: {}
 
 service:
   type: ClusterIP
-  port: 80
+  port: 8080
 
 ingress:
   enabled: true

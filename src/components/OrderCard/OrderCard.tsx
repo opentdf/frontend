@@ -21,6 +21,8 @@ type Props = {
   rule?: string;
   tabList: ListItem[];
   toggleEdit: () => void;
+  valueEdit: () => void;
+  closeAll: () => void;
 };
 
 const OrderCard: FC<Props> = (props) => {
@@ -37,14 +39,20 @@ const OrderCard: FC<Props> = (props) => {
     rule,
     tabList,
     toggleEdit,
+    valueEdit,
+    closeAll,
   } = props;
 
   const actions = useMemo(() => {
     const config = {
-      view: [{ onClick: toggleEdit, key: "edit", text: "Edit Rule" },{ onClick: onDeleteAttribute, key: "delete-attribute", text: "Delete Attribute" }],
+      view: [
+        { onClick: toggleEdit, key: "edit", text: "Edit Rule" },
+        { onClick: valueEdit, key: "edit-value", text: "Edit Values" },
+        { onClick: onDeleteAttribute, key: "delete-attribute", text: "Delete Attribute" }
+      ],
       edit: [
-        { onClick: onSaveClick, key: "save-rule", text: "Save rule" },
-        { onClick: toggleEdit, key: "cancel", text: "Cancel" },
+        { onClick: onSaveClick, key: "save-rule", text: "Save" },
+        { onClick: closeAll, key: "cancel", text: "Cancel" },
       ],
     };
 
@@ -59,7 +67,7 @@ const OrderCard: FC<Props> = (props) => {
         {text}
       </Button>
     ));
-  }, [activeTabKey, isActive, isEdit, toggleEdit, onSaveClick]);
+  }, [activeTabKey, isActive, isEdit, valueEdit, toggleEdit, onSaveClick, closeAll, onDeleteAttribute]);
 
   const title = useMemo(
     () => (

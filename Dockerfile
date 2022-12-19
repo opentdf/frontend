@@ -1,4 +1,5 @@
 ARG NODE_VERSION=lts
+ARG GO_VERSION=latest
 # multi-stage build
 
 # depender - get production dependencies
@@ -15,18 +16,28 @@ COPY src/ src/
 COPY tests/ tests/
 COPY tsconfig.json/ .
 COPY craco.config.js/ .
+RUN npm pkg set 'homepage'='%REACT_APP_SERVER_BASE_PATH%'
 RUN npm run build
 
+# gobuilder - http server build
+FROM golang:${GO_VERSION} as gobuilder
+WORKDIR /usr/local/go/src/server/
+COPY server/ ./
+RUN CGO_ENABLED=0 GOOS=linux go build -v -a  -o /server
+
+
 # server - nginx alpine
-FROM nginx:stable-alpine as server
-COPY --from=builder /build/build /usr/share/nginx/html
-COPY nginx-default.conf /etc/nginx/templates/default.conf.template
+FROM scratch as server
+WORKDIR /
+COPY --from=builder /build/build/ /www/
+COPY --from=gobuilder /server /server
 ENV KEYCLOAK_HOST "http://localhost/keycloak/auth"
-ENV KEYCLOAK_CLIENT_ID ""
+ENV KEYCLOAK_CLIENT_ID "abacus"
 ENV KEYCLOAK_REALMS "tdf"
 ENV ATTRIBUTES_HOST "http://localhost/attributes"
 ENV ENTITLEMENTS_HOST "http://localhost/entitlements"
 ENV KAS_HOST "http://localhost:8000"
 ENV SERVER_BASE_PATH ""
 
-EXPOSE 80
+EXPOSE 8080
+ENTRYPOINT ["/server"]

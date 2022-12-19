@@ -7,8 +7,9 @@ import { Method } from "../../types/enums";
 import { attributesClient, entitlementsClient } from "../../service";
 import { useLazyFetch } from "../../hooks";
 import { TABLE_COLUMNS } from "./constants";
-import { AttributeRule, OrderCard, OrderList } from "../../components";
+import { AttributeRule, OrderCard, OrderList, EditValueList } from "../../components";
 import { AttributesFiltersStore } from "../../store";
+import { ATTRIBUTE_RULE_TYPES } from "../../../src/constants/attributeRules"
 
 type Props = {
   activeAuthority: string;
@@ -16,18 +17,24 @@ type Props = {
   onChange: () => void;
 };
 
+const attributeRules = ATTRIBUTE_RULE_TYPES.map((item) => item[0]);
+type AttributeRuleType = typeof attributeRules[number]
+
 const AttributeListItem: FC<Props> = (props) => {
   const { attr, activeAuthority, onChange } = props;
   const { name, order, state, rule } = attr;
   const [activeTabKey, setActiveTab] = useState("");
+
   const [isEdit, setIsEdit] = useState(false);
+  const [isEditValues, setIsEditValues] = useState(false);
+
   const [activeOrderList, setActiveOrderList] = useState<string[]>([]);
   const [activeAttribute, setActiveAttribute] = useState<Attribute>();
-  const [activeRule, setActiveRule] = useState();
+  const [activeRule, setActiveRule] = useState<AttributeRuleType>();
 
   const [getAttrEntities, { loading, data: entities }] =
     useLazyFetch<EntityAttribute[]>(entitlementsClient);
-  const [updateRules] = useLazyFetch(attributesClient);
+  const [updateAttribute] = useLazyFetch(attributesClient);
 
   useEffect(() => {
     const unsubscribeAttributesFiltersStore = AttributesFiltersStore.subscribe(
@@ -42,10 +49,19 @@ const AttributeListItem: FC<Props> = (props) => {
     return () => unsubscribeAttributesFiltersStore();
   }, [])
 
+  const closeAll = useCallback(() => {
+    setIsEdit(false);
+    setIsEditValues(false);
+  }, [])
 
   const toggleEdit = useCallback(() => {
     setIsEdit(!isEdit);
   }, [isEdit]);
+
+  const valueEdit = useCallback(() => {
+    setIsEditValues(!isEditValues);
+    setActiveRule(activeAttribute?.rule);
+  }, [isEditValues, activeAttribute]);
 
   const activeOrderItem = useMemo(
     () => order.find((orderItem) => orderItem === activeTabKey),
@@ -100,6 +116,11 @@ const AttributeListItem: FC<Props> = (props) => {
   }, []);
 
   const handleSaveClick = useCallback(async () => {
+    const isSomeItemEmpty = activeOrderList.some((item) => !item.trim());
+    if (isSomeItemEmpty) {
+      return;
+    }
+
     const data = {
       authority: activeAuthority,
       name: activeAttribute?.name,
@@ -109,12 +130,12 @@ const AttributeListItem: FC<Props> = (props) => {
     };
 
     try {
-      await updateRules({
+      await updateAttribute({
         method: Method.PUT,
         path: `/definitions/attributes`,
         data,
       });
-      toast.success("Rule was updated!");
+      toast.success(isEditValues ? "Order value was updated!" : "Rule was updated!");
     } catch (error) {
       toast.error("Could not update rules!");
     }
@@ -125,7 +146,7 @@ const AttributeListItem: FC<Props> = (props) => {
     activeAuthority,
     activeOrderList,
     activeRule,
-    updateRules,
+    updateAttribute,
     handleClose,
     onChange
   ]);
@@ -162,8 +183,6 @@ const AttributeListItem: FC<Props> = (props) => {
     activeAttribute,
     activeAuthority,
     activeOrderList,
-    activeRule,
-    updateRules,
     handleClose,
     onChange
   ]);
@@ -185,18 +204,22 @@ const AttributeListItem: FC<Props> = (props) => {
 
   const handleRuleChange = useCallback((rule) => {
     setActiveRule(rule);
-  }, []);
+  }, [setActiveRule]);
 
   const handleReorder = useCallback((list) => {
     setActiveOrderList(list);
   }, []);
+
+  const handleEditValues = useCallback(async (newList: string[]) => {
+    setActiveOrderList(newList);
+  }, [setActiveOrderList]);
 
   return (
     <List.Item>
       <OrderCard
         activeTabKey={activeTabKey}
         isActive={!!activeOrderItem}
-        isEdit={!!activeOrderItem && isEdit}
+        isEdit={!!activeOrderItem && (isEdit || isEditValues)}
         name={name}
         onClose={handleClose}
         onDeleteAttribute={onDeleteAttribute}
@@ -206,6 +229,8 @@ const AttributeListItem: FC<Props> = (props) => {
         rule={rule}
         tabList={tabList}
         toggleEdit={toggleEdit}
+        valueEdit={valueEdit}
+        closeAll={closeAll}
       >
         {activeOrderItem && (
           <>
@@ -228,6 +253,17 @@ const AttributeListItem: FC<Props> = (props) => {
                   />
                 </div>
               </>
+            )}
+            {isEditValues && (
+                <>
+                  <Divider orientation="left">Edit values</Divider>
+                  <div>
+                    <EditValueList
+                        list={activeOrderList}
+                        onEdit={handleEditValues}
+                    />
+                  </div>
+                </>
             )}
           </>
         )}

@@ -3,10 +3,10 @@ kind: ConfigMap
 metadata:
   name: {{ include "abacus.name" . }}-cm
 data:
-  KEYCLOAK_HOST: {{ .Values.oidc.serverUrl | quote }}
+  KEYCLOAK_HOST: {{ include "abacus.keycloakServerUrl" . | quote }}
   KEYCLOAK_CLIENT_ID: {{ .Values.oidc.clientId | quote }}
   KEYCLOAK_REALMS: {{ .Values.oidc.queryRealms | quote }}
-  ATTRIBUTES_HOST: {{ .Values.attributes.serverUrl | quote }}
-  ENTITLEMENTS_HOST: {{ .Values.entitlements.serverUrl | quote }}
+  ATTRIBUTES_HOST: {{ include "abacus.attributesServerUrl" . | quote }}
+  ENTITLEMENTS_HOST: {{ include "abacus.entitlementsServerUrl" . | quote }}
   SERVER_BASE_PATH: {{ .Values.basePath | quote }}
-  KAS_HOST: {{ .Values.kas.serverUrl | quote }}
+  KAS_HOST: {{ include "abacus.kasServerUrl" . | quote }}
