@@ -153,21 +153,16 @@ jobs:
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         working-directory: charts
 
-#  FIXME replace when working
-#  dispatch:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/github-script@v6
-#        with:
-#          github-token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
-#          # TODO:
-#          # https://octokit.github.io/rest.js/v18#actions-create-workflow-dispatch
-#          script: |
-#            await github.rest.repos.createDispatchEvent({
-#              owner: 'opentdf',
-#              repo: 'tests',
-#              event_type: 'xtest',
-#            })
+  dispatch:
+    runs-on: ubuntu-latest
+      steps:
+        - name: Trigger opentdf/tests
+          run: >-
+            curl -X POST \
+                 -u "${{ secrets.PERSONAL_ACCESS_TOKEN }}" \
+                 -H "Accept: application/vnd.github.v3+json" \
+                 https://api.github.com/repos/opentdf/tests/dispatches \
+                 --data '{"event_type":"xtest"}'
 
   ci:
     needs: chart
