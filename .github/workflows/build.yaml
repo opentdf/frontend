@@ -15,18 +15,52 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       VERSION: ${{ steps.version.outputs.VERSION }}
-      CHART_VERSION: ${{ steps.chart-version.outputs.VERSION }}
+      CHART_VERSION: ${{ steps.chart-version.outputs.CHART_VERSION }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: 18
+      - run: grep --version
+      - run: |
+          app_version=$( jq -r .version package.json )
+          semver_ere='^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$'
+          semver_perl='^(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)$'
+          # Work both on BSD/macos and GNU/Linux:
+          if grep --help 2>&1 | grep perl; then
+            if ! echo "$app_version" | grep -P "${semver_perl}"; then
+              echo "## Invalid package.version: `${app_version}`" >> $GITHUB_STEP_SUMMARY
+              exit 1
+            fi
+          elif ! echo "$app_version" | grep -E "${semver_ere}"; then
+            echo "## Invalid package.version: `${app_version}`" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+          echo "VERSION=$app_version" >> $GITHUB_OUTPUT
+          echo "version=$app_version" >> $GITHUB_STEP_SUMMARY
+        id: version
+      - run: |
+          chart_version=$(jq -r .version package.json)-sha$(git rev-parse --short HEAD)
+          semver_full_ere='^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$'
+          semver_full_perl='^(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$'
+          if grep --help 2>&1 | grep perl; then
+            if ! echo "$chart_version" | grep -P "${semver_full_perl}"; then
+              echo "## Invalid package.version: `${app_version}`" >> $GITHUB_STEP_SUMMARY
+              exit 1
+            fi
+          elif ! echo "$chart_version" | grep -E "${semver_full_ere}"; then
+            echo "## Invalid generated chart version number: `${chart_version}`" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+          echo "CHART_VERSION=$chart_version" >> $GITHUB_OUTPUT
+          echo "chart_version=$chart_version" >> $GITHUB_STEP_SUMMARY
+        id: chart-version
+      - run: |
+          [[ "${{ github.event.release.tag_version }}" == "${{ steps.version.outputs.VERSION }}" ]]
+        if: ${{ github.event.release }}
+        name: Validate release tag matches package version
       - run: npm ci
       - run: npm run test
-      - id: version
-        run: echo "VERSION=$(jq -r .version package.json)" >> $GITHUB_OUTPUT
-      - id: chart-version
-        run: echo "CHART-VERSION=$(jq -r .version package.json)-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
     # - name: Install Playwright
     # run: npx playwright install --with-deps
     # - name: Run Playwright tests
@@ -80,9 +114,9 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
   chart:
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     needs:
+      - app
       - image
       - app
     permissions:
@@ -102,21 +136,23 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
           logout: false
+      - name: package
+        run: |
+          set -x
+          echo "Packaging Helm chart abacus with chart version [${chart_ver}] and appVersion to [${app_ver}]"
+          helm package abacus --app-version="${app_ver}" --version="${chart_ver}"
+          echo *.tgz
+        working-directory: charts
+        env:
+          app_ver: ${{ needs.app.outputs.VERSION }}
+          chart_ver: ${{ github.event.release.tag_version || needs.app.outputs.CHART_VERSION }}
       - name: push
         run: |
-          sha_ver=sha-$(git rev-parse --short HEAD)
-          tag_ver=${{ github.event.release.tag_version }}
-          explicit_version=$(printf '%s\n' "${app_ver}-${sha_ver}" | sed -e 's/[\/.]/\\./g')
-          chart_ver="${tag_ver:-${explicit_version}}"
-          image_tag="${tag_ver:-${sha_ver}}"
-          cd charts
-          helm package abacus --app-version="${app_ver}" --version="${chart_ver}"
-          echo "Packaged Helm chart abacus with chart version [${chart_ver}] and appVersion to [${app_ver}]"
-          echo *.tgz
           helm push *.tgz oci://ghcr.io/${{ github.repository_owner }}/charts
-          rm *.tgz
-        env:
-          app_ver: ${{ needs.app.outputs.VERSION || '0.0.0' }}
+          echo "## Published Helm chart abacus with chart version [${chart_ver}] and appVersion to [${app_ver}]" >> $GITHUB_STEP_SUMMARY
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        working-directory: charts
+
 #  FIXME replace when working
 #  dispatch:
 #    runs-on: ubuntu-latest
@@ -134,7 +170,7 @@ jobs:
 #            })
 
   ci:
-    needs: image
+    needs: chart
     if: ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
     steps:
