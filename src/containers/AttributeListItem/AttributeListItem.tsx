@@ -52,7 +52,10 @@ const AttributeListItem: FC<Props> = (props) => {
   const closeAll = useCallback(() => {
     setIsEdit(false);
     setIsEditValues(false);
-  }, [])
+    if (activeAttribute?.order) {
+      setActiveOrderList(activeAttribute?.order);
+    }
+  }, [activeAttribute])
 
   const toggleEdit = useCallback(() => {
     setIsEdit(!isEdit);
