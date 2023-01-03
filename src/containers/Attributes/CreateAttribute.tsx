@@ -30,6 +30,7 @@ const CreateAttribute: FC<Props> = (props) => {
   const handleCreateAuthority = useCallback(
     async ({ authority }) => {
       try {
+        authority = authority.replace(/\/+$/g, '');
         const { data } = await createAuthority<string[]>({
           method: Method.POST,
           path: '/authorities',
