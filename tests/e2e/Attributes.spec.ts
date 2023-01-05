@@ -322,7 +322,7 @@ test.describe('<Attributes/>', () => {
     expect(updatedTableSize === (originalTableSize - 1)).toBeTruthy()
   });
 
-  test('should edit attribute rule', async ({ page , authority, attributeName, attributeValue}) => {
+  test('should edit attribute rule, non applied changes are discarded after cancellation', async ({ page , authority, attributeName, attributeValue}) => {
     const restrictiveAccessDropdownOption = page.locator('.ant-select-item-option', {hasText:'Restrictive Access'})
     const ruleUpdatedMsg = page.locator(selectors.alertMessage, {hasText: `Rule was updated!`})
 
@@ -334,9 +334,18 @@ test.describe('<Attributes/>', () => {
     await page.click(selectors.attributesPage.attributesHeader.itemsQuantityIndicator)
     await page.click(selectors.attributesPage.newSectionBtn);
 
-    await test.step('Update rule and check result', async() => {
+    await test.step('able to cancel rule editing, non applied changes are discarded properly', async() => {
       await page.click(existedOrderValue)
       await page.click(attributeDetailsSection.editRuleButton)
+      await page.click(attributeDetailsSection.ruleDropdown)
+      await restrictiveAccessDropdownOption.click()
+      await page.click(attributeDetailsSection.cancelEditingButton)
+      // reenter editing mode and assert option state is returned to previous one
+      await page.click(attributeDetailsSection.editRuleButton)
+      await expect(page.locator(attributeDetailsSection.ruleDropdown)).toHaveText('Hierarchical Access')
+    })
+
+    await test.step('Update rule and assert saving result', async() => {
       await page.click(attributeDetailsSection.ruleDropdown)
       await restrictiveAccessDropdownOption.click()
       await page.click(attributeDetailsSection.saveChangesButton)
@@ -359,15 +368,16 @@ test.describe('<Attributes/>', () => {
     await page.click(selectors.attributesPage.attributesHeader.itemsQuantityIndicator)
     await page.click(selectors.attributesPage.newSectionBtn);
 
-    await test.step('Able to cancel editing a value', async() => {
+    await test.step('Able to cancel editing a value, non-applied changes are discarded properly', async() => {
       await page.click(existedOrderValue)
       await page.click(attributeDetailsSection.editValueButton)
+      await page.fill(attributeDetailsSection.editValueInputField, 'Updated value but not applied')
       await page.click(attributeDetailsSection.cancelEditingButton)
+      await page.click(attributeDetailsSection.editValueButton)
+      await expect(page.locator(attributeDetailsSection.editValueInputField)).toHaveValue(attributeValue)
     })
 
     await test.step('Update value and assert result', async() => {
-      await page.click(existedOrderValue)
-      await page.click(attributeDetailsSection.editValueButton)
       const updatedOrderValue = 'Updated Value'
       await page.fill(attributeDetailsSection.editValueInputField, updatedOrderValue)
       await page.click(attributeDetailsSection.saveChangesButton)
@@ -383,6 +393,8 @@ test.describe('<Attributes/>', () => {
 
   test('should create an attribute with multiple order values, able to edit order of values, able to cancel editing', async ({ page , authority, attributeName, attributeValue}) => {
     const ruleUpdatedMsg = page.locator(selectors.alertMessage, {hasText: `Rule was updated!`})
+    const firstOrderItemInEditableList = '.order-list__item >> nth=0'
+    const fourthOrderItemInEditableList = '.order-list__item >> nth=3'
 
     await test.step('Create an attribute with multiple Order values and check result message', async() => {
       await createAttribute(page, attributeName, [`${attributeValue}1`, `${attributeValue}2`, `${attributeValue}3`, `${attributeValue}4`])
@@ -406,15 +418,17 @@ test.describe('<Attributes/>', () => {
       await page.locator(selectors.attributesPage.attributeDetailsSection.editRuleButton).click()
     })
 
-    await test.step('Should be able to cancel attribute editing', async() => {
+    await test.step('Should be able to cancel editing of order, non-applied changes are discarded properly', async() => {
+      await page.dragAndDrop(fourthOrderItemInEditableList, firstOrderItemInEditableList)
+      await expect(page.locator(firstOrderItemInEditableList)).toHaveText(`${attributeValue}4`)
       await page.click(selectors.attributesPage.attributeDetailsSection.cancelEditingButton)
+      // reenter editing state and check state
+      await page.locator(selectors.attributesPage.attributeDetailsSection.editRuleButton).click()
+      await expect(page.locator(firstOrderItemInEditableList)).toHaveText(`${attributeValue}1`)
     })
 
-    await test.step('Reenter editing mode and edit order of values items using drag-and-drop feature', async() => {
-      await page.locator(selectors.attributesPage.attributeDetailsSection.editRuleButton).click()
-      const firstOrderItemInEditableList = '.order-list__item >> nth=0'
-      const fourthOrderItemInEditableList = '.order-list__item >> nth=3'
-      await page.dragAndDrop(fourthOrderItemInEditableList, firstOrderItemInEditableList )
+    await test.step('Edit order of values items using drag-and-drop feature and assert proper saving', async() => {
+      await page.dragAndDrop(fourthOrderItemInEditableList, firstOrderItemInEditableList)
       await page.click(selectors.attributesPage.attributeDetailsSection.saveChangesButton)
       await expect(ruleUpdatedMsg).toBeVisible()
       const updatedFirstOrderValue = page.locator('.ant-tabs-tab-btn >> nth=0')
