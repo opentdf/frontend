@@ -114,9 +114,12 @@ jobs:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - run: pwd
+      - run: ls -l
       - name: publish
         uses: docker/build-push-action@v3
         with:
+          context: .
           build-args: |-
             NODE_VERSION=18
           platforms: ${{ env.CONTAINER_ARCHS }}
