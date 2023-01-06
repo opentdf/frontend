@@ -58,7 +58,11 @@ jobs:
           echo "chart_version=$chart_version" >> $GITHUB_STEP_SUMMARY
         id: chart-version
       - run: |
-          [[ "${{ github.event.release.tag_version }}" == "${{ steps.version.outputs.VERSION }}" ]]
+          [[ "$tag" == "$app_ver" ]] || echo "# Invalid release tag [$tag] - must match package version [$app_ver]" >> $GITHUB_STEP_SUMMARY
+          git merge-base --is-ancestor "$tag" main || echo "# Invalid release tag [$tag] - must be on `main` branch" >> $GITHUB_STEP_SUMMARY
+        env:
+          tag: "${{ github.event.release.tag_version }}"
+          app_ver: "${{ steps.version.outputs.VERSION }}"
         if: ${{ github.event.release }}
         name: Validate release tag matches package version
       - run: npm ci
