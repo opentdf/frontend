@@ -84,6 +84,21 @@ jobs:
       IMAGE_TAGS: ${{ steps.meta.outputs.tags }}
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: npm-${{ hashFiles('package-lock.json') }}
+          restore-keys: npm-
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+      - name: Run NPM build
+        run: |
+          npm pkg set 'homepage'='%REACT_APP_SERVER_BASE_PATH%'
+          npm run build
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v4
