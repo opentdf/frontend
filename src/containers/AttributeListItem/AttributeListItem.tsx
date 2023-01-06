@@ -149,6 +149,7 @@ const AttributeListItem: FC<Props> = (props) => {
     activeAuthority,
     activeOrderList,
     activeRule,
+    isEditValues,
     updateAttribute,
     handleClose,
     onChange
@@ -173,11 +174,11 @@ const AttributeListItem: FC<Props> = (props) => {
 
     } catch (error: any) {
       let errorText = error.message;
-  
+
       if (error.message.includes('code 500')) {
         errorText = 'Something went wrong.'
       }
-  
+
       toast.error(errorText)
     }
     handleClose();
