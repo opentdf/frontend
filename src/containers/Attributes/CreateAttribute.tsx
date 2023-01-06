@@ -30,6 +30,9 @@ const CreateAttribute: FC<Props> = (props) => {
   const handleCreateAuthority = useCallback(
     async ({ authority }) => {
       try {
+        while (authority.endsWith('/')) {
+          authority = authority.slice(0, -1);
+        }
         const { data } = await createAuthority<string[]>({
           method: Method.POST,
           path: '/authorities',
