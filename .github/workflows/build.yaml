@@ -59,12 +59,17 @@ jobs:
         id: chart-version
       - run: |
           [[ "$tag" == "$app_ver" ]] || echo "# Invalid release tag [$tag] - must match package version [$app_ver]" >> $GITHUB_STEP_SUMMARY
-          git merge-base --is-ancestor "$tag" main || echo "# Invalid release tag [$tag] - must be on `main` branch" >> $GITHUB_STEP_SUMMARY
         env:
           tag: "${{ github.event.release.tag_version }}"
           app_ver: "${{ steps.version.outputs.VERSION }}"
         if: ${{ github.event.release }}
         name: Validate release tag matches package version
+      - run: |
+          git merge-base --is-ancestor "$tag" main || echo "# Invalid release tag [$tag] - must be on `main` branch" >> $GITHUB_STEP_SUMMARY
+        env:
+          tag: "${{ github.event.release.tag_version }}"
+        if: ${{ github.event.release }}
+        name: Validate published release is on main (reviewed) branch
       - run: npm ci
       - run: npm run test
     # - name: Install Playwright
