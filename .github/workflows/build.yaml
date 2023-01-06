@@ -151,10 +151,9 @@ jobs:
       - name: push
         run: |
           helm push *.tgz oci://ghcr.io/${{ github.repository_owner }}/charts
-          echo "## Published Helm chart abacus with chart version [${chart_ver}] and appVersion to [${app_ver}]" >> $GITHUB_STEP_SUMMARY
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+          echo "## Published Helm abacus chart [${chart_ver}]" >> $GITHUB_STEP_SUMMARY
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' || github.event.release.tag_version }}
         env:
-          app_ver: ${{ needs.app.outputs.SHA_TAG }}
           chart_ver: ${{ github.event.release.tag_version || needs.app.outputs.CHART_VERSION }}
         working-directory: charts
 
