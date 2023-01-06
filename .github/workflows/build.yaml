@@ -14,8 +14,9 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     outputs:
-      VERSION: ${{ steps.version.outputs.VERSION }}
       CHART_VERSION: ${{ steps.chart-version.outputs.CHART_VERSION }}
+      SHA_TAG: ${{ steps.version.outputs.SHA }}
+      VERSION: ${{ steps.version.outputs.VERSION }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -38,6 +39,7 @@ jobs:
           fi
           echo "VERSION=$app_version" >> $GITHUB_OUTPUT
           echo "version=$app_version" >> $GITHUB_STEP_SUMMARY
+          echo "SHA=sha-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
         id: version
       - run: |
           chart_version=$(jq -r .version package.json)-sha$(git rev-parse --short HEAD)
@@ -125,12 +127,12 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v3
-      - uses: yokawasa/action-setup-kube-tools@v0.8.0
+      - uses: yokawasa/action-setup-kube-tools@v0.9.2
         with:
           setup-tools: helm
-          helm: "3.10.2"
+          helm: "3.10.3"
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -139,18 +141,21 @@ jobs:
       - name: package
         run: |
           set -x
-          echo "Packaging Helm chart abacus with chart version [${chart_ver}] and appVersion to [${app_ver}]"
+          echo "Packaged Helm chart abacus with chart version [${chart_ver}] and appVersion to [${app_ver}]"  >> $GITHUB_STEP_SUMMARY
           helm package abacus --app-version="${app_ver}" --version="${chart_ver}"
           echo *.tgz
         working-directory: charts
         env:
-          app_ver: ${{ needs.app.outputs.VERSION }}
+          app_ver: ${{ github.event.release && needs.app.outputs.VERSION || needs.app.outputs.SHA_TAG }}
           chart_ver: ${{ github.event.release.tag_version || needs.app.outputs.CHART_VERSION }}
       - name: push
         run: |
           helm push *.tgz oci://ghcr.io/${{ github.repository_owner }}/charts
           echo "## Published Helm chart abacus with chart version [${chart_ver}] and appVersion to [${app_ver}]" >> $GITHUB_STEP_SUMMARY
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        env:
+          app_ver: ${{ needs.app.outputs.SHA_TAG }}
+          chart_ver: ${{ github.event.release.tag_version || needs.app.outputs.CHART_VERSION }}
         working-directory: charts
 
   dispatch:
