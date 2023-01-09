@@ -141,8 +141,8 @@ jobs:
   chart:
     runs-on: ubuntu-latest
     needs:
-      - image
       - app
+      - image
     permissions:
       packages: write
       contents: read
