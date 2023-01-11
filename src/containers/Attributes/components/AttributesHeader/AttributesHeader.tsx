@@ -75,7 +75,7 @@ const AttributesHeader = ({ total }: AttributesHeaderProps) => {
     if (key === 'Escape' && visiblePopover) {
       setVisiblePopover(false);
     }
-  }, [visiblePopover]);
+  });
 
   return (
     <div className={styles.attributeHeader}>
