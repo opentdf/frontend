@@ -29,8 +29,9 @@ RUN CGO_ENABLED=0 GOOS=linux go build -v -a  -o /server
 # server - nginx alpine
 FROM scratch as server
 WORKDIR /
-COPY --from=builder /build/build/ /www/
 COPY --from=gobuilder /server /server
+# in CI the build out put is build/, locally it is dist/
+COPY build/ /www/
 ENV KEYCLOAK_HOST "http://localhost/keycloak/auth"
 ENV KEYCLOAK_CLIENT_ID "abacus"
 ENV KEYCLOAK_REALMS "tdf"
