@@ -34,6 +34,7 @@ COPY --from=gobuilder /server /server
 COPY build/ /www/
 RUN ls -l www
 RUN ls -l www/static
+RUN cat www/index.html
 ENV KEYCLOAK_HOST "http://localhost/keycloak/auth"
 ENV KEYCLOAK_CLIENT_ID "abacus"
 ENV KEYCLOAK_REALMS "tdf"
