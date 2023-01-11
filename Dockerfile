@@ -27,7 +27,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -v -a  -o /server
 
 
 # server - nginx alpine
-FROM scratch as server
+FROM ubuntu as server
 WORKDIR /
 COPY --from=gobuilder /server /server
 # in CI the build out put is build/, locally it is dist/
