@@ -57,6 +57,7 @@ func main() {
 	log.Println("replacing")
 	output := m.ReplaceAllString(string(input), string(sdJson))
 	if string(input) == output {
+		log.Println(output)
 		log.Fatalln("replacing failed")
 	}
 	// replace /%REACT_APP_SERVER_BASE_PATH% in index file
