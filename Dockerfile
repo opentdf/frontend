@@ -32,6 +32,7 @@ WORKDIR /
 COPY --from=gobuilder /server /server
 # in CI the build out put is build/, locally it is dist/
 COPY build/ /www/
+RUN ls www
 ENV KEYCLOAK_HOST "http://localhost/keycloak/auth"
 ENV KEYCLOAK_CLIENT_ID "abacus"
 ENV KEYCLOAK_REALMS "tdf"
