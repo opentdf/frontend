@@ -56,7 +56,7 @@ jobs:
           echo "CHART_VERSION=$chart_version" >> $GITHUB_OUTPUT
           echo "chart_version=$chart_version" >> $GITHUB_STEP_SUMMARY
         id: chart-version
-      - run: >-
+      - run: |
           if [[ "$tag" != "$app_ver" ]]; then
             echo "# Invalid release tag [$tag] - must match package version [$app_ver]" >>$GITHUB_STEP_SUMMARY
             exit 1
