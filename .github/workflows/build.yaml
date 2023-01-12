@@ -56,18 +56,24 @@ jobs:
           echo "CHART_VERSION=$chart_version" >> $GITHUB_OUTPUT
           echo "chart_version=$chart_version" >> $GITHUB_STEP_SUMMARY
         id: chart-version
-      - run: |
-          [[ "$tag" == "$app_ver" ]] || echo "# Invalid release tag [$tag] - must match package version [$app_ver]" >> $GITHUB_STEP_SUMMARY
+      - run: >-
+          if [[ "$tag" != "$app_ver" ]]; then
+            echo "# Invalid release tag [$tag] - must match package version [$app_ver]" >>$GITHUB_STEP_SUMMARY
+            exit 1
+          fi
         env:
-          tag: "${{ github.event.release.tag_version }}"
+          tag: "${{ github.event.release.tag_name }}"
           app_ver: "${{ steps.version.outputs.VERSION }}"
-        if: ${{ github.event.release }}
+        if: ${{ !!github.event.release }}
         name: Validate release tag matches package version
       - run: |
-          git merge-base --is-ancestor "$tag" main || echo "# Invalid release tag [$tag] - must be on `main` branch" >> $GITHUB_STEP_SUMMARY
+          if ! git merge-base --is-ancestor "$tag" main; then
+            echo "# Invalid release tag [$tag] - must be on `main` branch" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
         env:
-          tag: "${{ github.event.release.tag_version }}"
-        if: ${{ github.event.release }}
+          tag: "${{ github.event.release.tag_name }}"
+        if: ${{ !!github.event.release }}
         name: Validate published release is on main (reviewed) branch
       - run: npm ci
       - run: npm run test
@@ -113,7 +119,7 @@ jobs:
           tags: |
             type=ref,event=branch
             type=sha
-            type=semver,pattern={{version}},value=${{ github.event.release.tag_version }},enabled=${{ !!github.event.release }}
+            type=semver,pattern={{version}},value=${{ github.event.release.tag_name }},enabled=${{ !!github.event.release }}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
@@ -169,14 +175,14 @@ jobs:
         working-directory: charts
         env:
           app_ver: ${{ github.event.release && needs.app.outputs.VERSION || needs.app.outputs.SHA_TAG }}
-          chart_ver: ${{ github.event.release.tag_version || needs.app.outputs.CHART_VERSION }}
+          chart_ver: ${{ github.event.release.tag_name || needs.app.outputs.CHART_VERSION }}
       - name: push
         run: |
           helm push *.tgz oci://ghcr.io/${{ github.repository_owner }}/charts
           echo "## Published Helm abacus chart [${chart_ver}]" >> $GITHUB_STEP_SUMMARY
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' || github.event.release.tag_version }}
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' || github.event.release.tag_name }}
         env:
-          chart_ver: ${{ github.event.release.tag_version || needs.app.outputs.CHART_VERSION }}
+          chart_ver: ${{ github.event.release.tag_name || needs.app.outputs.CHART_VERSION }}
         working-directory: charts
 
   dispatch:
