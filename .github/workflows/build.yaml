@@ -131,7 +131,8 @@ jobs:
           build-args: |-
             NODE_VERSION=18
           platforms: ${{ env.CONTAINER_ARCHS }}
-          push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'opentdf/frontend' }}
+          # publish the image if there is a push event to main or a release event. !! needed bc expressions eval to strings. See https://github.com/actions/runner/issues/1483
+          push: ${{ !!(!!(github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event.release) && github.repository == 'opentdf/frontend' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
