@@ -10,6 +10,8 @@ See [Quickstart](https://github.com/opentdf/opentdf/tree/main/quickstart)
 
 ### Server (development)
 
+To use the quickstart endpoints, copy the `.env.local` to the `.env` file.
+
 Starts server on http://localhost:3000  
 ```shell
 npm run start
