@@ -27,6 +27,9 @@ jobs:
           git remote -v
           git branch -v
       - run: |
+          git pull origin main
+      - run: |
+          git merge-base --is-ancestor HEAD main && echo main before head
           if ! git merge-base --is-ancestor "$tag" origin/main; then
             if git merge-base --is-ancestor origin/main "$tag"; then
               echo "# Invalid release tag [$tag] - ahead of `main` branch" >> $GITHUB_STEP_SUMMARY
@@ -206,6 +209,7 @@ jobs:
 
   dispatch:
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'opentdf/frontend' }}
     steps:
       - name: Trigger opentdf/tests
         run: >-
