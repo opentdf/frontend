@@ -28,11 +28,15 @@ jobs:
           git branch -v
       - run: |
           if ! git merge-base --is-ancestor "$tag" origin/main; then
-            echo "# Invalid release tag [$tag] - must be on `main` branch" >> $GITHUB_STEP_SUMMARY
+            if git merge-base --is-ancestor origin/main "$tag"; then
+              echo "# Invalid release tag [$tag] - ahead of `main` branch" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "# Invalid release tag [$tag] - must be on `main` branch" >> $GITHUB_STEP_SUMMARY
+            fi
             exit 1
           fi
         env:
-          tag: "${{ github.event.push.branch }}"
+          tag: "${{ github.head_ref }}"
       - uses: actions/setup-node@v3
         with:
           node-version: 18
