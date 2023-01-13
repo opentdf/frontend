@@ -18,6 +18,8 @@ jobs:
       VERSION: ${{ steps.version.outputs.VERSION }}
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - name: Dump GitHub context
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
@@ -26,8 +28,6 @@ jobs:
       - run: |
           git remote -v
           git branch -v
-      - run: |
-          git pull origin main
       - run: |
           git merge-base --is-ancestor HEAD main && echo main before head
           if ! git merge-base --is-ancestor "$tag" origin/main; then
