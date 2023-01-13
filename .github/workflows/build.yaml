@@ -29,12 +29,12 @@ jobs:
           git remote -v
           git branch -v
           git fetch origin main:main
-          git fetch origin 1.2.0:1.2.0
+          git fetch --all --tags
           git branch -v
       - run: |
           git merge-base --is-ancestor HEAD main && echo main before head
-          if ! git merge-base --is-ancestor "$tag" origin/main; then
-            if git merge-base --is-ancestor origin/main "$tag"; then
+          if ! git merge-base --is-ancestor "$tag" main; then
+            if git merge-base --is-ancestor main "$tag"; then
               echo "# Invalid release tag [$tag] - ahead of `main` branch" >> $GITHUB_STEP_SUMMARY
             else
               echo "# Invalid release tag [$tag] - must be on `main` branch" >> $GITHUB_STEP_SUMMARY
