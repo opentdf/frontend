@@ -18,6 +18,8 @@ jobs:
       VERSION: ${{ steps.version.outputs.VERSION }}
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
           node-version: 18
@@ -67,6 +69,10 @@ jobs:
         if: ${{ !!github.event.release }}
         name: Validate release tag matches package version
       - run: |
+          git fetch origin main:main
+          git fetch --all --tags
+          git branch -v
+          git tag
           if ! git merge-base --is-ancestor "$tag" main; then
             echo "# Invalid release tag [$tag] - must be on `main` branch" >> $GITHUB_STEP_SUMMARY
             exit 1
@@ -187,6 +193,7 @@ jobs:
 
   dispatch:
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'opentdf/frontend' }}
     steps:
       - name: Trigger opentdf/tests
         run: >-
