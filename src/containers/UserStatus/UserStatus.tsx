@@ -14,7 +14,7 @@ const UserStatus = () => {
             style={{ marginLeft: '0.5rem' }}
             src={
               <Image
-                src={window.SERVER_DATA.basePath != '' ? window.SERVER_DATA.basePath + '/openTDF.png': 'openTDF.png'}
+                src={window.SERVER_DATA.basePath !== '' ? window.SERVER_DATA.basePath + '/openTDF.png': 'openTDF.png'}
                 preview={false}
                 style={{ width: 32 }}
               />
