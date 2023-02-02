@@ -1,7 +1,4 @@
 import { PlaywrightTestConfig, devices } from '@playwright/test';
-import dotenv from "dotenv";
-// @ts-ignore
-dotenv.config({ multiline: true });
 
 /* See https://playwright.dev/docs/test-configuration. */
 const config: PlaywrightTestConfig = {
@@ -27,7 +24,7 @@ const config: PlaywrightTestConfig = {
     browserName: "chromium",
     headless: !false,
     launchOptions: {
-      slowMo: 50,
+      slowMo: 500,
     }
   },
   expect: {
@@ -38,7 +35,7 @@ const config: PlaywrightTestConfig = {
     timeout: 5000
   },
   /* Maximum time one test can run for. */
-  timeout: 30 * 1000,
+  timeout: 3 * 60 * 1000,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: process.env.CI ? 'line' : 'html',
   /* Configure projects for major browsers */

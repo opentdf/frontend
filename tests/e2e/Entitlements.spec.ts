@@ -1,4 +1,4 @@
-import {APIRequestContext, expect} from '@playwright/test';
+import { APIRequestContext, expect } from '@playwright/test';
 import {
   createAuthority,
   firstTableRowClick,
@@ -8,7 +8,7 @@ import {
   getAccessToken
 } from './helpers/operations';
 import { test } from './helpers/fixtures';
-import {selectors} from "./helpers/selectors";
+import { selectors } from "./helpers/selectors";
 
 let authToken: string | null;
 let apiContext: APIRequestContext;
@@ -18,16 +18,16 @@ test.describe('<Entitlements/>', () => {
     await authorize(page);
     authToken = await getAccessToken(page)
 
-    await page.goto('/attributes');
-    // click the token message to close it and overcome potential overlapping problem
-    await page.locator(selectors.tokenMessage).click()
+    await page.getByRole('link', { name: 'Attributes' }).click();
+    await page.waitForURL('**/attributes');
+
     await createAuthority(page, authority);
     // click success message to close it and overcome potential overlapping problem
     const authorityCreatedMsg = page.locator(selectors.alertMessage, {hasText:'Authority was created'})
     await authorityCreatedMsg.click()
-    await page.goto('/entitlements');
-    // click the token message to close it and overcome potential overlapping problem
-    await page.locator(selectors.tokenMessage).click()
+
+    await page.getByRole('link', { name: 'Entitlements' }).click();
+    await page.waitForURL('**/entitlements');
 
     apiContext = await playwright.request.newContext({
       extraHTTPHeaders: {
@@ -53,10 +53,7 @@ test.describe('<Entitlements/>', () => {
   });
 
   test('redirect to user/PE', async ({ page }) => {
-    await Promise.all([
-        page.waitForNavigation(),
-        firstTableRowClick('users-table', page),
-    ]);
+    await firstTableRowClick('users-table', page)
 
     const id = getLastPartOfUrl(page);
     const header = page.locator(selectors.secondaryHeader, { hasText: `User ${id}` });
@@ -64,10 +61,7 @@ test.describe('<Entitlements/>', () => {
   });
 
   test('redirect to client/NPE', async ({ page }) => {
-    await Promise.all([
-        page.waitForNavigation(),
-        firstTableRowClick('clients-table', page),
-    ]);
+    await firstTableRowClick('clients-table', page)
 
     const id = getLastPartOfUrl(page);
     const header = page.locator(selectors.secondaryHeader, { hasText: `Client ${id}` });
@@ -75,10 +69,7 @@ test.describe('<Entitlements/>', () => {
   });
 
   test('Add Entitlements To Entity', async ({ page , authority, attributeName, attributeValue}) => {
-    await Promise.all([
-        page.waitForNavigation(),
-        firstTableRowClick('clients-table', page),
-    ]);
+    await firstTableRowClick('clients-table', page)
 
     await test.step('Entitle attribute', async() => {
       await page.type(selectors.entitlementsPage.authorityNamespaceField, authority);
