@@ -72,7 +72,7 @@ export const selectors = {
     authoritiesPage: {
         header: '.ant-page-header-heading-title',
         authoritiesTableRow: '.ant-table-row',
-        deleteAuthorityButton: '#delete-authority-button',
+        deleteAuthorityButton: '#delete-authority-button >> nth=0',
         confirmDeletionModal: {
             cancelDeletionBtn: '#cancel-deletion',
             confirmDeletionBtn: '#delete-authority',
