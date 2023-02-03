@@ -193,7 +193,7 @@ jobs:
 
   dispatch:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'pull_request' && github.ref == 'refs/heads/main' && github.repository == 'opentdf/frontend' }}
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/enable_tests_dispatch_on_pr' && github.repository == 'opentdf/frontend' }}
     steps:
       - name: Trigger opentdf/tests
         run: >-
