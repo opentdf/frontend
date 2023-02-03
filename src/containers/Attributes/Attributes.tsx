@@ -19,9 +19,16 @@ const Attributes = () => {
 
   useEffect(() => {
     if (initialized && keycloak.authenticated) {
-      fetchAttrs();
+      fetchAttrs().catch(() => {
+        AttributesFiltersStore.update(store => {
+          const updatedAuthority = [...store.possibleAuthorities].filter(val => val !== authority)[0];
+          if (authority && store && authority !== updatedAuthority) {
+            store.authority = updatedAuthority;
+          }
+        })
+      })
     }
-  }, [fetchAttrs, keycloak, initialized]);
+  }, [fetchAttrs, keycloak, initialized, authority]);
 
   const onNamespaceUpdate = useCallback((authority: string): void => {
     AttributesFiltersStore.update(store => {

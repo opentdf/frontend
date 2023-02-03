@@ -38,7 +38,7 @@ export const useAttributesFilters = (authority: string, query: DefAttrsQueryPara
   const [getAttrs, { data, loading, headers }] = useLazyFetch<Attribute[]>(attributesClient);
   const xTotalCount: number = Number(headers?.['x-total-count'] ?? 0);
 
-  const fetchAttrs = useCallback(() => {
+  const fetchAttrs = useCallback(async () => {
     if (authority) {
       const config = {
         method: Method.GET,
@@ -50,7 +50,10 @@ export const useAttributesFilters = (authority: string, query: DefAttrsQueryPara
       const queryParams = Object.fromEntries(Object.entries(query).filter(([_, v]) => v));
 
       config.params = { authority, ...queryParams }
-      getAttrs(config);
+      const { status } = await getAttrs(config);
+      if (status >= 400) {
+        throw new Error(`Status: ${status}`)
+      }
     }
   }, [
     authority,
