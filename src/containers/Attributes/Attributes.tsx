@@ -28,7 +28,7 @@ const Attributes = () => {
         })
       })
     }
-  }, [fetchAttrs, keycloak, initialized]);
+  }, [fetchAttrs, keycloak, initialized, authority]);
 
   const onNamespaceUpdate = useCallback((authority: string): void => {
     AttributesFiltersStore.update(store => {
