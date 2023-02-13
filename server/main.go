@@ -93,7 +93,8 @@ type IndexHandler struct {
 func (h IndexHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Security-Policy", "frame-ancestors")
 	w.Header().Set("X-Content-Type-Options", "nosniff")
-	if r.URL.Path == "/" || r.URL.Path == "/index.html" || r.URL.Path == "/authorities" || r.URL.Path == "/attributes" || r.URL.Path == "/entitlements" {
+	rex := regexp.MustCompile(`^\/entitlements\/clients\/[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$`)
+	if r.URL.Path == "/" || r.URL.Path == "/index.html" || r.URL.Path == "/authorities" || r.URL.Path == "/attributes" || r.URL.Path == "/entitlements" || rex.MatchString(r.URL.Path) {
 		log.Printf("serving root from %s", r.URL.Path)
 		_, err := w.Write(h.output)
 		if err != nil {
@@ -101,6 +102,8 @@ func (h IndexHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		return
+	} else {
+		log.Printf("url path does not pass match - %s", r.URL.Path)
 	}
 	log.Printf("serving %s", r.URL)
 	h.fs.ServeHTTP(w, r)
