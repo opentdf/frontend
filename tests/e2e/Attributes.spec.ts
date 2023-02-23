@@ -284,7 +284,15 @@ test.describe('<Attributes/>', () => {
     })
   });
 
-  test('should delete attribute entitlement', async ({ page}) => {
+  test('should delete attribute entitlement', async ({ page, authority, attributeName, attributeValue}) => {
+    const tableValue = `${authority}/attr/${attributeName}/value/${attributeValue}`
+    const deleteButtonForLastAddedEntitlement = page.locator('#delete-entitlement-button >> nth=-1')
+
+    await test.step('Create an attribute and assert creation', async() => {
+      await createAttribute(page, attributeName, [attributeValue])
+      await assertAttributeCreatedMsg(page)
+    })
+
     await test.step('Open Entitlements route', async () => {
       await page.getByRole('link', { name: 'Entitlements' }).click();
       await page.waitForURL('**/entitlements');
@@ -292,6 +300,18 @@ test.describe('<Attributes/>', () => {
 
     await test.step('Open table', async () => {
       await firstTableRowClick('clients-table', page)
+    });
+
+    await test.step('Create a new entitlement', async () => {
+      await page.type(selectors.entitlementsPage.authorityNamespaceField, authority);
+      await page.keyboard.press('Enter')
+      await page.fill(selectors.entitlementsPage.attributeNameField, attributeName);
+      await page.fill(selectors.entitlementsPage.attributeValueField, attributeValue);
+      await page.click(selectors.entitlementsPage.submitAttributeButton);
+
+      const successfulEntitlementMsg = await page.locator(selectors.alertMessage, {hasText: "Entitlement updated!"})
+      await successfulEntitlementMsg.click()
+      await expect(page.locator('.ant-table-row', {hasText: tableValue})).toBeVisible()
     });
 
     await test.step('Click on table cell', async () => {
@@ -302,14 +322,25 @@ test.describe('<Attributes/>', () => {
     const originalTableRows = await page.locator(selectors.entitlementsPage.entityDetailsPage.tableRow).all()
     const originalTableSize = originalTableRows.length
 
+    await test.step('Be able to cancel entitlement removal', async() => {
+      await deleteButtonForLastAddedEntitlement.click();
+      await page.click(selectors.entitlementsPage.entityDetailsPage.confirmDeletionModal.cancelDeletionBtn);
+    })
+
     await test.step('Delete single item', async () => {
-      await page.locator(selectors.entitlementsPage.entityDetailsPage.deleteEntitlementBtn).click();
-      await page.locator(selectors.entitlementsPage.entityDetailsPage.deleteEntitlementModalBtn).click();
+      await deleteButtonForLastAddedEntitlement.click();
+      await page.click(selectors.entitlementsPage.entityDetailsPage.confirmDeletionModal.confirmDeletionBtn);
     });
 
     await test.step('Click on table cell', async () => {
       await page.click(selectors.entitlementsPage.entityDetailsPage.tableCell)
       await page.waitForSelector(selectors.entitlementsPage.entityDetailsPage.tableRow)
+    });
+
+    await test.step('Assert success message', async () => {
+      const entitlementDeletedMsg = await page.locator(selectors.alertMessage, {hasText: `Attribute ${tableValue} deleted`})
+      await expect(entitlementDeletedMsg).toBeVisible()
+      await entitlementDeletedMsg.click()
     });
 
     await test.step('Match table rows after deletion', async () => {
