@@ -89,7 +89,7 @@ const User = () => {
               })
               .then(() => {
                 getEntitlements(config);
-                toast.success(`Attribute ${entity.attribute} deleted`);
+                toast.success(`Entitlement ${entity.attribute} deleted`);
               })
               .catch(({ message }) => toast.error(message));
         },
