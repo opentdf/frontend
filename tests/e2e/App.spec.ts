@@ -70,9 +70,9 @@ test.describe('<App/>', () => {
       await page.waitForURL('**/entitlements');
     });
 
-    await firstTableRowClick('users-table', page),
+    await firstTableRowClick('users-table', page)
     // check that entitlement items are present when logged in
-    await expect(page.locator(selectors.entitlementsPage.entityDetailsPage.deleteEntitlementBtn)).toBeVisible()
+    await expect(page.locator('#delete-entitlement-button >> nth=0')).toBeVisible()
 
     await page.click(selectors.logoutButton)
     await page.waitForSelector(selectors.loginButton);
@@ -87,7 +87,7 @@ test.describe('<Login/>', () => {
     await authorize(page, "/authorities")
 
     await test.step('check that Authorities data is loaded', async () => {
-      const authorityItems = await page.$$(selectors.authoritiesPage.authoritiesTableRow)
+      const authorityItems = await page.locator(selectors.authoritiesPage.authoritiesTableRow).all()
       const itemsQuantity = authorityItems.length
       await expect(itemsQuantity>0).toBeTruthy()
     })
