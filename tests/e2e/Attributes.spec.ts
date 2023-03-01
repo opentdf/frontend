@@ -345,7 +345,7 @@ test.describe('<Attributes/>', () => {
     });
 
     await test.step('Assert success message', async () => {
-      const entitlementDeletedMsg = await page.locator(selectors.alertMessage, {hasText: `Attribute ${tableValue} deleted`})
+      const entitlementDeletedMsg = await page.locator(selectors.alertMessage, {hasText: `Entitlement ${tableValue} deleted`})
       await expect(entitlementDeletedMsg).toBeVisible()
       await entitlementDeletedMsg.click()
     });
