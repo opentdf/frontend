@@ -5,7 +5,7 @@ const config: PlaywrightTestConfig = {
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: Boolean(process.env.CI),
   /* Retry on CI only */
-  retries: process.env.CI ? 2 : 0,
+  retries: process.env.CI ? 2 : 1,
   /* Enable parallel execution using multiple workers */
   workers: 2,
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */

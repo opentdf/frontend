@@ -3,11 +3,7 @@ import { selectors } from "./selectors";
 
 export const login = async (page: Page, username: string, password: string, sectionUrl= "/") => {
   await page.goto(sectionUrl);
-
-  await Promise.all([
-    page.waitForNavigation(),
-    page.locator(selectors.loginButton).click()
-  ]);
+  await page.locator(selectors.loginButton).click()
 
   await page.fill(selectors.loginScreen.usernameField, username);
   await page.fill(selectors.loginScreen.passwordField, password);
@@ -21,7 +17,7 @@ export const authorize = async (page: Page, sectionUrl = "/") => {
   await page.locator(selectors.tokenMessage).click()
 };
 
-export const createAuthority = async (page: Page, authority: any) => {
+export const createAuthority = async (page: Page, authority: string) => {
   await page.waitForSelector(selectors.attributesPage.newSectionBtn);
   await page.locator(selectors.attributesPage.newSectionBtn).click();
   await page.fill(selectors.attributesPage.newSection.authorityField, authority);
