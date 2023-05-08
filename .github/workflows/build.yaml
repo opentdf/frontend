@@ -70,7 +70,7 @@ jobs:
         name: Validate release tag matches package version
       - run: |
           git fetch origin main:main
-          git fetch --all --tags
+          git fetch --all --tags --force
           git branch -v
           git tag
           if ! git merge-base --is-ancestor "$tag" main; then
