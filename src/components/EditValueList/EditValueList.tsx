@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, { FC } from 'react';
 import { Form, Input, Button } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 
@@ -10,68 +10,56 @@ type Props = {
 const EditValueList: FC<Props> = (props) => {
     const [form] = Form.useForm();
     const { onEdit } = props;
-    const [list, setList] = useState<string[]>(props.list);
-
-    useEffect(() => {
-        onEdit(list.filter((item: string) => !!item));
-    }, [list]);
 
     const onBlurHandle = () => {
-        setList(form.getFieldsValue().values);
+        onEdit(form.getFieldsValue().values);
+    };
+
+    const onRemoveHandle = (remove: (index: number) => void, index: number) => {
+        remove(index);
+        onEdit(form.getFieldsValue().values);
     };
 
     return (
-      <Form
-        form={form}
-        name="form"
-      >
+       <Form
+         form={form}
+         name="form"
+       >
           <Form.List
             name="values"
             initialValue={props.list}
           >
-              {(fields, { add, remove }, { errors }) => (
-                <>
-                    {fields.map((field, index) => (
-                      <Form.Item
-                        required={false}
-                        key={field.key}
-                      >
+              {(fields, { add, remove }) => (
+                 <>
+                    {fields.map((field) => (
+                       <div style={{ display: "flex", width: '100%' }} key={field.key}>
                           <Form.Item
-                            noStyle
                             {...field}
+                            style={{ flex: '1' }}
                             rules={[{ required: true, message: 'Order value should not be blank' }]}
                           >
                               <Input
                                 id={'edit-value-input-field'}
                                 onBlur={onBlurHandle}
-                                style={{
-                                    width: '98%',
-                                }}
                               />
                           </Form.Item>
 
-                          <DeleteOutlined
-                            style={{
-                                width: '2%',
-                            }}
-                            onClick={() => {
-                                remove(field.name);
-                                setList(form.getFieldsValue().values);
-                            }}
+                          <Button
+                            style={{ left: '-1px' }}
+                            icon={<DeleteOutlined />}
+                            onClick={() => onRemoveHandle(remove, field.name)}
                           />
-                      </Form.Item>
+                       </div>
                     ))}
                     <Form.Item>
-                        <Button
-                          onClick={() => add()}
-                        >
+                        <Button onClick={() => add('')}>
                             Add field
                         </Button>
                     </Form.Item>
-                </>
+                 </>
               )}
           </Form.List>
-      </Form>
+       </Form>
     );
 }
 // Blocking unnecessary re render because we losing validation messages after it
