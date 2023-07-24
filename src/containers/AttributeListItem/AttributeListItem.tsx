@@ -1,5 +1,5 @@
 import { FC, useCallback, useMemo, useState, useEffect } from "react";
-import { List, Table, Divider, Modal} from "antd";
+import { List, Table, Divider, Modal } from "antd";
 import { toast } from "react-toastify";
 import { Attribute } from "../../types/attributes";
 import { EntityAttribute } from "../../types/entitlements";
