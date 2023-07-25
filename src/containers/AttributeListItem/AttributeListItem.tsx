@@ -17,6 +17,7 @@ type Props = {
   onChange: () => void;
 };
 
+const addKey = (item: EntityAttribute) => ({ ...item, key: item.entityId })
 const attributeRules = ATTRIBUTE_RULE_TYPES.map((item) => item[0]);
 type AttributeRuleType = typeof attributeRules[number]
 
@@ -32,8 +33,7 @@ const AttributeListItem: FC<Props> = (props) => {
   const [activeAttribute, setActiveAttribute] = useState<Attribute>();
   const [activeRule, setActiveRule] = useState<AttributeRuleType>();
 
-  const [getAttrEntities, { loading, data: entities }] =
-    useLazyFetch<EntityAttribute[]>(entitlementsClient);
+  const [getAttrEntities, { loading, data: entities }] = useLazyFetch<EntityAttribute[]>(entitlementsClient);
   const [updateAttribute] = useLazyFetch(attributesClient);
 
   useEffect(() => {
@@ -242,7 +242,7 @@ const AttributeListItem: FC<Props> = (props) => {
               className="table"
               id="entitlements-table"
               columns={TABLE_COLUMNS}
-              dataSource={entities}
+              dataSource={entities?.map(addKey)}
               loading={loading}
             />
 
