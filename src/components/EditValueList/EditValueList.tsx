@@ -1,10 +1,12 @@
-import React, { FC, useState } from 'react';
+import React, {FC, useState, useEffect} from 'react';
 import { Form, Input, Button, Divider, Select } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 
 type Props = {
     list: string[];
-    onEdit: (newList: string[]) => void;
+    groupByValue?: string;
+    onEditOrderValues: (newList: string[]) => void;
+    onEditGroupBy: (value: string) => void;
 }
 
 type SelectOption = {
@@ -15,23 +17,31 @@ type SelectOption = {
 const toOptions = (item: string) => ({ value: item, label: item })
 
 const EditValueList: FC<Props> = (props) => {
+  const [selectValue, setSelectValue] = useState(props.groupByValue);
   const [selectOptions, setSelectOptions] = useState<SelectOption[]>(props.list.map(toOptions));
   const [form] = Form.useForm();
-  const { onEdit } = props;
+  const { onEditOrderValues, onEditGroupBy } = props;
 
-  const onBlurHandle = () => {
-    onEdit(form.getFieldsValue().values);
+  useEffect(() => {
+    onEditGroupBy(selectValue || '');
+  }, [selectValue, onEditGroupBy]);
+
+  const onOrderValueBlur = () => {
+    onEditOrderValues(form.getFieldsValue().values);
     setSelectOptions(form.getFieldsValue().values.map(toOptions));
   };
 
-  const onRemoveHandle = (remove: (index: number) => void, index: number) => {
+  const onRemoveOrderValue = (remove: (index: number) => void, index: number) => {
+    if (selectOptions[index].value === selectValue) {
+      setSelectValue(undefined);
+    }
     remove(index);
-    onEdit(form.getFieldsValue().values);
+    onEditOrderValues(form.getFieldsValue().values);
     setSelectOptions(form.getFieldsValue().values.map(toOptions));
   };
 
-  const onChangeHandle = () => {
-
+  const onSelectChange = (value: string) => {
+    setSelectValue(value);
   }
 
   return (
@@ -53,8 +63,8 @@ const EditValueList: FC<Props> = (props) => {
                           rules={[{ required: true, message: 'Order value should not be blank' }]}
                         >
                             <Input
-                              id={'edit-value-input-field'}
-                              onBlur={onBlurHandle}
+                              id={`edit-value-input-field-${field.name}`}
+                              onBlur={onOrderValueBlur}
                               placeholder="Order Value"
                             />
                         </Form.Item>
@@ -62,7 +72,7 @@ const EditValueList: FC<Props> = (props) => {
                         <Button
                           style={{ left: '-1px' }}
                           icon={<DeleteOutlined />}
-                          onClick={() => onRemoveHandle(remove, field.name)}
+                          onClick={() => onRemoveOrderValue(remove, field.name)}
                         />
                      </div>
                   ))}
@@ -77,13 +87,12 @@ const EditValueList: FC<Props> = (props) => {
 
        <Divider orientation="left">Group By</Divider>
        <Form.Item>
-         <Input placeholder="Name" />
-       </Form.Item>
-       <Form.Item>
          <Select
+           value={selectValue}
+           allowClear
            placeholder="Order Value"
            options={selectOptions}
-           onChange={onChangeHandle}
+           onChange={onSelectChange}
          />
        </Form.Item>
      </Form>

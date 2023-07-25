@@ -30,6 +30,7 @@ const AttributeListItem: FC<Props> = (props) => {
   const [isEditValues, setIsEditValues] = useState(false);
 
   const [activeOrderList, setActiveOrderList] = useState<string[]>([]);
+  const [groupByValue, setGroupByValue] = useState<string | undefined>('');
   const [activeAttribute, setActiveAttribute] = useState<Attribute>();
   const [activeRule, setActiveRule] = useState<AttributeRuleType>();
 
@@ -97,6 +98,7 @@ const AttributeListItem: FC<Props> = (props) => {
       setActiveTab(order);
       setActiveOrderList(attribute.order);
       setActiveAttribute(attribute);
+      setGroupByValue(attribute.group_by?.value);
     },
     [getAttrEntities],
   );
@@ -130,6 +132,12 @@ const AttributeListItem: FC<Props> = (props) => {
       order: activeOrderList,
       rule: activeRule,
       state: activeAttribute?.state,
+      group_by: groupByValue ?
+        {
+          authority: activeAuthority,
+          name: activeAttribute?.name,
+          value: groupByValue
+        } : null
     };
 
     try {
@@ -140,7 +148,7 @@ const AttributeListItem: FC<Props> = (props) => {
       });
       toast.success(isEditValues ? "Order value was updated!" : "Rule was updated!");
     } catch (error) {
-      toast.error("Could not update rules!");
+      toast.error("Could not update attribute!");
     }
     handleClose();
     onChange();
@@ -148,6 +156,7 @@ const AttributeListItem: FC<Props> = (props) => {
     activeAttribute,
     activeAuthority,
     activeOrderList,
+    groupByValue,
     activeRule,
     isEditValues,
     updateAttribute,
@@ -218,6 +227,10 @@ const AttributeListItem: FC<Props> = (props) => {
     setActiveOrderList(newList);
   }, [setActiveOrderList]);
 
+  const handleGroupByValue = useCallback((value: string) => {
+    setGroupByValue(value);
+  }, [setGroupByValue]);
+
   return (
     <List.Item>
       <OrderCard
@@ -264,7 +277,9 @@ const AttributeListItem: FC<Props> = (props) => {
                   <div>
                     <EditValueList
                         list={activeOrderList}
-                        onEdit={handleEditValues}
+                        groupByValue={groupByValue}
+                        onEditOrderValues={handleEditValues}
+                        onEditGroupBy={handleGroupByValue}
                     />
                   </div>
                 </>

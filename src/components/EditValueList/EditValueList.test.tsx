@@ -8,6 +8,7 @@ describe('EditValueList component', () => {
         props = {
             list: ["one"],
             onEdit: jest.fn(),
+            onEditGroupBy: jest.fn(),
         };
     })
     it("should rendered", () => {
@@ -15,6 +16,6 @@ describe('EditValueList component', () => {
         // @ts-ignore
         const x = render(<EditValueList {...props} />);
 
-        expect(x.findByTestId("edit-value-input-field")).toBeTruthy();
+        expect(x.findByTestId("edit-value-input-field-0")).toBeTruthy();
     });
 });
