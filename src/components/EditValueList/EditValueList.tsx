@@ -34,7 +34,7 @@ const EditValueList: FC<Props> = (props) => {
   }, [selectValue, onEditGroupBy]);
 
   const onOrderValueBlur = (event?: FocusEvent<HTMLInputElement>) => {
-    if (selectOptions[Number(event?.target.dataset.index)].value === selectValue) {
+    if (selectOptions[Number(event?.target.dataset.index)]?.value === selectValue) {
       setSelectValue(undefined);
     }
     onEditOrderValues(form.getFieldsValue().values, shouldSaveValues(selectOptions.map((item) => item.value), form.getFieldsValue().values));
