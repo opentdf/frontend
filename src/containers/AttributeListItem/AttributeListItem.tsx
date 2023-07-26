@@ -223,9 +223,35 @@ const AttributeListItem: FC<Props> = (props) => {
     setActiveOrderList(list);
   }, []);
 
-  const handleEditValues = useCallback(async (newList: string[]) => {
+  const handleEditValues = useCallback(async (newList: string[], shouldSave?: boolean) => {
     setActiveOrderList(newList);
-  }, [setActiveOrderList]);
+
+    if (shouldSave) {
+      const data = {
+        authority: activeAuthority,
+        name: activeAttribute?.name,
+        order: newList,
+        rule: activeRule,
+        state: activeAttribute?.state,
+        group_by: groupByValue ?
+          {
+            authority: activeAuthority,
+            name: activeAttribute?.name,
+            value: groupByValue
+          } : null
+      };
+      try {
+        await updateAttribute({
+          method: Method.PUT,
+          path: `/definitions/attributes`,
+          data,
+        });
+        toast.success(isEditValues ? "Order value was updated!" : "Rule was updated!");
+      } catch (error) {
+        toast.error("Could not update attribute!");
+      }
+    }
+  }, [setActiveOrderList, updateAttribute, activeAuthority, activeAttribute, activeRule, groupByValue, isEditValues]);
 
   const handleGroupByValue = useCallback((value: string) => {
     setGroupByValue(value);
@@ -276,7 +302,7 @@ const AttributeListItem: FC<Props> = (props) => {
                   <Divider orientation="left">Edit values</Divider>
                   <div>
                     <EditValueList
-                        list={activeOrderList}
+                        orderValues={activeOrderList}
                         groupByValue={groupByValue}
                         onEditOrderValues={handleEditValues}
                         onEditGroupBy={handleGroupByValue}

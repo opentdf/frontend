@@ -1,12 +1,12 @@
-import React, {FC, useState, useEffect} from 'react';
+import React, { FC, useState, useEffect, FocusEvent,  } from 'react';
 import { Form, Input, Button, Divider, Select } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 
 type Props = {
-    list: string[];
-    groupByValue?: string;
-    onEditOrderValues: (newList: string[]) => void;
-    onEditGroupBy: (value: string) => void;
+  orderValues: string[];
+  groupByValue?: string;
+  onEditOrderValues: (newList: string[], shouldSave?: boolean) => void;
+  onEditGroupBy: (value: string) => void;
 }
 
 type SelectOption = {
@@ -14,11 +14,18 @@ type SelectOption = {
   label: string;
 }
 
+export const shouldSaveValues = (arr1: string[], arr2: string[]) => {
+  if (arr1.length === 0 && arr2.length === 0) {
+    return false;
+  }
+  return arr1.toString() !== arr2.toString();
+}
+
 const toOptions = (item: string) => ({ value: item, label: item })
 
 const EditValueList: FC<Props> = (props) => {
   const [selectValue, setSelectValue] = useState(props.groupByValue);
-  const [selectOptions, setSelectOptions] = useState<SelectOption[]>(props.list.map(toOptions));
+  const [selectOptions, setSelectOptions] = useState<SelectOption[]>(props.orderValues.map(toOptions));
   const [form] = Form.useForm();
   const { onEditOrderValues, onEditGroupBy } = props;
 
@@ -26,8 +33,11 @@ const EditValueList: FC<Props> = (props) => {
     onEditGroupBy(selectValue || '');
   }, [selectValue, onEditGroupBy]);
 
-  const onOrderValueBlur = () => {
-    onEditOrderValues(form.getFieldsValue().values);
+  const onOrderValueBlur = (event?: FocusEvent<HTMLInputElement>) => {
+    if (selectOptions[Number(event?.target.dataset.index)].value === selectValue) {
+      setSelectValue(undefined);
+    }
+    onEditOrderValues(form.getFieldsValue().values, shouldSaveValues(selectOptions.map((item) => item.value), form.getFieldsValue().values));
     setSelectOptions(form.getFieldsValue().values.map(toOptions));
   };
 
@@ -51,7 +61,7 @@ const EditValueList: FC<Props> = (props) => {
      >
         <Form.List
           name="values"
-          initialValue={props.list}
+          initialValue={props.orderValues}
         >
             {(fields, { add, remove }) => (
                <>
@@ -64,6 +74,7 @@ const EditValueList: FC<Props> = (props) => {
                         >
                             <Input
                               id={`edit-value-input-field-${field.name}`}
+                              data-index={field.name}
                               onBlur={onOrderValueBlur}
                               placeholder="Order Value"
                             />
