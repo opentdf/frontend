@@ -54,7 +54,7 @@ describe('EditValueList component', () => {
         expect(x.findByTestId("edit-value-input-field-2")).toBeTruthy();
     });
 
-    it("should rendered with three inputs", () => {
+    it("should rendered with no inputs", () => {
         const props = {
             orderValues: [],
             groupByValue: "",

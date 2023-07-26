@@ -299,7 +299,7 @@ const AttributeListItem: FC<Props> = (props) => {
             )}
             {isEditValues && (
                 <>
-                  <Divider orientation="left">Edit values</Divider>
+                  <Divider orientation="left">Edit order values</Divider>
                   <div>
                     <EditValueList
                         orderValues={activeOrderList}

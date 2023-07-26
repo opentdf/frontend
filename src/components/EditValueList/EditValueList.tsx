@@ -89,7 +89,7 @@ const EditValueList: FC<Props> = (props) => {
                   ))}
                   <Form.Item>
                       <Button onClick={() => add('')}>
-                          Add field
+                        Add new value
                       </Button>
                   </Form.Item>
                </>
