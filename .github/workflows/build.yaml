@@ -2,12 +2,12 @@ env:
   CONTAINER_ARCHS: linux/amd64,linux/arm64
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-    types: [opened, synchronize, reopened]
-  release:
-    types: [published]
+    branches: [plat2614_sonar_coverage]
+#  pull_request:
+#    branches: [main]
+#    types: [opened, synchronize, reopened]
+#  release:
+#    types: [published]
 jobs:
   app:
     timeout-minutes: 60
@@ -82,7 +82,12 @@ jobs:
         if: ${{ !!github.event.release }}
         name: Validate published release is on main (reviewed) branch
       - run: npm ci
-      - run: npm run test
+      - run: npm run test:coverage
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     # - name: Install Playwright
     # run: npx playwright install --with-deps
     # - name: Run Playwright tests
@@ -94,119 +99,119 @@ jobs:
     # name: playwright-test-results
     # path: test-results
 
-  image:
-    needs:
-      - app
-    permissions:
-      contents: read
-      packages: write
-    runs-on: ubuntu-latest
-    timeout-minutes: 90
-    outputs:
-      IMAGE_TAGS: ${{ steps.meta.outputs.tags }}
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: npm
-          cache-dependency-path: package-lock.json
-      - name: Install NPM dependencies
-        run: npm ci --ignore-scripts
-      - name: Run NPM build
-        run: |
-          npm pkg set 'homepage'='%REACT_APP_SERVER_BASE_PATH%'
-          npm run build
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: ghcr.io/opentdf/abacus
-          tags: |
-            type=ref,event=branch
-            type=sha
-            type=semver,pattern={{version}},value=${{ github.event.release.tag_name }},enabled=${{ !!github.event.release }}
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - name: publish
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          build-args: |-
-            NODE_VERSION=18
-          platforms: ${{ env.CONTAINER_ARCHS }}
-          # publish the image if there is a push event to main or a release event. !! needed bc expressions eval to strings. See https://github.com/actions/runner/issues/1483
-          push: ${{ !!(!!(github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event.release) && github.repository == 'opentdf/frontend' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-  chart:
-    runs-on: ubuntu-latest
-    needs:
-      - app
-      - image
-    permissions:
-      packages: write
-      contents: read
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v3
-      - uses: yokawasa/action-setup-kube-tools@v0.9.2
-        with:
-          setup-tools: helm
-          helm: "3.10.3"
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-          logout: false
-      - name: package
-        run: |
-          set -x
-          echo "Packaged Helm chart abacus with chart version [${chart_ver}] and appVersion to [${app_ver}]"  >> $GITHUB_STEP_SUMMARY
-          helm package abacus --app-version="${app_ver}" --version="${chart_ver}"
-          echo *.tgz
-        working-directory: charts
-        env:
-          app_ver: ${{ github.event.release && needs.app.outputs.VERSION || needs.app.outputs.SHA_TAG }}
-          chart_ver: ${{ github.event.release.tag_name || needs.app.outputs.CHART_VERSION }}
-      - name: push
-        run: |
-          helm push *.tgz oci://ghcr.io/${{ github.repository_owner }}/charts
-          echo "## Published Helm abacus chart [${chart_ver}]" >> $GITHUB_STEP_SUMMARY
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' || github.event.release.tag_name }}
-        env:
-          chart_ver: ${{ github.event.release.tag_name || needs.app.outputs.CHART_VERSION }}
-        working-directory: charts
-
-  dispatch:
-    runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'opentdf/frontend' }}
-    steps:
-      - name: Trigger opentdf/tests
-        run: >-
-          curl -X POST \
-               -u "${{ secrets.PERSONAL_ACCESS_TOKEN }}" \
-               -H "Accept: application/vnd.github.v3+json" \
-               https://api.github.com/repos/opentdf/tests/dispatches \
-               --data '{"event_type":"xtest"}'
-
-  ci:
-    needs: chart
-    if: ${{ github.event_name == 'pull_request' }}
-    runs-on: ubuntu-latest
-    steps:
-      - run: exit 1
-        if: ${{ needs.image.result == 'failure' }}
+#  image:
+#    needs:
+#      - app
+#    permissions:
+#      contents: read
+#      packages: write
+#    runs-on: ubuntu-latest
+#    timeout-minutes: 90
+#    outputs:
+#      IMAGE_TAGS: ${{ steps.meta.outputs.tags }}
+#    steps:
+#      - uses: actions/checkout@v3
+#      - uses: actions/setup-node@v3
+#        with:
+#          node-version: 18
+#          cache: npm
+#          cache-dependency-path: package-lock.json
+#      - name: Install NPM dependencies
+#        run: npm ci --ignore-scripts
+#      - name: Run NPM build
+#        run: |
+#          npm pkg set 'homepage'='%REACT_APP_SERVER_BASE_PATH%'
+#          npm run build
+#      - name: Docker meta
+#        id: meta
+#        uses: docker/metadata-action@v4
+#        with:
+#          images: ghcr.io/opentdf/abacus
+#          tags: |
+#            type=ref,event=branch
+#            type=sha
+#            type=semver,pattern={{version}},value=${{ github.event.release.tag_name }},enabled=${{ !!github.event.release }}
+#      - name: Set up QEMU
+#        uses: docker/setup-qemu-action@v2
+#      - name: Set up Docker Buildx
+#        uses: docker/setup-buildx-action@v2
+#      - name: Login to GitHub Container Registry
+#        uses: docker/login-action@v2
+#        with:
+#          registry: ghcr.io
+#          username: ${{ github.repository_owner }}
+#          password: ${{ secrets.GITHUB_TOKEN }}
+#      - name: publish
+#        uses: docker/build-push-action@v3
+#        with:
+#          context: .
+#          build-args: |-
+#            NODE_VERSION=18
+#          platforms: ${{ env.CONTAINER_ARCHS }}
+#          # publish the image if there is a push event to main or a release event. !! needed bc expressions eval to strings. See https://github.com/actions/runner/issues/1483
+#          push: ${{ !!(!!(github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event.release) && github.repository == 'opentdf/frontend' }}
+#          tags: ${{ steps.meta.outputs.tags }}
+#          labels: ${{ steps.meta.outputs.labels }}
+#          cache-from: type=gha
+#          cache-to: type=gha,mode=max
+#
+#  chart:
+#    runs-on: ubuntu-latest
+#    needs:
+#      - app
+#      - image
+#    permissions:
+#      packages: write
+#      contents: read
+#    timeout-minutes: 10
+#    steps:
+#      - uses: actions/checkout@v3
+#      - uses: yokawasa/action-setup-kube-tools@v0.9.2
+#        with:
+#          setup-tools: helm
+#          helm: "3.10.3"
+#      - name: Login to GitHub Container Registry
+#        uses: docker/login-action@v2
+#        with:
+#          registry: ghcr.io
+#          username: ${{ github.repository_owner }}
+#          password: ${{ secrets.GITHUB_TOKEN }}
+#          logout: false
+#      - name: package
+#        run: |
+#          set -x
+#          echo "Packaged Helm chart abacus with chart version [${chart_ver}] and appVersion to [${app_ver}]"  >> $GITHUB_STEP_SUMMARY
+#          helm package abacus --app-version="${app_ver}" --version="${chart_ver}"
+#          echo *.tgz
+#        working-directory: charts
+#        env:
+#          app_ver: ${{ github.event.release && needs.app.outputs.VERSION || needs.app.outputs.SHA_TAG }}
+#          chart_ver: ${{ github.event.release.tag_name || needs.app.outputs.CHART_VERSION }}
+#      - name: push
+#        run: |
+#          helm push *.tgz oci://ghcr.io/${{ github.repository_owner }}/charts
+#          echo "## Published Helm abacus chart [${chart_ver}]" >> $GITHUB_STEP_SUMMARY
+#        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' || github.event.release.tag_name }}
+#        env:
+#          chart_ver: ${{ github.event.release.tag_name || needs.app.outputs.CHART_VERSION }}
+#        working-directory: charts
+#
+#  dispatch:
+#    runs-on: ubuntu-latest
+#    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'opentdf/frontend' }}
+#    steps:
+#      - name: Trigger opentdf/tests
+#        run: >-
+#          curl -X POST \
+#               -u "${{ secrets.PERSONAL_ACCESS_TOKEN }}" \
+#               -H "Accept: application/vnd.github.v3+json" \
+#               https://api.github.com/repos/opentdf/tests/dispatches \
+#               --data '{"event_type":"xtest"}'
+#
+#  ci:
+#    needs: chart
+#    if: ${{ github.event_name == 'pull_request' }}
+#    runs-on: ubuntu-latest
+#    steps:
+#      - run: exit 1
+#        if: ${{ needs.image.result == 'failure' }}
