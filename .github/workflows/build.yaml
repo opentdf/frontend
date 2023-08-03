@@ -82,7 +82,12 @@ jobs:
         if: ${{ !!github.event.release }}
         name: Validate published release is on main (reviewed) branch
       - run: npm ci
-      - run: npm run test
+      - run: npm run test:coverage
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     # - name: Install Playwright
     # run: npx playwright install --with-deps
     # - name: Run Playwright tests

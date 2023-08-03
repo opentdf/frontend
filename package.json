@@ -29,6 +29,7 @@
     "build": "REACT_APP_SERVER_DATA=%REACT_APP_SERVER_DATA% react-scripts build",
     "test": "react-scripts test --coverage",
     "test:prod": "react-scripts test --watchAll=false",
+    "test:coverage": "react-scripts test --coverage --watchAll=false",
     "test:debug": "react-scripts --inspect-brk test --runInBand --no-cache --setupFilesAfterEnv='./src/setupTests.ts'",
     "test:playwright": "playwright test --config=tests/e2e/playwright.config.ts",
     "test:playwright-debug": "playwright test --debug --config=tests/e2e/playwright.config.ts",
