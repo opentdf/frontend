@@ -73,7 +73,7 @@ const EditValueList: FC<Props> = (props) => {
                           rules={[{ required: true, message: 'Order value should not be blank' }]}
                         >
                             <Input
-                              id={`edit-value-input-field-${field.name}`}
+                              id={`edit-value-input-field`}
                               data-index={field.name}
                               onBlur={onOrderValueBlur}
                               placeholder="Order Value"
@@ -84,11 +84,12 @@ const EditValueList: FC<Props> = (props) => {
                           style={{ left: '-1px' }}
                           icon={<DeleteOutlined />}
                           onClick={() => onRemoveOrderValue(remove, field.name)}
+                          id={`delete-order-value`}
                         />
                      </div>
                   ))}
                   <Form.Item>
-                      <Button onClick={() => add('')}>
+                      <Button id={'add-new-order-value-button'} onClick={() => add('')}>
                         Add new value
                       </Button>
                   </Form.Item>
@@ -104,6 +105,7 @@ const EditValueList: FC<Props> = (props) => {
            placeholder="Order Value"
            options={selectOptions}
            onChange={onSelectChange}
+           id={'group-by-selector'}
          />
        </Form.Item>
      </Form>
