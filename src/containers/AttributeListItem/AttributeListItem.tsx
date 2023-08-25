@@ -1,5 +1,5 @@
 import { FC, useCallback, useMemo, useState, useEffect } from "react";
-import { List, Table, Divider, Modal} from "antd";
+import { List, Table, Divider, Modal } from "antd";
 import { toast } from "react-toastify";
 import { Attribute } from "../../types/attributes";
 import { EntityAttribute } from "../../types/entitlements";
@@ -17,6 +17,7 @@ type Props = {
   onChange: () => void;
 };
 
+const addKey = (item: EntityAttribute) => ({ ...item, key: item.entityId })
 const attributeRules = ATTRIBUTE_RULE_TYPES.map((item) => item[0]);
 type AttributeRuleType = typeof attributeRules[number]
 
@@ -29,11 +30,11 @@ const AttributeListItem: FC<Props> = (props) => {
   const [isEditValues, setIsEditValues] = useState(false);
 
   const [activeOrderList, setActiveOrderList] = useState<string[]>([]);
+  const [groupByValue, setGroupByValue] = useState<string | undefined>('');
   const [activeAttribute, setActiveAttribute] = useState<Attribute>();
   const [activeRule, setActiveRule] = useState<AttributeRuleType>();
 
-  const [getAttrEntities, { loading, data: entities }] =
-    useLazyFetch<EntityAttribute[]>(entitlementsClient);
+  const [getAttrEntities, { loading, data: entities }] = useLazyFetch<EntityAttribute[]>(entitlementsClient);
   const [updateAttribute] = useLazyFetch(attributesClient);
 
   useEffect(() => {
@@ -97,6 +98,7 @@ const AttributeListItem: FC<Props> = (props) => {
       setActiveTab(order);
       setActiveOrderList(attribute.order);
       setActiveAttribute(attribute);
+      setGroupByValue(attribute.group_by?.value);
     },
     [getAttrEntities],
   );
@@ -130,6 +132,12 @@ const AttributeListItem: FC<Props> = (props) => {
       order: activeOrderList,
       rule: activeRule,
       state: activeAttribute?.state,
+      group_by: groupByValue ?
+        {
+          authority: activeAuthority,
+          name: activeAttribute?.name,
+          value: groupByValue
+        } : null
     };
 
     try {
@@ -140,7 +148,7 @@ const AttributeListItem: FC<Props> = (props) => {
       });
       toast.success(isEditValues ? "Order value was updated!" : "Rule was updated!");
     } catch (error) {
-      toast.error("Could not update rules!");
+      toast.error("Could not update attribute!");
     }
     handleClose();
     onChange();
@@ -148,7 +156,9 @@ const AttributeListItem: FC<Props> = (props) => {
     activeAttribute,
     activeAuthority,
     activeOrderList,
+    groupByValue,
     activeRule,
+    isEditValues,
     updateAttribute,
     handleClose,
     onChange
@@ -173,11 +183,11 @@ const AttributeListItem: FC<Props> = (props) => {
 
     } catch (error: any) {
       let errorText = error.message;
-  
+
       if (error.message.includes('code 500')) {
         errorText = 'Something went wrong.'
       }
-  
+
       toast.error(errorText)
     }
     handleClose();
@@ -213,9 +223,39 @@ const AttributeListItem: FC<Props> = (props) => {
     setActiveOrderList(list);
   }, []);
 
-  const handleEditValues = useCallback(async (newList: string[]) => {
+  const handleEditValues = useCallback(async (newList: string[], shouldSave?: boolean) => {
     setActiveOrderList(newList);
-  }, [setActiveOrderList]);
+
+    if (shouldSave) {
+      const data = {
+        authority: activeAuthority,
+        name: activeAttribute?.name,
+        order: newList,
+        rule: activeRule,
+        state: activeAttribute?.state,
+        group_by: groupByValue ?
+          {
+            authority: activeAuthority,
+            name: activeAttribute?.name,
+            value: groupByValue
+          } : null
+      };
+      try {
+        await updateAttribute({
+          method: Method.PUT,
+          path: `/definitions/attributes`,
+          data,
+        });
+        toast.success(isEditValues ? "Order value was updated!" : "Rule was updated!");
+      } catch (error) {
+        toast.error("Could not update attribute!");
+      }
+    }
+  }, [setActiveOrderList, updateAttribute, activeAuthority, activeAttribute, activeRule, groupByValue, isEditValues]);
+
+  const handleGroupByValue = useCallback((value: string) => {
+    setGroupByValue(value);
+  }, [setGroupByValue]);
 
   return (
     <List.Item>
@@ -241,7 +281,7 @@ const AttributeListItem: FC<Props> = (props) => {
               className="table"
               id="entitlements-table"
               columns={TABLE_COLUMNS}
-              dataSource={entities}
+              dataSource={entities?.map(addKey)}
               loading={loading}
             />
 
@@ -259,11 +299,13 @@ const AttributeListItem: FC<Props> = (props) => {
             )}
             {isEditValues && (
                 <>
-                  <Divider orientation="left">Edit values</Divider>
+                  <Divider orientation="left">Edit order values</Divider>
                   <div>
                     <EditValueList
-                        list={activeOrderList}
-                        onEdit={handleEditValues}
+                        orderValues={activeOrderList}
+                        groupByValue={groupByValue}
+                        onEditOrderValues={handleEditValues}
+                        onEditGroupBy={handleGroupByValue}
                     />
                   </div>
                 </>

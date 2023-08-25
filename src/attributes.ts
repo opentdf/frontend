@@ -38,6 +38,11 @@ export interface components {
       rule: components["schemas"]["RuleEnum"];
       /** State */
       state?: string;
+      group_by?: {
+        authority: string,
+        name: string,
+        value: string
+      }
     };
     /** AuthorityDefinition */
     AuthorityDefinition: {

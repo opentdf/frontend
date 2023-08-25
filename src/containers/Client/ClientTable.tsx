@@ -20,6 +20,9 @@ const ClientTable: FC<Props> = (props) => {
       okText: 'Delete',
       okButtonProps: {
         id: 'delete-attr'
+      },
+      cancelButtonProps: {
+        id: 'cancel-deletion'
       }
     })}, [onDeleteKey]);
 
@@ -43,6 +46,7 @@ const ClientTable: FC<Props> = (props) => {
           <Button
             type="link"
             onClick={() => onDelete(row)}
+            id="delete-entitlement-button"
           >
             Delete
           </Button>

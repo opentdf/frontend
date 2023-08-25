@@ -39,7 +39,11 @@ const Authorities = () => {
         toast.error(errorText)
       }
     },
-    [getAuthorities],
+    [
+      getAuthorities,
+      activeAuthority,
+      authorities,
+    ],
   );
 
   const onDelete = useCallback((row: TableData): void => {

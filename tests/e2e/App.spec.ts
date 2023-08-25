@@ -19,11 +19,12 @@ test.describe('<App/>', () => {
   });
 
   test('should be able to log out on the Attributes page', async ({ page }) => {
-    await page.goto('/attributes');
-    await Promise.all([
-      page.waitForNavigation(),
-      page.click(selectors.logoutButton),
-    ])
+    await test.step('Open Attributes route', async () => {
+      await page.getByRole('link', { name: 'Attributes' }).click();
+      await page.waitForURL('**/attributes');
+    });
+
+    await page.click(selectors.logoutButton)
     await page.waitForSelector(selectors.loginButton);
     // check that data isn't shown
     const authorityDropdown = page.locator(".ant-select-selector >> nth=1")
@@ -32,14 +33,15 @@ test.describe('<App/>', () => {
   });
 
   test('should be able to log out on the Authorities page', async ({ page }) => {
-    await page.goto('/authorities');
-    // check that authority items are present when logged in
-    await expect(page.locator(selectors.authoritiesPage.deleteAuthorityButton)).toBeVisible()
+    await test.step('Open Authorities route', async () => {
+      await page.getByRole('link', { name: 'Authorities' }).click();
+      await page.waitForURL('**/authorities');
+    });
 
-    await Promise.all([
-      page.waitForNavigation(),
-      page.click(selectors.logoutButton),
-    ])
+    // check that authority items are present when logged in
+    await expect(page.locator(selectors.authoritiesPage.deleteAuthorityButton).first()).toBeVisible()
+
+    await page.click(selectors.logoutButton)
     await page.waitForSelector(selectors.loginButton);
     // check that authorities data isn't shown after log out
     const noDataInfo = page.locator(".ant-empty-description", {hasText: 'No Data'})
@@ -47,11 +49,12 @@ test.describe('<App/>', () => {
   });
 
   test('should be able to log out on the Entitlements page', async ({ page }) => {
-    await page.goto('/entitlements');
-    await Promise.all([
-      page.waitForNavigation(),
-      page.click(selectors.logoutButton),
-    ])
+    await test.step('Open Entitlements route', async () => {
+      await page.getByRole('link', { name: 'Entitlements' }).click();
+      await page.waitForURL('**/entitlements');
+    });
+
+    await page.click(selectors.logoutButton)
     await page.waitForSelector(selectors.loginButton);
 
     // check that entities data isn't shown after log out - progress indicator is shown constantly
@@ -62,18 +65,16 @@ test.describe('<App/>', () => {
   });
 
   test('should be able to log out on the Entity Details page', async ({ page }) => {
-    await page.goto('/entitlements');
-    await Promise.all([
-      page.waitForNavigation(),
-      firstTableRowClick('users-table', page),
-    ]);
-    // check that entitlement items are present when logged in
-    await expect(page.locator(selectors.entitlementsPage.entityDetailsPage.deleteEntitlementBtn)).toBeVisible()
+    await test.step('Open Entitlements route', async () => {
+      await page.getByRole('link', { name: 'Entitlements' }).click();
+      await page.waitForURL('**/entitlements');
+    });
 
-    await Promise.all([
-      page.waitForNavigation(),
-      page.click(selectors.logoutButton),
-    ])
+    await firstTableRowClick('users-table', page)
+    // check that entitlement items are present when logged in
+    await expect(page.locator(selectors.entitlementsPage.entityDetailsPage.deleteEntitlementBtn).first()).toBeVisible()
+
+    await page.click(selectors.logoutButton)
     await page.waitForSelector(selectors.loginButton);
     // check that entitlement data isn't shown after log out
     const noDataInfo = page.locator(".ant-empty-description", {hasText: 'No Data'})
@@ -86,7 +87,7 @@ test.describe('<Login/>', () => {
     await authorize(page, "/authorities")
 
     await test.step('check that Authorities data is loaded', async () => {
-      const authorityItems = await page.$$(selectors.authoritiesPage.authoritiesTableRow)
+      const authorityItems = await page.locator(selectors.authoritiesPage.authoritiesTableRow).all()
       const itemsQuantity = authorityItems.length
       await expect(itemsQuantity>0).toBeTruthy()
     })
@@ -96,7 +97,7 @@ test.describe('<Login/>', () => {
     await authorize(page, "/attributes")
 
     await test.step('check that Attributes data is loaded', async () => {
-      const attributeItems = await page.$$(selectors.attributesPage.attributeListItems)
+      const attributeItems = await page.locator(selectors.attributesPage.attributeListItems).all();
       const itemsQuantity = attributeItems.length
       await expect(itemsQuantity>1).toBeTruthy()
     })
@@ -106,13 +107,13 @@ test.describe('<Login/>', () => {
     await authorize(page, "/entitlements")
 
     await test.step('check that Clients data is loaded', async () => {
-      const clientsTableItems = await page.$$(`[data-test-id='clients-table'] .ant-table-row`);
+      const clientsTableItems = await page.locator(`[data-test-id='clients-table'] .ant-table-row`).all();
       const clientsItemsQuantity = clientsTableItems.length
       await expect(clientsItemsQuantity>0).toBeTruthy()
     })
 
     await test.step('check that Users data is loaded', async () => {
-      const usersTableItems = await page.$$(`[data-test-id='users-table'] .ant-table-row`);
+      const usersTableItems = await page.locator(`[data-test-id='users-table'] .ant-table-row`).all();
       const usersItemsQuantity = usersTableItems.length
       await expect(usersItemsQuantity>0).toBeTruthy()
     })
@@ -122,17 +123,11 @@ test.describe('<Login/>', () => {
   test.skip('succeeded on the Entity Details page, actual data is loaded', async ({ page }) => {
     await authorize(page, "/entitlements")
 
-    await Promise.all([
-      page.waitForNavigation(),
-      firstTableRowClick('users-table', page),
-    ]);
+    await firstTableRowClick('users-table', page)
 
     const entityId = await getLastPartOfUrl(page)
 
-    await Promise.all([
-      page.waitForNavigation(),
-      page.click(selectors.logoutButton),
-    ])
+    await page.click(selectors.logoutButton)
 
     await authorize(page, `/entitlements/users/${entityId}`)
     await expect(page.locator(selectors.entitlementsPage.entityDetailsPage.deleteEntitlementBtn)).toBeVisible()

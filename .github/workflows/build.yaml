@@ -3,7 +3,6 @@ env:
 on:
   push:
     branches: [main]
-    tags: ["*"]
   pull_request:
     branches: [main]
     types: [opened, synchronize, reopened]
@@ -14,10 +13,13 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     outputs:
-      VERSION: ${{ steps.version.outputs.VERSION }}
       CHART_VERSION: ${{ steps.chart-version.outputs.CHART_VERSION }}
+      SHA_TAG: ${{ steps.version.outputs.SHA }}
+      VERSION: ${{ steps.version.outputs.VERSION }}
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
           node-version: 18
@@ -38,6 +40,7 @@ jobs:
           fi
           echo "VERSION=$app_version" >> $GITHUB_OUTPUT
           echo "version=$app_version" >> $GITHUB_STEP_SUMMARY
+          echo "SHA=sha-$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
         id: version
       - run: |
           chart_version=$(jq -r .version package.json)-sha$(git rev-parse --short HEAD)
@@ -56,11 +59,35 @@ jobs:
           echo "chart_version=$chart_version" >> $GITHUB_STEP_SUMMARY
         id: chart-version
       - run: |
-          [[ "${{ github.event.release.tag_version }}" == "${{ steps.version.outputs.VERSION }}" ]]
-        if: ${{ github.event.release }}
+          if [[ "$tag" != "$app_ver" ]]; then
+            echo "# Invalid release tag [$tag] - must match package version [$app_ver]" >>$GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+        env:
+          tag: "${{ github.event.release.tag_name }}"
+          app_ver: "${{ steps.version.outputs.VERSION }}"
+        if: ${{ !!github.event.release }}
         name: Validate release tag matches package version
+      - run: |
+          git fetch origin main:main
+          git fetch --all --tags --force
+          git branch -v
+          git tag
+          if ! git merge-base --is-ancestor "$tag" main; then
+            echo "# Invalid release tag [$tag] - must be on `main` branch" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
+        env:
+          tag: "${{ github.event.release.tag_name }}"
+        if: ${{ !!github.event.release }}
+        name: Validate published release is on main (reviewed) branch
       - run: npm ci
-      - run: npm run test
+      - run: npm run test:coverage
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
     # - name: Install Playwright
     # run: npx playwright install --with-deps
     # - name: Run Playwright tests
@@ -84,6 +111,17 @@ jobs:
       IMAGE_TAGS: ${{ steps.meta.outputs.tags }}
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Install NPM dependencies
+        run: npm ci --ignore-scripts
+      - name: Run NPM build
+        run: |
+          npm pkg set 'homepage'='%REACT_APP_SERVER_BASE_PATH%'
+          npm run build
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v4
@@ -92,7 +130,7 @@ jobs:
           tags: |
             type=ref,event=branch
             type=sha
-            type=semver,pattern={{version}},value=${{ github.event.release.tag_version }},enabled=${{ !!github.event.release }}
+            type=semver,pattern={{version}},value=${{ github.event.release.tag_name }},enabled=${{ !!github.event.release }}
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
@@ -106,31 +144,34 @@ jobs:
       - name: publish
         uses: docker/build-push-action@v3
         with:
+          context: .
           build-args: |-
             NODE_VERSION=18
           platforms: ${{ env.CONTAINER_ARCHS }}
-          push: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'opentdf/frontend' }}
+          # publish the image if there is a push event to main or a release event. !! needed bc expressions eval to strings. See https://github.com/actions/runner/issues/1483
+          push: ${{ !!(!!(github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event.release) && github.repository == 'opentdf/frontend' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   chart:
     runs-on: ubuntu-latest
     needs:
       - app
       - image
-      - app
     permissions:
       packages: write
       contents: read
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v3
-      - uses: yokawasa/action-setup-kube-tools@v0.8.0
+      - uses: yokawasa/action-setup-kube-tools@v0.9.2
         with:
           setup-tools: helm
-          helm: "3.10.2"
+          helm: "3.10.3"
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -139,22 +180,25 @@ jobs:
       - name: package
         run: |
           set -x
-          echo "Packaging Helm chart abacus with chart version [${chart_ver}] and appVersion to [${app_ver}]"
+          echo "Packaged Helm chart abacus with chart version [${chart_ver}] and appVersion to [${app_ver}]"  >> $GITHUB_STEP_SUMMARY
           helm package abacus --app-version="${app_ver}" --version="${chart_ver}"
           echo *.tgz
         working-directory: charts
         env:
-          app_ver: ${{ needs.app.outputs.VERSION }}
-          chart_ver: ${{ github.event.release.tag_version || needs.app.outputs.CHART_VERSION }}
+          app_ver: ${{ github.event.release && needs.app.outputs.VERSION || needs.app.outputs.SHA_TAG }}
+          chart_ver: ${{ github.event.release.tag_name || needs.app.outputs.CHART_VERSION }}
       - name: push
         run: |
           helm push *.tgz oci://ghcr.io/${{ github.repository_owner }}/charts
-          echo "## Published Helm chart abacus with chart version [${chart_ver}] and appVersion to [${app_ver}]" >> $GITHUB_STEP_SUMMARY
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+          echo "## Published Helm abacus chart [${chart_ver}]" >> $GITHUB_STEP_SUMMARY
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' || github.event.release.tag_name }}
+        env:
+          chart_ver: ${{ github.event.release.tag_name || needs.app.outputs.CHART_VERSION }}
         working-directory: charts
 
   dispatch:
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'opentdf/frontend' }}
     steps:
       - name: Trigger opentdf/tests
         run: >-

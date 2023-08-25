@@ -1,7 +1,6 @@
 import { useKeycloak } from "@react-keycloak/web";
 import { Avatar, Button, Image } from "antd";
 import { SelectRealm } from "./SelectRealm";
-import logo from '../../assets/openTDF.png';
 
 const UserStatus = () => {
   const { keycloak } = useKeycloak();
@@ -15,7 +14,7 @@ const UserStatus = () => {
             style={{ marginLeft: '0.5rem' }}
             src={
               <Image
-                src={logo}
+                src={window.SERVER_DATA.basePath !== '' ? window.SERVER_DATA.basePath + '/openTDF.png': 'openTDF.png'}
                 preview={false}
                 style={{ width: 32 }}
               />
@@ -49,3 +48,4 @@ const UserStatus = () => {
 UserStatus.displayName = 'UserStatus';
 
 export default UserStatus;
+

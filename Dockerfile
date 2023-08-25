@@ -15,7 +15,6 @@ COPY public/ public/
 COPY src/ src/
 COPY tests/ tests/
 COPY tsconfig.json/ .
-COPY craco.config.js/ .
 RUN npm pkg set 'homepage'='%REACT_APP_SERVER_BASE_PATH%'
 RUN npm run build
 
@@ -26,11 +25,16 @@ COPY server/ ./
 RUN CGO_ENABLED=0 GOOS=linux go build -v -a  -o /server
 
 
-# server - nginx alpine
+# server - nginx alpine - change to ubuntu instead of scratch for debug tools
 FROM scratch as server
 WORKDIR /
-COPY --from=builder /build/build/ /www/
 COPY --from=gobuilder /server /server
+# in CI the build out put is build/, locally it is dist/
+COPY build/ /www/
+# uncomment to debug CI builds
+#RUN ls -l www
+#RUN ls -l www/static
+#RUN cat www/index.html
 ENV KEYCLOAK_HOST "http://localhost/keycloak/auth"
 ENV KEYCLOAK_CLIENT_ID "abacus"
 ENV KEYCLOAK_REALMS "tdf"

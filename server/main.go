@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
@@ -51,13 +50,14 @@ func main() {
 	}
 	// replace %REACT_APP_SERVER_DATA% in index file
 	m := regexp.MustCompile("%REACT_APP_SERVER_DATA%")
-	input, err := ioutil.ReadFile(filepath.Join(directory, index))
+	input, err := os.ReadFile(filepath.Join(directory, index))
 	if err != nil {
 		log.Fatalln(err)
 	}
 	log.Println("replacing")
 	output := m.ReplaceAllString(string(input), string(sdJson))
 	if string(input) == output {
+		log.Println(output)
 		log.Fatalln("replacing failed")
 	}
 	// replace /%REACT_APP_SERVER_BASE_PATH% in index file
@@ -91,11 +91,21 @@ type IndexHandler struct {
 }
 
 func (h IndexHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-    w.Header().Set("Content-Security-Policy", "frame-ancestors")
-    w.Header().Set("X-Content-Type-Options", "nosniff")
-	if r.URL.Path == "/" || r.URL.Path == "/index.html" {
-		w.Write(h.output)
+	w.Header().Set("Content-Security-Policy", "frame-ancestors")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	rexClients := regexp.MustCompile(`^\/entitlements\/clients\/[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$`)
+	rexUsers := regexp.MustCompile(`^\/entitlements\/users\/[0-9a-fA-F]{8}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{4}\b-[0-9a-fA-F]{12}$`)
+	if r.URL.Path == "/" || r.URL.Path == "/index.html" || r.URL.Path == "/authorities" || r.URL.Path == "/attributes" || r.URL.Path == "/entitlements" || rexClients.MatchString(r.URL.Path) || rexUsers.MatchString(r.URL.Path) {
+		log.Printf("serving root from %s", r.URL.Path)
+		_, err := w.Write(h.output)
+		if err != nil {
+			log.Println(err)
+			return
+		}
 		return
+	} else {
+		log.Printf("url path does not pass match - %s", r.URL.Path)
 	}
+	log.Printf("serving %s", r.URL)
 	h.fs.ServeHTTP(w, r)
 }

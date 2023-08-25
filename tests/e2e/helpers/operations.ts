@@ -3,11 +3,7 @@ import { selectors } from "./selectors";
 
 export const login = async (page: Page, username: string, password: string, sectionUrl= "/") => {
   await page.goto(sectionUrl);
-
-  await Promise.all([
-    page.waitForNavigation(),
-    page.locator(selectors.loginButton).click()
-  ]);
+  await page.locator(selectors.loginButton).click()
 
   await page.fill(selectors.loginScreen.usernameField, username);
   await page.fill(selectors.loginScreen.passwordField, password);
@@ -21,7 +17,8 @@ export const authorize = async (page: Page, sectionUrl = "/") => {
   await page.locator(selectors.tokenMessage).click()
 };
 
-export const createAuthority = async (page: Page, authority: any) => {
+export const createAuthority = async (page: Page, authority: string) => {
+  await page.waitForSelector(selectors.attributesPage.newSectionBtn);
   await page.locator(selectors.attributesPage.newSectionBtn).click();
   await page.fill(selectors.attributesPage.newSection.authorityField, authority);
   await page.locator(selectors.attributesPage.newSection.submitAuthorityBtn).click();
@@ -59,6 +56,25 @@ export const getAccessToken = async (page: Page) => {
   });
 };
 
+export const createAttributeViaAPI = async (
+    apiContext: APIRequestContext,
+    authority: string,
+    attrName: string,
+    attrOrder: string[],
+    attrRule: string
+) => {
+  const createAttributeResponse = await apiContext.post('http://localhost:65432/api/attributes/definitions/attributes', {
+    data: {
+      "authority": authority,
+      "name": attrName,
+      "rule": attrRule,
+      "state": "published",
+      "order": attrOrder
+    }
+  })
+  expect(createAttributeResponse.ok()).toBeTruthy()
+}
+
 export const deleteAttributeViaAPI = async (apiContext: APIRequestContext, authority: string, attrName: string, attrOrder: string[], attrRule = "hierarchy", attrState = "published") => {
   const deleteAttributeResponse = await apiContext.delete('http://localhost:65432/api/attributes/definitions/attributes', {
     data: {
@@ -70,6 +86,20 @@ export const deleteAttributeViaAPI = async (apiContext: APIRequestContext, autho
     }
   })
   expect(deleteAttributeResponse.ok()).toBeTruthy()
+};
+
+export const removeAllAttributesOfAuthority = async (apiContext: APIRequestContext, authority: string) => {
+  const response = await apiContext.get(`http://localhost:65432/api/attributes/definitions/attributes?authority=${authority}`);
+  const attributes = await response.json();
+
+  if (attributes.length > 0) {
+    return await Promise.all(attributes.map(async (item: any) => {
+      const mockExampleAuthority = 'https://example.com';
+      if (!item.name.includes(mockExampleAuthority)) {
+        await deleteAttributeViaAPI(apiContext, authority, item.name, item.order, item.rule, item.state);
+      }
+    }))
+  }
 };
 
 export const deleteAuthorityViaAPI = async (apiContext: APIRequestContext, authority: string) => {

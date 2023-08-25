@@ -29,13 +29,16 @@ export const selectors = {
             editRuleButton: '#edit',
             editValueButton: '#edit-value',
             editValueInputField: '#edit-value-input-field',
+            deleteOrderValueIcon: '#delete-order-value',
             deleteAttributeButton: '#delete-attribute',
             confirmAttributeDeletionModal: {
                 cancelDeletionBtn: '#cancel-attribute-deletion',
                 confirmDeletionBtn: '#confirm-attribute-deletion',
             },
+            addNewOrderValueBtn: '#add-new-order-value-button',
             closeDetailsSectionButton: "#close-details-button",
             ruleDropdown: '.attribute-rule__select',
+            groupByDropdown: '#group-by-selector',
             saveChangesButton: '#save-rule',
             cancelEditingButton: '#cancel',
         },
@@ -65,14 +68,17 @@ export const selectors = {
         entityDetailsPage: {
             tableCell: '.ant-table-cell',
             tableRow: '.ant-table-row',
-            deleteEntitlementBtn: '.ant-btn-link >> nth=0',
-            deleteEntitlementModalBtn: '#delete-attr',
+            deleteEntitlementBtn: '#delete-entitlement-button',
+            confirmDeletionModal: {
+                cancelDeletionBtn: '#cancel-deletion',
+                confirmDeletionBtn: '#delete-attr',
+            },
         }
     },
     authoritiesPage: {
         header: '.ant-page-header-heading-title',
         authoritiesTableRow: '.ant-table-row',
-        deleteAuthorityButton: '#delete-authority-button',
+        deleteAuthorityButton: '#delete-authority-button >> nth=0',
         confirmDeletionModal: {
             cancelDeletionBtn: '#cancel-deletion',
             confirmDeletionBtn: '#delete-authority',
