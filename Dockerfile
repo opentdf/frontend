@@ -25,8 +25,7 @@ COPY server/ ./
 RUN CGO_ENABLED=0 GOOS=linux go build -v -a  -o /server
 
 
-# server - nginx alpine - change to ubuntu instead of scratch for debug tools
-FROM alpine as server
+FROM gcr.io/distroless/static-debian11 as server
 WORKDIR /
 COPY --from=gobuilder --chown=root:root --chmod=555 /server /server
 # in CI the build out put is build/, locally it is dist/
