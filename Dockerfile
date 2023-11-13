@@ -30,7 +30,7 @@ FROM alpine as server
 WORKDIR /
 COPY --from=gobuilder --chown=root:root --chmod=555 /server /server
 # in CI the build out put is build/, locally it is dist/
-COPY --from=builder --chown=root:root --chmod=555 /build/ /www/
+COPY --chown=root:root --chmod=555 build/ /www/
 
 USER 10001
 
