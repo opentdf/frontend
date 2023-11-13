@@ -26,11 +26,14 @@ RUN CGO_ENABLED=0 GOOS=linux go build -v -a  -o /server
 
 
 # server - nginx alpine - change to ubuntu instead of scratch for debug tools
-FROM scratch as server
+FROM alpine as server
 WORKDIR /
-COPY --from=gobuilder /server /server
+COPY --from=gobuilder --chown=root:root --chmod=555 /server /server
 # in CI the build out put is build/, locally it is dist/
-COPY build/ /www/
+COPY --from=builder --chown=root:root --chmod=555 /build/ /www/
+
+USER 10001
+
 # uncomment to debug CI builds
 #RUN ls -l www
 #RUN ls -l www/static
