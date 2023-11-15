@@ -8,13 +8,8 @@ const attributesClient = () => {
 
   instance.interceptors.request.use((config) => {
     const token = window.sessionStorage.getItem('keycloak');
-
-    config.headers = {
-      ...config.headers,
-      authorization: `Bearer ${token}`,
-      accept: 'application/json'
-    };
-
+    config.headers.setAuthorization(`Bearer ${token}`)
+    config.headers.setAccept('application/json')
     return config;
   });
 

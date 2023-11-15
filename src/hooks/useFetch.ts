@@ -35,6 +35,7 @@ export const useFetch = <T>(client: AxiosInstance, config: Config): [T | undefin
 
 export const useLazyFetch = <T>(client: AxiosInstance): [<Q>(config: Config) => Promise<AxiosResponse<Q, any>>, { loading: boolean, data: T | undefined, headers: AxiosResponseHeaders | undefined }] => {
   const [data, setData] = useState<T>();
+  // setHeaders is not used
   const [headers, setHeaders] = useState<AxiosResponseHeaders>();
   const [loading, setLoading] = useState(false);
 
@@ -50,7 +51,6 @@ export const useLazyFetch = <T>(client: AxiosInstance): [<Q>(config: Config) => 
 
     try {
       const res = await methods[config.method]();
-      setHeaders(res.headers);
       setData(res.data);
       return res;
     } catch (error) {
