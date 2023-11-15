@@ -10,14 +10,8 @@ const entitlementsClient = () => {
 
   instance.interceptors.request.use((config) => {
     const token = window.sessionStorage.getItem('keycloak');
-
-    config.headers = {
-      ...config.headers,
-      authorization: `Bearer ${token}`,
-      accept: 'application/json',
-      "Access-Control-Allow-Origin": "http://localhost:3000"
-    };
-
+    config.headers.setAuthorization(`Bearer ${token}`)
+    config.headers.setAccept('application/json')
     return config;
   });
 
