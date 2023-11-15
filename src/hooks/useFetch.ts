@@ -1,9 +1,8 @@
-import { AxiosInstance, AxiosResponse, AxiosError, AxiosResponseHeaders } from "axios";
+import {AxiosInstance, AxiosResponse, AxiosError, AxiosResponseHeaders, RawAxiosResponseHeaders} from "axios";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { getCancellationConfig } from "../service";
 import { useKeycloak } from "@react-keycloak/web";
-import {RawAxiosResponseHeaders} from "axios/index";
 
 export type Method = 'get' | 'delete' | "put" | 'post';
 export type Config = { method: Method, path: string, params?: Record<any, any>; data?: Record<any, any>; };
@@ -36,7 +35,6 @@ export const useFetch = <T>(client: AxiosInstance, config: Config): [T | undefin
 
 export const useLazyFetch = <T>(client: AxiosInstance): [<Q>(config: Config) => Promise<AxiosResponse<Q, any>>, { loading: boolean, data: T | undefined, headers: RawAxiosResponseHeaders | AxiosResponseHeaders | undefined }] => {
   const [data, setData] = useState<T>();
-  // setHeaders is not used
   const [headers, setHeaders] = useState<RawAxiosResponseHeaders | AxiosResponseHeaders>();
   const [loading, setLoading] = useState(false);
 
