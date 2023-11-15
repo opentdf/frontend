@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { getCancellationConfig } from "../service";
 import { useKeycloak } from "@react-keycloak/web";
+import {RawAxiosResponseHeaders} from "axios/index";
 
 export type Method = 'get' | 'delete' | "put" | 'post';
 export type Config = { method: Method, path: string, params?: Record<any, any>; data?: Record<any, any>; };
@@ -33,10 +34,10 @@ export const useFetch = <T>(client: AxiosInstance, config: Config): [T | undefin
   return [data];
 };
 
-export const useLazyFetch = <T>(client: AxiosInstance): [<Q>(config: Config) => Promise<AxiosResponse<Q, any>>, { loading: boolean, data: T | undefined, headers: AxiosResponseHeaders | undefined }] => {
+export const useLazyFetch = <T>(client: AxiosInstance): [<Q>(config: Config) => Promise<AxiosResponse<Q, any>>, { loading: boolean, data: T | undefined, headers: RawAxiosResponseHeaders | AxiosResponseHeaders | undefined }] => {
   const [data, setData] = useState<T>();
   // setHeaders is not used
-  const [headers, setHeaders] = useState<AxiosResponseHeaders>();
+  const [headers, setHeaders] = useState<RawAxiosResponseHeaders | AxiosResponseHeaders>();
   const [loading, setLoading] = useState(false);
 
   const makeRequest = useCallback(async (config: Config) => {
@@ -51,6 +52,7 @@ export const useLazyFetch = <T>(client: AxiosInstance): [<Q>(config: Config) => 
 
     try {
       const res = await methods[config.method]();
+      setHeaders(res.headers);
       setData(res.data);
       return res;
     } catch (error) {
