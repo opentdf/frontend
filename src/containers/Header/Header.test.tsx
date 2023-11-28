@@ -1,13 +1,11 @@
 import { render, screen } from "@testing-library/react";
 import Header from "./Header";
 import { BrowserRouter as Router } from "react-router-dom";
-import { setWindowMock, mockKeycloakStub } from "../../../tests/unit";
+import { mockKeycloakStub } from "../../../tests/unit";
 const { ReactKeycloakProvider } = require('@react-keycloak/web')
 
 describe('Header component', () => {
   it("is rendered", () => {
-    setWindowMock();
-
     render(
       <ReactKeycloakProvider authClient={mockKeycloakStub()}>
         <Router>

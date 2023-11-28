@@ -1,1 +1,1 @@
-export { setWindowMock, mockKeycloakStub } from './helpers';
+export { mockKeycloakStub } from './helpers';

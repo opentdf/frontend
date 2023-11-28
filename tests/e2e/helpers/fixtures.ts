@@ -1,7 +1,12 @@
 import { test as baseTest } from "@playwright/test";
+import path from "path";
+import fs from "fs";
 
 export const generateRandomDigit = (max = 10, min = 0) =>
   Math.floor(Math.random() * max + min);
+
+const istanbulCLIOutput = path.join(process.cwd(), '../../coverage/playwright');
+
 
 export const test = baseTest.extend<{ attributeName: string; authority: string; attributeValue: string; }>({
   attributeName: async ({ page }, use) => {
@@ -19,4 +24,20 @@ export const test = baseTest.extend<{ attributeName: string; authority: string; 
 
     await use(attributeValue);
   },
+  context: async ({ context }, use) => {
+    await context.addInitScript(() =>
+      window.addEventListener('beforeunload', () =>
+        (window as any).collectIstanbulCoverage(JSON.stringify((window as any).__coverage__))
+      ),
+    );
+    await fs.promises.mkdir(istanbulCLIOutput, { recursive: true });
+    await context.exposeFunction('collectIstanbulCoverage', (coverageJSON: string) => {
+      if (coverageJSON)
+        fs.writeFileSync(path.join(istanbulCLIOutput, `playwright_coverage_${generateRandomDigit(1000, 1)}.json`), coverageJSON);
+    });
+    await use(context);
+    for (const page of context.pages()) {
+      await page.evaluate(() => (window as any).collectIstanbulCoverage(JSON.stringify((window as any).__coverage__)))
+    }
+  }
 });
