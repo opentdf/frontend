@@ -83,4 +83,4 @@ To run (while development server above is running)
 
 ## Design
 
-The `REACT_APP_SERVER_DATA` environment variable becomes `window.SERVER_DATA`.
+The `VITE_APP_SERVER_DATA` environment variable becomes `window.SERVER_DATA`.
