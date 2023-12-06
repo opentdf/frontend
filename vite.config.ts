@@ -6,6 +6,7 @@ import istanbul from 'vite-plugin-istanbul';
 export default defineConfig({
 	base: process.env.REACT_APP_SERVER_BASE_PATH || '/',
 	server: {
+		host: 'localhost',
 		port: 3000,
 	},
 	build: {
