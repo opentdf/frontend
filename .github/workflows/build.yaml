@@ -82,7 +82,7 @@ jobs:
         if: ${{ !!github.event.release }}
         name: Validate published release is on main (reviewed) branch
       - run: npm ci
-      - run: npm run test:coverage
+      - run: npm run test:merge
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:

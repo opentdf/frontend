@@ -80,6 +80,13 @@ To run (while development server above is running)
 ### Lint
 `CI=true npm run build`
 
+### Tilt
+
+```shell
+ctlptl create cluster kind --registry=ctlptl-registry --name kind-opentdf-frontend
+tilt ci
+```
+
 
 ## Design
 

@@ -15,8 +15,16 @@ describe('Header component', () => {
     }
   })
   it("should rendered", () => {
-    // @ts-ignore
-    const x = render(<AttributeListItem {...props} />);
+    const x = render(<AttributeListItem activeAuthority={""} attr={{
+      authority: "",
+      name: "",
+      order: [],
+      rule: "hierarchy",
+      state: undefined,
+      group_by: undefined
+    }} onChange={function (): void {
+      throw new Error("Function not implemented.");
+    }} {...props} />);
 
     expect(x.getByText("mockName")).toBeInTheDocument();
     expect(x.getByText("order1")).toBeInTheDocument();
