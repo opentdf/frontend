@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { selectors } from "./helpers/selectors";
-import {authorize, firstTableRowClick, getLastPartOfUrl, login} from "./helpers/operations";
+import {authorize, firstTableRowClick, numberedTableRowClick, getLastPartOfUrl, login} from "./helpers/operations";
 
 test.describe('<App/>', () => {
   test.beforeEach(async ({ page }) => {
@@ -64,13 +64,14 @@ test.describe('<App/>', () => {
     await expect(progressIndicator).toBeVisible()
   });
 
-  test('should be able to log out on the Entity Details page', async ({ page }) => {
+  // TODO: Test should add entitlement in user page before checking it. Not relly on prepopulation. Tests should be self-efficient
+  test.skip('should be able to log out on the Entity Details page', async ({ page }) => {
     await test.step('Open Entitlements route', async () => {
       await page.getByRole('link', { name: 'Entitlements' }).click();
       await page.waitForURL('**/entitlements');
     });
 
-    await firstTableRowClick('users-table', page)
+    await numberedTableRowClick('users-table', page, 2)
     // check that entitlement items are present when logged in
     await expect(page.locator(selectors.entitlementsPage.entityDetailsPage.deleteEntitlementBtn).first()).toBeVisible()
 

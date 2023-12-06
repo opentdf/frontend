@@ -571,6 +571,7 @@ test.describe('<Attributes/>', () => {
     })
 
     await test.step('Assert success message', async() => {
+      await page.waitForSelector(`text=Attribute ${attributeName} deleted`);
       const successfulDeletionMsg = await page.locator(selectors.alertMessage, {hasText: `Attribute ${attributeName} deleted`})
       await expect(successfulDeletionMsg).toBeVisible()
     })

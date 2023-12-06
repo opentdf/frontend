@@ -3,6 +3,7 @@ import Authorities from "./Authorities";
 import { BrowserRouter as Router } from "react-router-dom";
 import { mockKeycloakStub } from "../../../tests/unit";
 
+
 const { ReactKeycloakProvider } = require('@react-keycloak/web')
 
 describe('Authorities component', () => {

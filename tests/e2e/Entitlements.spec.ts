@@ -170,7 +170,6 @@ test.describe('<Entitlements/>', () => {
     await test.step('Assert success message', async () => {
       const entitlementDeletedMsg = await page.locator(selectors.alertMessage, {hasText: `Entitlement ${tableValue} deleted`})
       await expect(entitlementDeletedMsg).toBeVisible()
-      await entitlementDeletedMsg.click()
     });
 
     await test.step('Match table rows after deletion', async () => {

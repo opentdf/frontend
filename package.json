@@ -25,10 +25,11 @@
   "scripts": {
     "start": "vite",
     "build": "vite build",
+    "test": "npm run test:jest && npm run test:playwright-ci && npm run test:merge",
     "test:jest": "jest --coverage",
     "test:playwright": "playwright test --config=tests/e2e/playwright.config.ts",
     "test:playwright-ci": "start-server-and-test start http://localhost:3000 test:playwright",
-    "test:merge": "istanbul-merge --out coverage/total.json coverage/playwright/** coverage/jest/coverage-final.json",
+    "test:merge": "istanbul-merge --out coverage/total.json coverage/playwright/** coverage/jest/coverage-final.json && node generateLcov.js",
     "eject": "react-scripts eject",
     "prepare": "husky install"
   },
@@ -57,6 +58,7 @@
     "@playwright/test": "^1.27.2",
     "@testing-library/jest-dom": "~5.14.1",
     "@testing-library/react": "~11.2.7",
+    "@testing-library/react-hooks": "^8.0.1",
     "@testing-library/user-event": "~12.8.3",
     "@types/node": "^20.10.0",
     "@types/react-router-dom": "^5.3.2",
