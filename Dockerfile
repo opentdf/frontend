@@ -14,9 +14,9 @@ WORKDIR /build/
 COPY public/ public/
 COPY src/ src/
 COPY tests/ tests/
-COPY tsconfig.json/ .
-COPY vite.config.ts/ .
-COPY index.html/ .
+COPY tsconfig.json .
+COPY vite.config.ts .
+COPY index.html .
 ENV VITE_APP_SERVER_BASE_PATH "/"
 RUN npm run build
 
