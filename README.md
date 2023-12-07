@@ -82,6 +82,7 @@ To run (while development server above is running)
 
 ### Tilt
 
+Runs unit-tests, e2e tests with backend, generates coverage from both.
 ```shell
 ctlptl create cluster kind --registry=ctlptl-registry --name kind-opentdf-frontend
 tilt ci
