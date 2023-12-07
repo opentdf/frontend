@@ -60,8 +60,8 @@ func main() {
 		log.Println(output)
 		log.Fatalln("replacing failed")
 	}
-	// replace /%REACT_APP_SERVER_BASE_PATH% in index file
-	r := regexp.MustCompile("/%REACT_APP_SERVER_BASE_PATH%")
+	// replace /%VITE_APP_SERVER_BASE_PATH% in index file
+	r := regexp.MustCompile("/%VITE_APP_SERVER_BASE_PATH%")
 	basePath := os.Getenv("SERVER_BASE_PATH")
 	// make sure there is no double-slash
 	if basePath == "/" {

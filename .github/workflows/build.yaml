@@ -143,7 +143,7 @@ jobs:
         run: npm ci --ignore-scripts
       - name: Run NPM build
         run: |
-          npm pkg set 'homepage'='%REACT_APP_SERVER_BASE_PATH%'
+          npm pkg set 'homepage'='%VITE_APP_SERVER_BASE_PATH%'
           npm run build
       - name: Docker meta
         id: meta

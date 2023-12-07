@@ -17,7 +17,7 @@ COPY tests/ tests/
 COPY tsconfig.json/ .
 COPY vite.config.ts/ .
 COPY index.html/ .
-ENV REACT_APP_SERVER_BASE_PATH "/"
+ENV VITE_APP_SERVER_BASE_PATH "/"
 RUN npm run build
 
 # gobuilder - http server build
