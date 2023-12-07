@@ -75,7 +75,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "start-server-and-test": "^2.0.3",
     "ts-jest": "^29.1.1",
-    "vite": "^5.0.2",
+    "vite": "^5.0.5",
     "vite-plugin-istanbul": "^5.0.0"
   }
 }
