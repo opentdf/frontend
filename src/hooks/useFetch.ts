@@ -65,5 +65,6 @@ export const useLazyFetch = <T>(client: AxiosInstance): [<Q>(config: Config) => 
     }
   }, [client]);
 
+  // @ts-ignore
   return [makeRequest, { loading, data, headers }];
 };
