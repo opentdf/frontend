@@ -80,7 +80,15 @@ To run (while development server above is running)
 ### Lint
 `CI=true npm run build`
 
+### Tilt
+
+Runs unit-tests, e2e tests with backend, generates coverage from both.
+```shell
+ctlptl create cluster kind --registry=ctlptl-registry --name kind-opentdf-frontend
+tilt ci
+```
+
 
 ## Design
 
-The `REACT_APP_SERVER_DATA` environment variable becomes `window.__SERVER_DATA__`.
+The `VITE_APP_SERVER_DATA` environment variable becomes `window.SERVER_DATA`.

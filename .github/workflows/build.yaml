@@ -81,8 +81,31 @@ jobs:
           tag: "${{ github.event.release.tag_name }}"
         if: ${{ !!github.event.release }}
         name: Validate published release is on main (reviewed) branch
-      - run: npm ci
-      - run: npm run test:coverage
+      - run: |-
+          npm ci
+          npx playwright install
+      - uses: yokawasa/action-setup-kube-tools@v0.9.2
+        with:
+          setup-tools: |
+            kubectl
+            helm
+            tilt
+          kubectl: "1.24.1"
+          helm: "3.9.2"
+          tilt: "0.31.2"
+      - run: |
+          kubectl version --client
+          kustomize version
+          tilt version
+      - name: start minikube
+        id: minikube
+        uses: medyagh/setup-minikube@master
+        with:
+          minikube-version: 1.26.0
+          # This should be in sync with the setup-tools version above
+          kubernetes-version: 1.24.1
+      - name: Run unit tests and e2e
+        run: tilt ci
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         env:
@@ -120,7 +143,7 @@ jobs:
         run: npm ci --ignore-scripts
       - name: Run NPM build
         run: |
-          npm pkg set 'homepage'='%REACT_APP_SERVER_BASE_PATH%'
+          npm pkg set 'homepage'='%VITE_APP_SERVER_BASE_PATH%'
           npm run build
       - name: Docker meta
         id: meta

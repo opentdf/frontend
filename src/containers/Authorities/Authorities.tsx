@@ -4,6 +4,7 @@ import { useCallback, useMemo } from "react";
 import { attributesClient } from "../../service";
 import { AttributesFiltersStore } from "../../store";
 import { toast } from "react-toastify";
+// @ts-ignore
 import styles from './Authorities.module.css';
 
 type TableData = { authority: string; };

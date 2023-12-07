@@ -1,6 +1,5 @@
 import { render } from "@testing-library/react";
 import EditValueList from "./EditValueList";
-import { setWindowMock } from "../../../tests/unit";
 import { shouldSaveValues } from './EditValueList';
 
 describe('EditValueList component', () => {
@@ -30,7 +29,6 @@ describe('EditValueList component', () => {
             onEditGroupBy: jest.fn(),
         };
 
-        setWindowMock();
         // @ts-ignore
         const x = render(<EditValueList {...props} />);
 
@@ -45,7 +43,6 @@ describe('EditValueList component', () => {
             onEditGroupBy: jest.fn(),
         };
 
-        setWindowMock();
         // @ts-ignore
         const x = render(<EditValueList {...props} />);
 
@@ -62,7 +59,6 @@ describe('EditValueList component', () => {
             onEditGroupBy: jest.fn(),
         };
 
-        setWindowMock();
         // @ts-ignore
         const x = render(<EditValueList {...props} />);
         expect(x.queryByTestId('edit-value-input-field-0')).toBeFalsy();

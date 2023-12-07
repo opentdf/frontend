@@ -1,7 +1,7 @@
 import {APIRequestContext, expect, Page} from '@playwright/test'
 import { selectors } from "./selectors";
 
-export const login = async (page: Page, username: string, password: string, sectionUrl= "/") => {
+export const login = async (page: Page, username: string, password: string, sectionUrl= "localhost:3000/") => {
   await page.goto(sectionUrl);
   await page.locator(selectors.loginButton).click()
 
@@ -41,7 +41,11 @@ export const assertAttributeCreatedMsg = async (page: Page) => {
 }
 
 export const firstTableRowClick = async (table: string, page: Page) => {
-  const firstRow = await page.locator(`[data-test-id=${table}] .ant-table-tbody>tr:first-child`);
+  return await numberedTableRowClick(table, page, 1)
+};
+
+export const numberedTableRowClick = async (table: string, page: Page, number = 1) => {
+  const firstRow = await page.locator(`[data-test-id=${table}] .ant-table-tbody>tr:nth-child(${number})`);
   return await firstRow.click();
 };
 

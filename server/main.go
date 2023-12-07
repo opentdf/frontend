@@ -27,7 +27,7 @@ type ServerData struct {
 
 func main() {
 	log.Println("starting")
-	// create server data REACT_APP_SERVER_DATA
+	// create server data VITE_APP_SERVER_DATA
 	log.Println("populating")
 	sd := &ServerData{
 		Attributes:   os.Getenv("ATTRIBUTES_HOST"),
@@ -44,12 +44,12 @@ func main() {
 		log.Fatalln(err)
 	}
 	log.Println("populated")
-	log.Printf("REACT_APP_SERVER_DATA=%s", string(sdJson))
+	log.Printf("VITE_APP_SERVER_DATA=%s", string(sdJson))
 	if bytes.Equal(emptyJson, sdJson) {
 		log.Fatalln("env populating failed")
 	}
-	// replace %REACT_APP_SERVER_DATA% in index file
-	m := regexp.MustCompile("%REACT_APP_SERVER_DATA%")
+	// replace %VITE_APP_SERVER_DATA% in index file
+	m := regexp.MustCompile("%VITE_APP_SERVER_DATA%")
 	input, err := os.ReadFile(filepath.Join(directory, index))
 	if err != nil {
 		log.Fatalln(err)
@@ -60,8 +60,8 @@ func main() {
 		log.Println(output)
 		log.Fatalln("replacing failed")
 	}
-	// replace /%REACT_APP_SERVER_BASE_PATH% in index file
-	r := regexp.MustCompile("/%REACT_APP_SERVER_BASE_PATH%")
+	// replace /%VITE_APP_SERVER_BASE_PATH% in index file
+	r := regexp.MustCompile("/%VITE_APP_SERVER_BASE_PATH%")
 	basePath := os.Getenv("SERVER_BASE_PATH")
 	// make sure there is no double-slash
 	if basePath == "/" {

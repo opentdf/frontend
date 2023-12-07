@@ -71,21 +71,20 @@ describe('UserStatus component', () => {
   });
 
   it("should save realm in localStorage",()=> {
-    Object.defineProperty(window, "localStorage", {
-      value: {
-        getItem: jest.fn(() => null),
-        setItem: jest.fn(() => null)
-      },
-      writable: true
-    });
+    // Create the mock functions
+    const mockGetItem = jest.fn(() => null);
+    const mockSetItem = jest.fn();
+
+    window.localStorage.getItem = mockGetItem;
+    window.localStorage.setItem = mockSetItem;
+
     const mockKeycloak = {
-      logout: () => {
-      },
+      logout: jest.fn(),
       authenticated: true
     };
     saveNewRealm(mockKeycloak, "value");
-    expect(window.localStorage.setItem).toHaveBeenCalledWith("realm-tmp", "value");
+    expect(mockSetItem).toHaveBeenCalledWith("realm-tmp", "value");
     saveNewRealm({...mockKeycloak, authenticated: false}, "value");
-    expect(window.localStorage.setItem).toHaveBeenCalledWith("realm", "value");
+    expect(mockSetItem).toHaveBeenCalledWith("realm", "value");
   });
 });

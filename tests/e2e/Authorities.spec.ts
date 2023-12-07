@@ -46,7 +46,7 @@ test.describe('<Authorities/>', () => {
         await apiContext.dispose();
     });
 
-    test('renders initially', async ({ page, authority}) => {
+    test('renders initially', async ({ page}) => {
         await page.getByRole('link', { name: 'Authorities' }).click();
         await page.waitForURL('**/authorities');
 
@@ -61,14 +61,17 @@ test.describe('<Authorities/>', () => {
         });
 
         await page.waitForSelector(selectors.authoritiesPage.authoritiesTableRow);
-        const originalTableRows = await page.locator(selectors.authoritiesPage.authoritiesTableRow).all()
-        const originalTableSize = originalTableRows.length
 
         const deleteAuthorityButton = await page.getByRole('row', { name: `${authority} Delete` }).getByRole('button', { name: 'Delete' });
         await deleteAuthorityButton.click();
 
         await test.step('Should be able to close the dialog and cancel authority removal', async() => {
             await page.click(selectors.authoritiesPage.confirmDeletionModal.cancelDeletionBtn)
+        })
+
+        await test.step('Assert item is in the table', async() => {
+            const cell = page.locator(`td:has-text("${authority}")`);
+            await expect(cell).toHaveCount(1);
         })
 
         await test.step('Confirm Deletion Modal', async () => {
@@ -83,14 +86,12 @@ test.describe('<Authorities/>', () => {
         })
 
         await test.step('Assert item is deleted from the table', async() => {
-            const updatedTableRows = await page.locator(selectors.authoritiesPage.authoritiesTableRow).all()
-            const updatedTableSize = updatedTableRows.length
-
-            expect(updatedTableSize === (originalTableSize - 1)).toBeTruthy()
+            const cell = page.locator(`td:has-text("${authority}")`);
+            await expect(cell).toHaveCount(0);
         })
     });
 
-    test('Authority removal is failed when contains assigned attributes', async ({ page, authority, attributeName, attributeValue}) => {
+    test('Authority removal is failed when contains assigned attributes', async ({ page, attributeName, attributeValue}) => {
         await createAttribute(page, attributeName, [attributeValue])
         await assertAttributeCreatedMsg(page)
 
