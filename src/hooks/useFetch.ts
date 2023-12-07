@@ -38,7 +38,7 @@ export const useLazyFetch = <T>(client: AxiosInstance): [<Q>(config: Config) => 
   const [headers, setHeaders] = useState<RawAxiosResponseHeaders | AxiosResponseHeaders>();
   const [loading, setLoading] = useState(false);
 
-  const makeRequest = useCallback(async (config: Config) => {
+  const makeRequest = useCallback(async <Q>(config: Config): Promise<AxiosResponse<Q, any>> => {
     setLoading(true);
 
     const methods = {
@@ -56,6 +56,7 @@ export const useLazyFetch = <T>(client: AxiosInstance): [<Q>(config: Config) => 
     } catch (error) {
       if (isAxiosError(error) && error.response) {
         toast.error(error.message);
+        // @ts-ignore
         return error.response;
       } else {
         throw new Error(error as string);
