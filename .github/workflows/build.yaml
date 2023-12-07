@@ -79,6 +79,8 @@ jobs:
           fi
         env:
           tag: "${{ github.event.release.tag_name }}"
+        if: ${{ !!github.event.release }}
+        name: Validate published release is on main (reviewed) branch
       - name: Prepare for unit tests and e2e
       - run: npm ci
       - uses: yokawasa/action-setup-kube-tools@v0.9.2
