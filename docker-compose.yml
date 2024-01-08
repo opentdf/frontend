@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  abacus:
+    build:
+      context: .
+      args:
+        NODE_VERSION: 'lts'  # You can change this as needed
+        GO_VERSION: 'latest' # You can change this as needed
+    ports:
+      - "3000:8080"
+    environment:
+      KEYCLOAK_HOST: "http://localhost:65432/auth/"
+      KEYCLOAK_CLIENT_ID: "abacus-localhost"
+      KEYCLOAK_REALMS: "tdf"
+      ATTRIBUTES_HOST: "http://localhost:65432/api/attributes"
+      ENTITLEMENTS_HOST: "http://localhost:65432/api/entitlements"
+      KAS_HOST: "http://localhost:65432/api/kas"
+      SERVER_BASE_PATH: "/"
+    user: "10001" # Running as non-root user
+
+# Add other services like databases, caches, etc, here if needed.
+
+# Commands to use
+# docker-compose up --build
+# docker-compose down
