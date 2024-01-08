@@ -48,7 +48,7 @@ func main() {
 	if bytes.Equal(emptyJson, sdJson) {
 		log.Fatalln("env populating failed")
 	}
-	input, err := os.ReadFile(filepath.Join(directory, index))
+	output, err := os.ReadFile(filepath.Join(directory, index))
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -56,7 +56,7 @@ func main() {
 	// serve replaced index.html instead of writing it (permission issue)
 	fs := http.FileServer(http.Dir(directory))
 	http.Handle("/", &IndexHandler{
-		output: input,
+		output: output,
 		fs:     fs,
 	})
 	log.Printf("listening %s\n", port)
