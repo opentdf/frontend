@@ -48,31 +48,15 @@ func main() {
 	if bytes.Equal(emptyJson, sdJson) {
 		log.Fatalln("env populating failed")
 	}
-	// replace %VITE_APP_SERVER_DATA% in index file
-	m := regexp.MustCompile("%VITE_APP_SERVER_DATA%")
-	input, err := os.ReadFile(filepath.Join(directory, index))
+	output, err := os.ReadFile(filepath.Join(directory, index))
 	if err != nil {
 		log.Fatalln(err)
 	}
-	log.Println("replacing")
-	output := m.ReplaceAllString(string(input), string(sdJson))
-	if string(input) == output {
-		log.Println(output)
-		log.Fatalln("replacing failed")
-	}
-	// replace /%VITE_APP_SERVER_BASE_PATH% in index file
-	r := regexp.MustCompile("/%VITE_APP_SERVER_BASE_PATH%")
-	basePath := os.Getenv("SERVER_BASE_PATH")
-	// make sure there is no double-slash
-	if basePath == "/" {
-		basePath = ""
-	}
-	output = r.ReplaceAllString(output, basePath)
-	log.Println("replaced")
+
 	// serve replaced index.html instead of writing it (permission issue)
 	fs := http.FileServer(http.Dir(directory))
 	http.Handle("/", &IndexHandler{
-		output: []byte(output),
+		output: output,
 		fs:     fs,
 	})
 	log.Printf("listening %s\n", port)
