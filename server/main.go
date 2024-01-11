@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -27,7 +28,7 @@ type ServerData struct {
 
 func main() {
 	log.Println("starting")
-	// create server data VITE_APP_SERVER_DATA
+	// create server data SERVER_DATA
 	log.Println("populating")
 	sd := &ServerData{
 		Attributes:   os.Getenv("ATTRIBUTES_HOST"),
@@ -44,19 +45,36 @@ func main() {
 		log.Fatalln(err)
 	}
 	log.Println("populated")
-	log.Printf("VITE_APP_SERVER_DATA=%s", string(sdJson))
+	log.Printf("SERVER_DATA=%s", string(sdJson))
 	if bytes.Equal(emptyJson, sdJson) {
 		log.Fatalln("env populating failed")
 	}
-	output, err := os.ReadFile(filepath.Join(directory, index))
+	// override window.SERVER_DATA in index file
+	m := regexp.MustCompile(`window\.SERVER_DATA\s*=\s*\{.*?};`)
+	input, err := os.ReadFile(filepath.Join(directory, index))
 	if err != nil {
 		log.Fatalln(err)
 	}
-
+	log.Println("replacing")
+	replacement := fmt.Sprintf("window.SERVER_DATA = %s;", string(sdJson))
+	output := m.ReplaceAllString(string(input), replacement)
+	if string(input) == output {
+		log.Println(output)
+		log.Fatalln("replacing failed")
+	}
+	// replace /%VITE_APP_SERVER_BASE_PATH% in index file
+	r := regexp.MustCompile("/%VITE_APP_SERVER_BASE_PATH%")
+	basePath := os.Getenv("SERVER_BASE_PATH")
+	// make sure there is no double-slash
+	if basePath == "/" {
+		basePath = ""
+	}
+	output = r.ReplaceAllString(output, basePath)
+	log.Println("replaced")
 	// serve replaced index.html instead of writing it (permission issue)
 	fs := http.FileServer(http.Dir(directory))
 	http.Handle("/", &IndexHandler{
-		output: output,
+		output: []byte(output),
 		fs:     fs,
 	})
 	log.Printf("listening %s\n", port)
