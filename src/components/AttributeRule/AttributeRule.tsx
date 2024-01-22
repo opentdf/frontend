@@ -25,7 +25,7 @@ const AttributeRule: FC<Props> = (props) => {
   );
 
   const handleSelect = useCallback(
-    (option) => {
+    (option: string) => {
       setSelectedStrategy(option);
       onRuleChange(option);
     },

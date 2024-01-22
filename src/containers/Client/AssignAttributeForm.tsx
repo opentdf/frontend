@@ -32,7 +32,7 @@ const AssignAttributeForm: FC<Props> = (props) => {
   const { attrs, getAttrs, loading } = useDefinitionAttributes(authority);
   const [updateEntitlement] = useUpdateEntitlement();
 
-  const [selectedName, setSelectedName] = useState();
+  const [selectedName, setSelectedName] = useState("");
   const [attributeValOptions, setAttributeValOptions] = useState<Option[]>();
 
   const authoritiesOptions = useMemo(
@@ -66,7 +66,7 @@ const AssignAttributeForm: FC<Props> = (props) => {
     setAttributeValOptions(options);
   }, [attrs, selectedName]);
 
-  const onAttributeName = useCallback((selectedVal) => {
+  const onAttributeName = useCallback((selectedVal: string) => {
     setSelectedName(selectedVal);
   }, []);
 

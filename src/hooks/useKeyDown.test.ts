@@ -1,4 +1,4 @@
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react';
 import { fireEvent } from '@testing-library/dom';
 import { useKeyDown } from './useKeyDown'; // Adjust the path to the actual file location
 

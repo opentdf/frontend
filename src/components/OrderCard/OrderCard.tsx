@@ -25,7 +25,7 @@ type Props = {
   closeAll: () => void;
 };
 
-const OrderCard: FC<Props> = (props) => {
+const OrderCard: FC<React.PropsWithChildren<Props>> = (props) => {
   const {
     activeTabKey,
     isActive,

@@ -1,4 +1,4 @@
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react';
 import { useAuthorities } from './useAuthorities';
 import { useLazyFetch } from "./useFetch";
 import { useKeycloak } from "@react-keycloak/web";

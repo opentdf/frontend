@@ -18,7 +18,7 @@ const Authorities = () => {
   });
 
   const onDeleteKey = useCallback(
-    async ({ authority }) => {
+    async ({ authority }: {authority: string}) => {
       try {
         await attributesClient.delete('/authorities', {
           data: { authority },
