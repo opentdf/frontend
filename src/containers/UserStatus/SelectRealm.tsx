@@ -8,7 +8,7 @@ const  {Option} = Select;
 export const SelectRealm = ()=> {
     const { keycloak } = useKeycloak();
     const [currentRealm, setRealm] = useState(keycloakConfig.realm);
-    const handleChange = useCallback((value) => {
+    const handleChange = useCallback((value: string) => {
         setRealm(value);
         saveNewRealm(keycloak, value);
     }, [keycloak]);

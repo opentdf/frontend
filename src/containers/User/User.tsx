@@ -99,7 +99,7 @@ const User = () => {
     return (
         <section>
             <AssignAttributeForm
-                entityId={entityId}
+                entityId={entityId || ""}
                 onAssignAttribute={onAssignAttribute}
             />
             <Divider/>

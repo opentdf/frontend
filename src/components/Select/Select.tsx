@@ -1,4 +1,5 @@
 import { Select as AntdSelect, SelectProps, Form } from "antd";
+import { DefaultOptionType } from "antd/lib/select";
 import { useCallback, useEffect, useState } from "react";
 
 const { Option } = AntdSelect;
@@ -21,7 +22,7 @@ const Select = (props: SelectProps & { name: string }) => {
   }, [options]);
 
   const onSearch = useCallback(
-    (searchVal) => {
+    (searchVal: string) => {
       const filteredOptions = options?.filter(({ value }) => {
         return String(value).match(new RegExp(searchVal, "gi"));
       });
@@ -31,7 +32,7 @@ const Select = (props: SelectProps & { name: string }) => {
     [options],
   );
 
-  const filterOptionCb = useCallback((input, option) => {
+  const filterOptionCb = useCallback((input: string, option?: DefaultOptionType) => {
     if (option && option.children) {
       return String(option.children).toLowerCase().indexOf(input.toLowerCase()) >= 0;
     }

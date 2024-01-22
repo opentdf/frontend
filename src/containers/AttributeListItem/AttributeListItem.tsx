@@ -1,4 +1,4 @@
-import { FC, useCallback, useMemo, useState, useEffect } from "react";
+import { FC, useCallback, useMemo, useState, useEffect, SetStateAction } from "react";
 import { List, Table, Divider, Modal } from "antd";
 import { toast } from "react-toastify";
 import { Attribute } from "../../types/attributes";
@@ -215,11 +215,11 @@ const AttributeListItem: FC<Props> = (props) => {
     })},
   [handleDeleteClick]);
 
-  const handleRuleChange = useCallback((rule) => {
+  const handleRuleChange = useCallback((rule: SetStateAction<string | undefined>) => {
     setActiveRule(rule);
   }, [setActiveRule]);
 
-  const handleReorder = useCallback((list) => {
+  const handleReorder = useCallback((list: SetStateAction<string[]>) => {
     setActiveOrderList(list);
   }, []);
 
