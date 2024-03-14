@@ -6,7 +6,7 @@ import istanbul from 'vite-plugin-istanbul';
 export default defineConfig({
 	base: process.env.VITE_APP_SERVER_BASE_PATH || '/',
 	server: {
-		host: 'localhost',
+		host: true,
 		port: 3000,
 	},
 	build: {
